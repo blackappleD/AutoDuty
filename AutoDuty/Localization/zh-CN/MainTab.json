@@ -39,7 +39,10 @@
     "CurrentGearset": "当前套装",
     "Busy": "工作中...",
     "RequiresVNavmeshAlt": "AutoDuty 依赖 vnavmesh 插件进行移动和导航。\n请添加仓库：https://puni.sh/api/repository/veyn",
-    "RequiresBossModAlt": "AutoDuty 依赖 BossMod 插���处理战斗机制。\n请添加仓库：https://puni.sh/api/repository/veyn",
+    "RequiresBossModAlt": "AutoDuty 依赖 BossMod 插件处理战斗机制。\n请添加仓库：https://puni.sh/api/repository/veyn",
+    "DungeonsRemaining": "剩余副本次数：{0}",
+    "DungeonsRemainingExplanation": "预计您在达到每日 100 次副本上限前，还可以运行的副本数量。",
+    "CurrentVariantPath": "当前异闻路径",
     "Modes": {
       "Looping": "单副本挂机 (Looping)",
       "Playlist": "任务列表模式 (Playlist)",
@@ -61,6 +64,10 @@
       "Support": "自动排队",
       "Trust_Group": "亲信升级",
       "Trust_Solo": "仅自己"
+    },
+    "Playlist": {
+      "DeleteHelp": "删除已保存的任务列表\n按住 Ctrl 以启用",
+      "SaveHelp": "以所写名称保存当前任务列表\n按住 Ctrl 以启用"
     }
   }
 }
