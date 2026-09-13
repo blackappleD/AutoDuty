@@ -3,7 +3,7 @@
   "Name": "AutoDuty",
   "Punchline": "AutoDuty",
   "Description": "A plugin to run dungeons for you with Trust, Duty Support, Squadrons, Variants, and Regular, Requires BossMod, vnavmesh and a Rotation Plugin (Wrath Combo, BossMod AutoRotation, or RotationSolverReborn)",
-  "InternalName": "AutoDuty",
+  "InternalName": "AutoDuty-bld",
   "DalamudApiLevel": "15",
   "MinimumDalamudVersion": "15.0.0.0",
   "RepoUrl": "https://github.com/erdelf/AutoDuty",

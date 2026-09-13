@@ -31,34 +31,12 @@ jobs:
       - name: Build Project
         run: dotnet build --configuration Release AutoDuty/AutoDuty.csproj -p:AssemblyVersion=${{ github.ref_name }}
 
-      - name: Publish Version
-        uses: PunishXIV/dynamis-action@v1
-        id: dynamis
-        with:
-          plugin_id: 54
-          internal_name: "AutoDuty"
-          version_number: ${{ github.ref_name }}
-          path: "AutoDuty/bin/Release/AutoDuty/latest.zip"
-          type: "latest"
-          dalamud_version: "15"
-          changelog: ${{ github.event.release.body }}
-        env:
-          PUBLISHER_KEY: ${{ secrets.PUBLISHER_KEY }}
-
-      - name: Github Releases To Discord
-        uses: SethCohen/github-releases-to-discord@v1.15.0
-        with:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}
-          color: "2105893"
-          username: "Release Changelog"
-          avatar_url: "https://s3.puni.sh/media/plugin/54/icon-15ug2vnr9m1.png"
-          footer_title: "Changelog"
-          footer_icon_url: "https://s3.puni.sh/media/plugin/54/icon-15ug2vnr9m1.png"
-          footer_timestamp: true
+      - name: Rename zip to AutoDuty-bld.zip
+        run: mv AutoDuty/bin/Release/AutoDuty/latest.zip AutoDuty/bin/Release/AutoDuty/AutoDuty-bld.zip
 
       - name: 'Upload to GitHub release'
         run: |
-            gh release upload ${{github.event.release.tag_name}} AutoDuty/bin/Release/AutoDuty/latest.zip
+            gh release upload ${{github.event.release.tag_name}} AutoDuty/bin/Release/AutoDuty/AutoDuty-bld.zip
         env:
           GITHUB_TOKEN: ${{ github.TOKEN }}
         shell: bash
