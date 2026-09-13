@@ -12,6 +12,8 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       DALAMUD_HOME: /tmp/dalamud
     steps:
