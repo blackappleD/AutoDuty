@@ -15,6 +15,15 @@ jobs:
     env:
       DALAMUD_HOME: /tmp/dalamud
     steps:
+      - name: Set version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ inputs.tag }}" >> $GITHUB_ENV
+          else
+            echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
@@ -34,14 +43,14 @@ jobs:
         run: dotnet restore
 
       - name: Build Project
-        run: dotnet build --configuration Release AutoDuty/AutoDuty.csproj -p:AssemblyVersion=${{ github.ref_name }}
+        run: dotnet build --configuration Release AutoDuty/AutoDuty.csproj -p:AssemblyVersion=${{ env.VERSION }}
 
       - name: Rename zip to AutoDuty-bld.zip
         run: mv AutoDuty/bin/Release/AutoDuty/latest.zip AutoDuty/bin/Release/AutoDuty/AutoDuty-bld.zip
 
       - name: 'Upload to GitHub release'
         run: |
-            gh release upload ${{github.event.release.tag_name}} AutoDuty/bin/Release/AutoDuty/AutoDuty-bld.zip
+            gh release upload ${{ env.VERSION }} AutoDuty/bin/Release/AutoDuty/AutoDuty-bld.zip
         env:
           GITHUB_TOKEN: ${{ github.token }}
         shell: bash
