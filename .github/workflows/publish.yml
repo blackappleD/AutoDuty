@@ -3,6 +3,11 @@ name: Build & Publish to Dynamis Latest
 on:
   release:
     types: [released]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to build (e.g. 0.0.0.33501)'
+        required: true
 
 jobs:
   Build:
@@ -38,6 +43,6 @@ jobs:
         run: |
             gh release upload ${{github.event.release.tag_name}} AutoDuty/bin/Release/AutoDuty/AutoDuty-bld.zip
         env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         shell: bash
 
