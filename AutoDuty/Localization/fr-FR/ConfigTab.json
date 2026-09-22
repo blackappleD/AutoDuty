@@ -11,6 +11,7 @@
       "Delete": "Supprimer la configuration",
       "DeleteHelp": "Supprimer la configuration\nMaintenez ctrl pour activer",
       "BareProfileNote": "Le profil basique sert uniquement à lancer une mission, sans rien d'autre. Vous pouvez le dupliquer pour le modifier.",
+      "ConfigOverridesActiveNote": "La configuration est verrouillée tant que les surcharges IPC sont actives. Arrêtez AutoDuty pour la modifier de nouveau.",
       "NewProfileName": "Nom du nouveau profil",
       "ChangeProfileName": "Modifier le nom du profil"
     },
@@ -26,10 +27,12 @@
       "TransparentBG": "Utiliser un fond transparent",
       "ShowActionText": "Afficher le texte d'action AD",
       "AnchorBottom": "Ancrer en bas",
+      "ButtonsHeader": "Voici les boutons disponibles dans l'overlay / l'onglet principal",
       "OverrideButtons": "Forcer les boutons d'overlay",
       "OverrideButtonsHelp": "Par défaut, les boutons d'overlay sont activés si leur configuration est activée\nCeci vous permettra de choisir quels boutons activer",
       "ShowMainWindowOnStartup": "Afficher la fenêtre principale au démarrage",
-      "SliderInputs": "Curseurs de saisie"
+      "SliderInputs": "Curseurs de saisie",
+      "LoopActionsOpenByDefault": "Déplier par défaut les actions de boucle activées"
     },
     "Duty": {
       "Header": "Paramètres de configuration des missions",
@@ -80,6 +83,8 @@
       "ReturnTimes": "fois",
       "DrawPath": "Dessiner les prochaines étapes du chemin",
       "DrawPathSteps": "Dessiner X étapes",
+      "DisableRenderWhileActive": "Désactiver le rendu",
+      "DisableRenderWhileActiveHelp": "Désactive le rendu du monde 3D tant qu'AutoDuty est actif",
       "W2W": {
         "Header": "> Configuration W2W <",
         "TreatUnsyncAsW2W": "Traiter Non-sync comme W2W",
@@ -101,8 +106,10 @@
       "Header": "Paramètres d'initialisation pré-boucle",
       "Enable": "Activer",
       "ExecuteCommands": "Exécuter des commandes au début de toutes les boucles",
+      "ExecuteCommandsHelp": "Exécute des commandes au démarrage de toutes les boucles\nPar exemple {0}",
       "BetweenLoopNote": "Les actions suivantes sont aussi effectuées entre les boucles, si Entre les boucles est activé (actuellement {0})",
       "RetireTo": "Se retirer à ",
+      "ActionsCopyFromBetweenLoop": "Copier les actions depuis Entre les boucles",
       "AddCurrentPosition": "Ajouter la position actuelle",
       "HomePathHelp": "Pour la plupart des maisons où la porte est en ligne droite depuis le point de téléportation, ceci n'est pas nécessaire. Dans les rares cas où la porte nécessite un chemin, vous pouvez le créer ici, ou si votre porte semble plus éloignée que celles de vos voisins, allez simplement à votre porte et cliquez sur Ajouter la position actuelle"
     },
@@ -110,6 +117,14 @@
       "Header": "Paramètres entre les boucles",
       "Enable": "Activer",
       "RunOnLastLoop": "Exécuter à la dernière boucle",
+      "ArmoireEntrustHelp": "Confie les objets à l'armoire entre les boucles.",
+      "GlamourEntrust": "Confier à l'armoire à projections",
+      "GlamourEntrustHelp": "Confie les objets à l'armoire à projections entre les boucles.",
+      "RegisterTripleTriadCards": "Enregistrer les cartes Triple Triade",
+      "SellTripleTriadCards": "Vendre les cartes Triple Triade",
+      "EnableAutoRetainerMultiMode": "Activer le MultiMode AutoRetainer",
+      "EnableAutoRetainerMultiModeHelp": "Parcourt une fois tous vos personnages via le MultiMode d'AutoRetainer, puis reprend la mission",
+      "EnableAutoRetainer": "Activer l'intégration AutoRetainer",
       "ExecuteCommands": "Exécuter des commandes entre toutes les boucles",
       "AutoExtract": "Extraction automatique",
       "AutoOpenCoffers": "Ouvrir automatiquement les coffres d'équipement",
@@ -118,18 +133,15 @@
       "Desynth": {
         "NQOnly": "Garantir des résultats NQ"
       },
-      "AutoDesynth": "Recyclage automatique",
-      "RegisterTripleTriadCards": "Enregistrer les cartes Triple Triade",
-      "SellTripleTriadCards": "Vendre les cartes Triple Triade",
-      "EnableAutoRetainer": "Activer l'intégration AutoRetainer"
+      "AutoDesynth": "Recyclage automatique"
     },
     "Termination": {
       "Header": "Paramètres d'arrêt de boucle",
       "Enable": "Activer",
+      "Help": "Les boucles s'arrêteront lorsque ces conditions seront atteintes, à condition qu'un nombre suffisant de boucles ait été alloué.",
       "StopAtLevel": "Arrêter la boucle au niveau",
-      "StopAtLevelHelp": "La boucle s'arrêtera lorsque ces conditions seront atteintes, à condition qu'un nombre suffisant de boucles ait été alloué.",
+      "StopAtILevel": "Arrêter les boucles au niveau d'objet",
       "StopNoRestedXP": "Arrêter quand plus d'XP de repos",
-      "StopNoRestedXPHelp": "La boucle s'arrêtera lorsque ces conditions seront atteintes, à condition qu'un nombre suffisant de boucles ait été alloué.",
       "StopAtItemQty": "Arrêter la boucle en atteignant la quantité d'objet",
       "StopAtItemQtyHelp": "La boucle s'arrêtera lorsque ces conditions seront atteintes, à condition qu'un nombre suffisant de boucles ait été alloué.",
       "SelectItem": "Sélectionner un objet",
@@ -138,13 +150,21 @@
       "Quantity": "Quantité",
       "AddItem": "Ajouter un objet",
       "StopOnlyWhenAllItems": "Arrêter uniquement quand tous les objets sont obtenus",
+      "StopWhenDutyGathered": "Arrêter les boucles quand toutes les projections sont obtenues",
+      "StopWhenDutyGatheredHelp": "Les boucles seront arrêtées quand les projections de la mission en cours auront été obtenues.",
+      "StopWhenDutyGatheredSetsOnly": "Sets uniquement",
       "StopBLUSpell": "Arrêter la boucle quand le sort de MBL est débloqué",
       "SelectBLUSpell": "Sélectionner un sort de MBL",
       "StopOnlyWhenAllSpells": "Arrêter uniquement quand tous les sorts sont débloqués",
+      "StopWhenInventoryFull": "Arrêter les boucles quand l'inventaire est plein",
+      "StopWhenInventoryFullSlots": "Emplacements libres restants : ",
       "ExecuteCommandsOnTermination": "Exécuter des commandes à l'arrêt de toutes les boucles",
+      "ExecuteCommandsOnTerminationHelp": "Exécute des commandes à la fin de toutes les boucles\nPar exemple {0}",
       "PlaySoundOnCompletion": "Jouer un son à la fin de toutes les boucles : ",
       "OnCompletionOfAllLoops": "À la fin de toutes les boucles : ",
-      "KeepTerminationActive": "Garder l'option d'arrêt active après exécution "
+      "KeepTerminationActive": "Garder l'option d'arrêt active après exécution ",
+      "StopAtLevelHelp": "La boucle s'arrêtera lorsque ces conditions seront atteintes, à condition qu'un nombre suffisant de boucles ait été alloué.",
+      "StopNoRestedXPHelp": "La boucle s'arrêtera lorsque ces conditions seront atteintes, à condition qu'un nombre suffisant de boucles ait été alloué."
     },
     "Multiboxing": {
       "Header": "Multiboxing",
@@ -185,6 +205,12 @@
       "ResynchronizeStep": "Resynchroniser l'étape"
     },
     "Enums": {
+      "Positional": {
+        "Any": "Indifférent",
+        "Flank": "Flanc",
+        "Rear": "Arrière",
+        "Front": "Avant"
+      },
       "RetireLocation": {
         "Inn": "Auberge",
         "Apartment": "Appartement",
@@ -264,13 +290,24 @@
         "Pictomancer": "Pictomancien",
         "Blue_Mage": "Mage bleu"
       },
+      "MultiModeType": {
+        "Retainers": "Servants",
+        "Submersibles": "Sous-marins",
+        "Everything": "Tout"
+      },
       "ConditionType": {
         "VariantPath": "Chemin",
         "Distance": "Distance",
         "ObjectData": "Objet",
         "ItemCount": "Objet",
         "Job": "Classe",
-        "ActionStatus": "StatutAction"
+        "ActionStatus": "StatutAction",
+        "ConditionFlag": "Indicateur de condition",
+        "Collision": "Collision",
+        "ToDo": "Objectif",
+        "Not": "Non",
+        "Or": "Ou",
+        "And": "Et"
       },
       "ObjectDataProperty": {
         "EventState": "ÉtatÉvénement",

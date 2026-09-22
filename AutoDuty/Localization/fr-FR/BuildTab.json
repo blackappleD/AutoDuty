@@ -42,6 +42,7 @@
     "XDiff": "Diff-X : ",
     "YDiff": "Diff-Y : ",
     "ZDiff": "Diff-Z : ",
-    "Diff": "Diff : "
+    "Diff": "Diff : ",
+    "NoPartyCoherency": "Désactiver la cohérence de groupe"
   }
 }

@@ -7,7 +7,6 @@
     "CreateIssueTooltip": "クリックでCreate Issueポップアップを開きます（GitHub認証後）。フォーム記入後、リポジトリにIssueを送信します",
     "FilterLogLevel": "ログレベルで絞り込み",
     "DebugLevelWarning": "AutoDutyからDalamudのログレベルは変更できません。デバッグ表示はDalamudログ \"/xllog\" を開き、左上で適切なレベルを設定してください。",
-
     "Auth": {
       "PollingGithub": "GitHubユーザー認証を確認中: {0}",
       "WaitingResponse": "GitHubからの応答待ち",
@@ -17,7 +16,6 @@
       "OpenGithub": "GitHubを開く",
       "InBrowserPaste": " をブラウザで貼り付け"
     },
-
     "IssueForm": {
       "Submitting": "Issue送信中",
       "Title": "Issue: バグ報告",
@@ -29,14 +27,13 @@
       "ReproStepsHelp": "こちらで再現できるよう、手順をすべて記載してください。",
       "Submit": "Issueを送信"
     },
-
     "LogLevels": {
-      "Verbose": "Verbose",
-      "Debug": "Debug",
-      "Information": "Information",
-      "Warning": "Warning",
-      "Error": "Error",
-      "Fatal": "Fatal"
+      "Verbose": "詳細 (Verbose)",
+      "Debug": "デバッグ (Debug)",
+      "Information": "情報 (Information)",
+      "Warning": "警告 (Warning)",
+      "Error": "エラー (Error)",
+      "Fatal": "致命的 (Fatal)"
     }
   }
 }

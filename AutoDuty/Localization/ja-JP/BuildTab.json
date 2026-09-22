@@ -42,6 +42,7 @@
     "XDiff": "X差分: ",
     "YDiff": "Y差分: ",
     "ZDiff": "Z差分: ",
-    "Diff": "差分: "
+    "Diff": "差分: ",
+    "NoPartyCoherency": "パーティ同調を無効化"
   }
 }

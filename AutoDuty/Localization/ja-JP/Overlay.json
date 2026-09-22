@@ -8,8 +8,19 @@
       "Repair": "修理",
       "Equip": "装備更新",
       "Coffers": "装備箱",
+      "Retire": "待機場所へ",
       "TripleTriad": "トリプルトライアド",
-      "Armoire": "愛蔵品"
+      "Armoire": "愛蔵品",
+      "Glamour": "ミラプリ箪笥",
+      "AutoRetainer": "リテイナー",
+      "AutoRetainerMulti": "ARマルチ",
+      "Discard": "破棄",
+      "TripleTriadUse": "TT登録",
+      "TripleTriadSell": "TT売却",
+      "ConsumeItems": "アイテム使用",
+      "ExecuteCommands": "コマンド",
+      "Wait": "待機(?)",
+      "PlaySound": "効果音"
     },
     "Tooltip": {
       "TurnIn": "クリックでグランドカンパニー納品場所へ移動し、AutoRetainerのGC納品を実行します",

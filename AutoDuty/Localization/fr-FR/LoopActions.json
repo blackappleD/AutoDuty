@@ -1,5 +1,6 @@
 {
   "LoopActions": {
+    "Hint": "Maintenez CTRL pour supprimer une entrée",
     "AutoEquip": {
       "GearSourceHelp": "Vanilla - Utilise l'équipement du coffre d'armes uniquement\nGearsetter - Demande à Gearsetter, peut déplacer les anciens objets dans l'inventaire\nStylist - Utilise vos paramètres Stylist",
       "MoveOldToInventory": "Déplacer les anciens objets dans l'inventaire",
@@ -14,6 +15,7 @@
       "TriggerAt": "Déclencher à",
       "PreferredRepairNPC": "PNJ de réparation préféré : ",
       "PreferredRepairNPCHelp": "Il est conseillé de faire correspondre le PNJ de réparation avec la cloche d'invocation et si possible le lieu de retrait",
+      "NPCSearchHint": "Commencez à taper le nom d'un PNJ ou d'une zone pour rechercher",
       "GrandCompanyInn": "Auberge de Grande Compagnie"
     },
     "AutoRetainer": {
@@ -21,6 +23,12 @@
       "PreferredSummoningBellHelp": "Quel que soit l'emplacement choisi, s'il y a une cloche d'invocation dans l'endroit où vous êtes quand ceci est invoqué, elle sera utilisée à la place",
       "WaitingUpTo": "Attente jusqu'à...",
       "Seconds": "secondes"
+    },
+    "PlaylistPreLoop": {
+      "Help": "En mode liste de lecture, change le set d'équipement pour celui indiqué par la première entrée"
+    },
+    "PlaylistSwitchLoop": {
+      "Help": "En mode liste de lecture, change le set d'équipement pour celui indiqué par l'entrée suivante et bascule la boucle active sur l'entrée suivante, le cas échéant"
     },
     "TripleTriadSell": {
       "SlotsOccupied": "Emplacements occupés",
@@ -34,15 +42,24 @@
       "InventorySlotsLeft": "Emplacements d'inventaire restants à",
       "UseGCAetheryteTicket": "Utiliser un ticket d'éthérite CG"
     },
+    "Armoire": {
+      "Help": "Confie les objets à l'armoire entre les boucles"
+    },
+    "Glamour": {
+      "Help": "Confie les objets à l'armoire à projections entre les boucles"
+    },
     "Desynth": {
       "OnlySkillUps": "Uniquement les montées de compétence",
       "ItemLevelLimit": "Limite de niveau d'objet",
       "ItemLevelLimitHelp": "Arrête le recyclage d'un objet une fois que votre compétence de recyclage atteint le niveau de l'objet + cette limite.",
       "NQOnly": "Garantir des résultats NQ",
       "ProtectGearsets": "Protéger les sets d'équipement",
+      "ProtectGearsetterUpgrades": "Protéger les améliorations Gearsetter du recyclage automatique",
+      "ProtectGearsetterUpgradesHelp": "Protège aussi les objets que Gearsetter recommande comme amélioration pour l'un de vos sets d'équipement, même s'ils n'y sont pas encore équipés. Nécessite le plugin Gearsetter.",
       "Categories": "Catégories de recyclage"
     },
     "Coffers": {
+      "Help": "AutoDuty ouvrira les coffres d'équipement (comme les armes de paladin) entre chaque boucle",
       "OpenCoffersWithGearset": "Ouvrir les coffres avec le set : ",
       "CurrentGearset": "Set d'équipement actuel",
       "UseBlacklist": "Utiliser la liste noire",
@@ -53,7 +70,7 @@
       "AddCoffer": "Ajouter un coffre"
     },
     "Retire": {
-      
+      "LifestreamNotRegistered": " (non enregistré dans Lifestream)"
     },
     "ConsumeItems": {
       "AutoConsumeHelp": "AutoDuty consommera ces objets au lancement et entre chaque boucle (si le statut n'existe pas)",
@@ -70,6 +87,7 @@
     },
     "Wait": {
       "WaitTime": "(s) Temps d'attente entre les boucles",
+      "WaitOnPlugins": "Attend que les plugins indiqués aient terminé leurs actions",
       "WaitTimeHelp": "Retardera tous les processus entre-boucles d'AutoDuty de X secondes."
     }
   }

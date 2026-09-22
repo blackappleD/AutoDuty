@@ -1,5 +1,6 @@
 {
   "LoopActions": {
+    "Hint": "按住 CTRL 可删除条目",
     "AutoEquip": {
       "GearSourceHelp": "原版 - 仅使用兵装库(Armory Chest)装备\n装备管理器 - 调用 Gearsetter，可将淘汰装备移至背包\n造型师 - 使用 Stylist 插件设置",
       "MoveOldToInventory": "将旧物品移至背包",
@@ -14,6 +15,7 @@
       "TriggerAt": "触发条件 @",
       "PreferredRepairNPC": "首选修理 NPC：",
       "PreferredRepairNPCHelp": "建议将修理 NPC 与传唤铃以及返回位置（如可能）设置在同一地点",
+      "NPCSearchHint": "开始输入 NPC 或地区名称以搜索",
       "GrandCompanyInn": "冒险者分队军营"
     },
     "AutoRetainer": {
@@ -21,6 +23,12 @@
       "PreferredSummoningBellHelp": "无论选择哪个位置，如果你当前所在地有传唤铃，将优先前往该位置",
       "WaitingUpTo": "最多等待...",
       "Seconds": "秒"
+    },
+    "PlaylistPreLoop": {
+      "Help": "处于播放列表模式时，切换到第一个条目指定的套装"
+    },
+    "PlaylistSwitchLoop": {
+      "Help": "处于播放列表模式时，切换到下一个条目指定的套装，并在适用时将当前循环切换到下一个播放列表条目"
     },
     "TripleTriadSell": {
       "SlotsOccupied": "占用格数",
@@ -34,15 +42,24 @@
       "InventorySlotsLeft": "剩余背包格数 @",
       "UseGCAetheryteTicket": "使用大国防联军传送券"
     },
+    "Armoire": {
+      "Help": "在每次循环之间将物品存入时装衣柜"
+    },
+    "Glamour": {
+      "Help": "在每次循环之间将物品存入幻化衣柜"
+    },
     "Desynth": {
       "OnlySkillUps": "仅提升分解熟练度时分解",
       "ItemLevelLimit": "物品等级限制",
       "ItemLevelLimitHelp": "当你的分解技能达到物品等级 + 此限制时，停止分解该物品。",
       "NQOnly": "只分解NQ物品",
       "ProtectGearsets": "保护套装",
+      "ProtectGearsetterUpgrades": "保护 Gearsetter 的升级候选装备不被自动分解",
+      "ProtectGearsetterUpgradesHelp": "同时保护 Gearsetter 推荐用于升级任意套装的物品，即使它们尚未被装备。需要 Gearsetter 插件。",
       "Categories": "分解类别"
     },
     "Coffers": {
+      "Help": "AutoDuty 将在每次循环之间开启装备箱（例如骑士武器箱）",
       "OpenCoffersWithGearset": "使用套装开启宝箱：",
       "CurrentGearset": "当前套装",
       "UseBlacklist": "使用黑名单",
@@ -53,6 +70,7 @@
       "AddCoffer": "添加宝箱"
     },
     "Retire": {
+      "LifestreamNotRegistered": "（未在 Lifestream 中注册）"
     },
     "ConsumeItems": {
       "AutoConsumeHelp": "AutoDuty 将在运行时和每次循环间使用这些物品（如果状态不存在）",
@@ -69,6 +87,7 @@
     },
     "Wait": {
       "WaitTime": "（秒）循环间等待时间",
+      "WaitOnPlugins": "等待指定插件完成其操作",
       "WaitTimeHelp": "将所有 AutoDuty 循环间处理延迟 X 秒。"
     }
   }

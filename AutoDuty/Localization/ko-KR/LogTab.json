@@ -7,7 +7,6 @@
     "CreateIssueTooltip": "클릭하면 Create Issue 팝업이 열립니다(GitHub 인증 후). 양식 작성 후 리포지토리에 Issue를 제출합니다",
     "FilterLogLevel": "로그 레벨로 필터링",
     "DebugLevelWarning": "AutoDuty에서 Dalamud의 로그 레벨을 변경할 수 없습니다. 디버그 표시는 Dalamud 로그 \"/xllog\"를 열고 왼쪽 상단에서 적절한 레벨을 설정하세요.",
-
     "Auth": {
       "PollingGithub": "GitHub 사용자 인증 확인 중: {0}",
       "WaitingResponse": "GitHub 응답 대기 중",
@@ -17,7 +16,6 @@
       "OpenGithub": "GitHub 열기",
       "InBrowserPaste": " 을(를) 브라우저에 붙여넣기"
     },
-
     "IssueForm": {
       "Submitting": "Issue 제출 중",
       "Title": "Issue: 버그 보고",
@@ -29,14 +27,13 @@
       "ReproStepsHelp": "이쪽에서 재현할 수 있도록 단계를 모두 기재해주세요.",
       "Submit": "Issue 제출"
     },
-
     "LogLevels": {
-      "Verbose": "Verbose",
-      "Debug": "Debug",
-      "Information": "Information",
-      "Warning": "Warning",
-      "Error": "Error",
-      "Fatal": "Fatal"
+      "Verbose": "상세 (Verbose)",
+      "Debug": "디버그 (Debug)",
+      "Information": "정보 (Information)",
+      "Warning": "경고 (Warning)",
+      "Error": "오류 (Error)",
+      "Fatal": "치명적 (Fatal)"
     }
   }
 }

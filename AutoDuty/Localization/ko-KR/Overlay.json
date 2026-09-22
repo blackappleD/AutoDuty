@@ -8,8 +8,19 @@
       "Repair": "수리",
       "Equip": "장비 갱신",
       "Coffers": "상자 개봉",
+      "Retire": "대기 장소로",
       "TripleTriad": "트리플 트라이어드",
-      "Armoire": "추억의 보관함"
+      "Armoire": "추억의 보관함",
+      "Glamour": "환상 옷장",
+      "AutoRetainer": "집사",
+      "AutoRetainerMulti": "AR 멀티",
+      "Discard": "폐기",
+      "TripleTriadUse": "TT 등록",
+      "TripleTriadSell": "TT 판매",
+      "ConsumeItems": "아이템 사용",
+      "ExecuteCommands": "명령어",
+      "Wait": "대기(?)",
+      "PlaySound": "소리"
     },
     "Tooltip": {
       "TurnIn": "클릭하면 총사령부 납품 장소로 이동하여 AutoRetainer의 총사령부 납품을 실행합니다",

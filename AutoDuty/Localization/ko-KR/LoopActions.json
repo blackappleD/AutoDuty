@@ -1,5 +1,6 @@
 {
   "LoopActions": {
+    "Hint": "CTRL을 누른 채 항목을 삭제",
     "AutoEquip": {
       "GearSourceHelp": "Vanilla - 무기고 내부만 사용\nGearsetter - gearsetter에 문의하여 오래된 장비를 소지품으로 이동 가능\nStylist - stylist 설정 사용",
       "MoveOldToInventory": "오래된 장비를 소지품으로 이동",
@@ -23,6 +24,12 @@
       "WaitingUpTo": "최대 대기 시간...",
       "Seconds": "초"
     },
+    "PlaylistPreLoop": {
+      "Help": "재생 목록 모드일 때 첫 번째 항목에 지정된 장비 세트로 변경합니다"
+    },
+    "PlaylistSwitchLoop": {
+      "Help": "재생 목록 모드일 때 다음 항목에 지정된 장비 세트로 변경하고, 해당되는 경우 실행 중인 반복 작업을 다음 항목으로 전환합니다"
+    },
     "TripleTriadSell": {
       "SlotsOccupied": "사용 슬롯",
       "CardCount": "카드 수"
@@ -35,6 +42,12 @@
       "InventorySlotsLeft": "소지품 빈 칸이 @ 이하일 때",
       "UseGCAetheryteTicket": "텔레포  이용권(총사령부) 사용"
     },
+    "Armoire": {
+      "Help": "반복 작업 사이에 아이템을 추억의 보관함에 맡깁니다"
+    },
+    "Glamour": {
+      "Help": "반복 작업 사이에 아이템을 환상 옷장에 맡깁니다"
+    },
     "Desynth": {
       "OnlySkillUps": "스킬 상승만",
       "ItemLevelLimit": "아이템 레벨 상한",
@@ -46,6 +59,7 @@
       "Categories": "분해 카테고리"
     },
     "Coffers": {
+      "Help": "반복 작업마다 장비 상자(나이트 무기 상자 등)를 개봉합니다",
       "OpenCoffersWithGearset": "개봉 시 기어셋: ",
       "CurrentGearset": "현재 기어셋",
       "UseBlacklist": "블랙리스트 사용",
@@ -56,6 +70,7 @@
       "AddCoffer": "상자 추가"
     },
     "Retire": {
+      "LifestreamNotRegistered": " (Lifestream에 등록되지 않음)"
     },
     "ConsumeItems": {
       "AutoConsumeHelp": "실행 중 및 각 반복 작업 간에 대상 상태가 없는 경우 이 아이템들을 사용합니다",
@@ -72,6 +87,7 @@
     },
     "Wait": {
       "WaitTime": "(초) 반복 작업 간 대기 시간",
+      "WaitOnPlugins": "지정한 플러그인의 작업이 끝날 때까지 대기합니다",
       "WaitTimeHelp": "반복 작업 간 처리를 X초 지연시킵니다."
     }
   }

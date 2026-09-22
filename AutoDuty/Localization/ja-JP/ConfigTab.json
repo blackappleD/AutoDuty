@@ -11,6 +11,7 @@
       "Delete": "設定を削除",
       "DeleteHelp": "設定を削除\nCtrl長押しで有効",
       "BareProfileNote": "Bareプロファイルはコンテンツ実行のみを行う設定です。編集が必要な場合は複製してください。",
+      "ConfigOverridesActiveNote": "IPCによる設定の上書きが有効な間、設定はロックされます。編集するにはAutoDutyを停止してください。",
       "NewProfileName": "新しいプロファイル名",
       "ChangeProfileName": "プロファイル名を変更"
     },
@@ -26,10 +27,12 @@
       "TransparentBG": "背景を透過",
       "ShowActionText": "ADアクションテキストを表示",
       "AnchorBottom": "下端に固定",
+      "ButtonsHeader": "以下はオーバーレイ／メインタブで使用できるボタンです",
       "OverrideButtons": "オーバーレイボタンを上書き",
       "OverrideButtonsHelp": "通常、オーバーレイボタンは対応設定が有効な時に有効化されます\nこれを有効にすると、使用するボタンを個別に選べます",
       "ShowMainWindowOnStartup": "起動時にメインウィンドウを表示",
-      "SliderInputs": "スライダー入力"
+      "SliderInputs": "スライダー入力",
+      "LoopActionsOpenByDefault": "有効なループアクションを既定で展開する"
     },
     "Duty": {
       "Header": "コンテンツ設定",
@@ -99,15 +102,35 @@
         "UsingAltBossHelp": "BossMod 以外を使用します。"
       }
     },
+    "PreLoop": {
+      "Header": "ループ開始前の初期化設定",
+      "Enable": "有効",
+      "ExecuteCommands": "全ループ開始時にコマンドを実行",
+      "ExecuteCommandsHelp": "全ループ開始時にコマンドを実行します\n例: {0}",
+      "BetweenLoopNote": "「ループ間」が有効な場合、以下はループ間にも実行されます（現在: {0}）",
+      "RetireTo": "待機場所 ",
+      "ActionsCopyFromBetweenLoop": "「ループ間」からアクションをコピー"
+    },
+    "BetweenLoop": {
+      "Header": "ループ間の設定",
+      "Enable": "有効",
+      "RunOnLastLoop": "最終ループでも実行",
+      "ArmoireEntrustHelp": "ループ間にアイテムを愛蔵品に収納します。",
+      "GlamourEntrust": "ミラージュドレッサーに収納",
+      "GlamourEntrustHelp": "ループ間にアイテムをミラージュドレッサーに収納します。",
+      "RegisterTripleTriadCards": "トリプルトライアドのカードを登録",
+      "SellTripleTriadCards": "トリプルトライアドのカードを売却",
+      "EnableAutoRetainerMultiMode": "AutoRetainerのマルチモードを有効化",
+      "EnableAutoRetainerMultiModeHelp": "AutoRetainerのマルチモードで全キャラクターを一巡してから、コンテンツの周回に戻ります",
+      "EnableAutoRetainer": "AutoRetainer連携を有効化"
+    },
     "Termination": {
       "Header": "ループ終了設定",
       "Enable": "有効",
       "Help": "十分なループ回数が設定されていれば、条件到達時にループを停止します。",
       "StopAtLevel": "レベル到達で停止 @",
-      "StopAtLevelHelp": "十分なループ回数が設定されていれば、条件到達時にループを停止します。",
       "StopAtILevel": "アイテムレベル到達で停止 @",
       "StopNoRestedXP": "休養経験値がない場合に停止",
-      "StopNoRestedXPHelp": "十分なループ回数が設定されていれば、条件到達時にループを停止します。",
       "StopAtItemQty": "指定個数到達で停止",
       "StopAtItemQtyHelp": "十分なループ回数が設定されていれば、条件到達時にループを停止します。",
       "SelectItem": "アイテム選択",
@@ -118,6 +141,7 @@
       "StopOnlyWhenAllItems": "全アイテム取得時のみ停止",
       "StopWhenDutyGathered": "対象コンテンツのミラプリ装備をすべて収集したら停止",
       "StopWhenDutyGatheredHelp": "現在のコンテンツのミラプリ装備をすべて収集すると、ループを停止します。",
+      "StopWhenDutyGatheredSetsOnly": "セット装備のみ",
       "StopBLUSpell": "青魔法習得時に停止",
       "SelectBLUSpell": "青魔法を選択",
       "StopOnlyWhenAllSpells": "全魔法習得時のみ停止",
@@ -127,7 +151,9 @@
       "ExecuteCommandsOnTerminationHelp": "一連のループ処理が終了したときに、登録したコマンドを実行します。\n例：{0}",
       "PlaySoundOnCompletion": "全ループ完了時に音を鳴らす: ",
       "OnCompletionOfAllLoops": "全ループ完了時: ",
-      "KeepTerminationActive": "実行後も終了オプションを維持 "
+      "KeepTerminationActive": "実行後も終了オプションを維持 ",
+      "StopAtLevelHelp": "十分なループ回数が設定されていれば、条件到達時にループを停止します。",
+      "StopNoRestedXPHelp": "十分なループ回数が設定されていれば、条件到達時にループを停止します。"
     },
     "Multiboxing": {
       "Header": "マルチボックス",
@@ -253,13 +279,24 @@
         "Pictomancer": "ピクトマンサー",
         "Blue_Mage": "青魔道士"
       },
+      "MultiModeType": {
+        "Retainers": "リテイナー",
+        "Submersibles": "潜水艦",
+        "Everything": "すべて"
+      },
       "ConditionType": {
         "VariantPath": "経路",
         "Distance": "距離",
         "ObjectData": "オブジェクト",
         "ItemCount": "アイテム",
         "Job": "ジョブ",
-        "ActionStatus": "アクション状態"
+        "ActionStatus": "アクション状態",
+        "ConditionFlag": "コンディションフラグ",
+        "Collision": "コリジョン",
+        "ToDo": "ToDo",
+        "Not": "NOT（否定）",
+        "Or": "OR（または）",
+        "And": "AND（かつ）"
       },
       "ObjectDataProperty": {
         "EventState": "イベント状態",

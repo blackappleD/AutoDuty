@@ -57,13 +57,60 @@
       "Trial": "Défi",
       "Raid": "Raid",
       "Variant": "Variant",
-      "NoviceHall": "Salon du novice"
+      "NoviceHall": "Salon du novice",
+      "Crucible": "Crucible"
+    },
+    "Crucible": {
+      "Team": "Équipe Crucible",
+      "Familiars": "Familiers {0}/{1}",
+      "Familiar": "Familier",
+      "Rank": "Rang",
+      "CustomFull": "L'équipe est complète ({0} max)\nDécochez-en un pour en choisir un autre",
+      "ClearRanks": "Effacer les rangs enregistrés",
+      "ClearRanksHelp": "Oublie les rangs enregistrés\nMaintenez Ctrl et cliquez",
+      "NoFamiliars": "Aucun familier connu pour l'instant. Ouvrez l'équipe ou le bestiaire chez Lauda pour qu'AutoDuty puisse les lire.",
+      "Menus": "Menus du plateau",
+      "TableLegend": "Surligné : l'équipe retenue par ce mode · Survolez un nom pour voir ses stats",
+      "TableLegendCustom": "Coché : l'équipe que vous emmenez · Survolez un nom pour voir ses stats",
+      "NotSeen": "Rang pas encore lu\nIl sera lu depuis le bestiaire lors de la prochaine composition d'équipe",
+      "Modes": {
+        "Recommended": "Recommandé",
+        "Leveling": "Montée en niveau",
+        "Custom": "Personnalisé"
+      },
+      "ModesHelp": {
+        "Recommended": "Emmène vos familiers de plus haut rang\nEn cas d'égalité, les meilleures stats l'emportent",
+        "Leveling": "Emmène vos familiers de plus bas rang, les moins expérimentés d'abord\nLe même ordre détermine qui combat à chaque bataille",
+        "Custom": "Emmène les familiers que vous cochez ci-dessous\nJusqu'à 10"
+      },
+      "Toggles": {
+        "FightPicks": "Choix de combat",
+        "Loot": "Butin et résultats",
+        "Treasure": "Trésors",
+        "Shop": "Boutique",
+        "Rest": "Repos aux camps",
+        "Items": "Objets de soin",
+        "MenusWithoutRun": "Gérer les menus sans AutoDuty (test)"
+      },
+      "TogglesHelp": {
+        "FightPicks": "Choisit jusqu'à 3 familiers pour chaque combat et le lance\nLes familiers K.O. sont ignorés",
+        "Loot": "Récupère tout le butin après un combat\nAppuie sur Continuer sur l'écran de résultats",
+        "Treasure": "Prend un trésor : soin en priorité, puis défense, puis dégâts",
+        "Shop": "Dépense les pièces en objets de soin, puis en équipement de bête, puis en une ration\nQuitte la boutique une fois terminé",
+        "Rest": "Se repose si jusqu'à 2 familiers sont sous 60 % de PV\nSi aucun n'est sélectionné, vous obtenez à la place le soin personnel de 90 %",
+        "Items": "Utilise des objets de soin quand vos PV sont bas\nEn combat : sous 40 %  ·  Sur le plateau : sous 60 %",
+        "MenusWithoutRun": "Pour tester sans chemins\nParler à Lauda compose l'équipe, défie le plateau et lance le combat\nSur un plateau, les menus ci-dessus sont gérés pendant que vous vous déplacez vous-même"
+      }
     },
     "LevelingModes": {
       "None": "Aucun",
       "Support": "Auto",
       "Trust_Group": "Adelphes Groupe",
       "Trust_Solo": "Adelphes Solo"
+    },
+    "Playlist": {
+      "DeleteHelp": "Supprime la liste de lecture enregistrée\nMaintenez Ctrl pour activer",
+      "SaveHelp": "Enregistre la liste de lecture actuelle sous le nom saisi\nMaintenez Ctrl pour activer"
     }
   }
 }

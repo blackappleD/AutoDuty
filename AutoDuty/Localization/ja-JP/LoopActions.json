@@ -1,5 +1,6 @@
 {
   "LoopActions": {
+    "Hint": "CTRLを押しながらクリックで項目を削除",
     "AutoEquip": {
       "GearSourceHelp": "Vanilla：アーマリーチェスト内の装備のみを使用します。\nGearsetter：Gearsettarの推奨装備を使用します。古装備は設定により所持品へ移動できます。\nStylist：Stylistの設定を使用します。",
       "MoveOldToInventory": "旧装備を所持品へ移動",
@@ -14,6 +15,7 @@
       "TriggerAt": "発動しきい値 @",
       "PreferredRepairNPC": "優先修理NPC: ",
       "PreferredRepairNPCHelp": "可能なら修理NPCは呼び鈴や退退先と合わせるのがおすすめです",
+      "NPCSearchHint": "NPC名またはエリア名を入力して検索",
       "GrandCompanyInn": "グランドカンパニー兵舎"
     },
     "AutoRetainer": {
@@ -21,6 +23,12 @@
       "PreferredSummoningBellHelp": "どの場所を選んでも、実行時に現在地に呼び鈴があればそちらを優先します",
       "WaitingUpTo": "最大待機時間...",
       "Seconds": "秒"
+    },
+    "PlaylistPreLoop": {
+      "Help": "プレイリストモードの場合、最初のエントリで指定されたギアセットに変更します"
+    },
+    "PlaylistSwitchLoop": {
+      "Help": "プレイリストモードの場合、次のエントリで指定されたギアセットに変更し、該当すれば実行中のループを次のエントリへ切り替えます"
     },
     "TripleTriadSell": {
       "SlotsOccupied": "使用枠",
@@ -34,16 +42,24 @@
       "InventorySlotsLeft": "所持品の空き枠が @ 以下で",
       "UseGCAetheryteTicket": "転送網利用券（GC）を使用"
     },
+    "Armoire": {
+      "Help": "ループ間にアイテムを愛蔵品に収納します"
+    },
+    "Glamour": {
+      "Help": "ループ間にアイテムをミラージュドレッサーに収納します"
+    },
     "Desynth": {
       "OnlySkillUps": "スキル上昇のみ",
       "ItemLevelLimit": "アイテムレベル上限",
       "ItemLevelLimitHelp": "分解スキルが「アイテムレベル + この値」に達すると、そのアイテムの分解を停止します。",
       "NQOnly": "NQ結果を保証",
       "ProtectGearsets": "ギアセット保護",
+      "ProtectGearsetterUpgrades": "Gearsetterの更新候補を自動分解から保護",
+      "ProtectGearsetterUpgradesHelp": "いずれかのギアセットにまだ装備していなくても、Gearsetterが更新候補として推奨するアイテムも保護します。Gearsetterプラグインが必要です。",
       "Categories": "分解カテゴリ"
     },
     "Coffers": {
-      "Help": "",
+      "Help": "ループごとに装備箱（ナイトの武器箱など）を開封します",
       "OpenCoffersWithGearset": "開封時のギアセット: ",
       "CurrentGearset": "現在のギアセット",
       "UseBlacklist": "ブラックリストを使用",
@@ -54,6 +70,7 @@
       "AddCoffer": "装備箱を追加"
     },
     "Retire": {
+      "LifestreamNotRegistered": "（Lifestreamに未登録）"
     },
     "ConsumeItems": {
       "AutoConsumeHelp": "実行中と各ループ間で、対象ステータスがない場合にこれらのアイテムを使用します",
@@ -70,6 +87,7 @@
     },
     "Wait": {
       "WaitTime": "（秒）ループ間の待機時間",
+      "WaitOnPlugins": "指定したプラグインの処理が終わるまで待機します",
       "WaitTimeHelp": "ループ間処理をX秒遅延させます。"
     }
   }

@@ -57,7 +57,50 @@
       "Trial": "讨伐/歼灭战",
       "Raid": "大型任务 (Raid)",
       "Variant": "异闻/多变副本",
-      "NoviceHall": "初学者学堂"
+      "NoviceHall": "初学者学堂",
+      "Crucible": "Crucible"
+    },
+    "Crucible": {
+      "Team": "Crucible 队伍",
+      "Familiars": "使魔 {0}/{1}",
+      "Familiar": "使魔",
+      "Rank": "等级",
+      "CustomFull": "队伍已满（最多 {0} 只）\n取消勾选一只后才能选择其他使魔",
+      "ClearRanks": "清除已保存的等级",
+      "ClearRanksHelp": "忘记已保存的等级\n按住 Ctrl 点击",
+      "NoFamiliars": "目前还没有已知的使魔。请在 Lauda 处打开队伍界面或魔物图鉴，AutoDuty 才能读取。",
+      "Menus": "棋盘菜单",
+      "TableLegend": "底色高亮：该模式选用的队伍 · 将鼠标悬停在名称上可查看属性",
+      "TableLegendCustom": "已勾选：你要带上的队伍 · 将鼠标悬停在名称上可查看属性",
+      "NotSeen": "尚未读取等级\n将在下次组队时从魔物图鉴中读取",
+      "Modes": {
+        "Recommended": "推荐",
+        "Leveling": "练级",
+        "Custom": "自定义"
+      },
+      "ModesHelp": {
+        "Recommended": "带上等级最高的使魔\n等级相同时优先属性更好的",
+        "Leveling": "带上等级最低的使魔，经验值最少的优先\n每场战斗的出战顺序也按此顺序",
+        "Custom": "带上你在下方勾选的使魔\n最多 10 只"
+      },
+      "Toggles": {
+        "FightPicks": "出战选择",
+        "Loot": "战利品与结算",
+        "Treasure": "宝箱",
+        "Shop": "商店",
+        "Rest": "在营地休息",
+        "Items": "治疗道具",
+        "MenusWithoutRun": "不启动 AutoDuty 也处理菜单（测试用）"
+      },
+      "TogglesHelp": {
+        "FightPicks": "为每场战斗选择最多 3 只使魔并开始战斗\n已倒下的使魔会被跳过",
+        "Loot": "战斗结束后拾取全部战利品\n并在结算界面点击继续",
+        "Treasure": "拾取一个宝箱：优先治疗，其次防御，最后伤害",
+        "Shop": "按治疗道具、兽用装备、一份饲料的顺序花费硬币\n完成后离开商店",
+        "Rest": "当至多 2 只使魔血量低于 60% 时进行休息\n若没有选中任何使魔，则改为使用 90% 的自我治疗",
+        "Items": "血量偏低时使用治疗道具\n战斗中：低于 40%  ·  棋盘上：低于 60%",
+        "MenusWithoutRun": "用于在没有路径的情况下测试\n与 Lauda 对话会完成组队、挑战棋盘并开始\n在棋盘上时，即使你自己走位，上述菜单处理仍会运行"
+      }
     },
     "LevelingModes": {
       "None": "不开启",

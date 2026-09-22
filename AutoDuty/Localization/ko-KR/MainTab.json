@@ -57,13 +57,60 @@
       "Trial": "토벌전",
       "Raid": "레이드",
       "Variant": "변형 던전",
-      "NoviceHall": "초보자의 집"
+      "NoviceHall": "초보자의 집",
+      "Crucible": "Crucible"
+    },
+    "Crucible": {
+      "Team": "Crucible 팀",
+      "Familiars": "사역마 {0}/{1}",
+      "Familiar": "사역마",
+      "Rank": "랭크",
+      "CustomFull": "팀이 가득 찼습니다 (최대 {0}마리)\n다른 사역마를 고르려면 하나의 선택을 해제하세요",
+      "ClearRanks": "저장된 랭크 지우기",
+      "ClearRanksHelp": "저장된 랭크를 삭제합니다\nCtrl을 누른 채 클릭",
+      "NoFamiliars": "아직 알려진 사역마가 없습니다. Lauda에서 팀 창이나 몬스터 도감을 열면 AutoDuty가 정보를 읽어옵니다.",
+      "Menus": "보드 메뉴",
+      "TableLegend": "음영 표시: 이 모드가 선택하는 팀 · 이름에 커서를 올리면 능력치 표시",
+      "TableLegendCustom": "체크됨: 데려갈 팀 · 이름에 커서를 올리면 능력치 표시",
+      "NotSeen": "랭크를 아직 읽지 않았습니다\n다음 팀 편성 시 몬스터 도감에서 읽어옵니다",
+      "Modes": {
+        "Recommended": "추천",
+        "Leveling": "레벨링",
+        "Custom": "사용자 지정"
+      },
+      "ModesHelp": {
+        "Recommended": "랭크가 가장 높은 사역마를 데려갑니다\n랭크가 같으면 능력치가 더 좋은 쪽을 우선합니다",
+        "Leveling": "랭크가 가장 낮은 사역마를 경험치가 적은 순서로 데려갑니다\n각 전투의 출전 순서도 같은 순서를 따릅니다",
+        "Custom": "아래에서 체크한 사역마를 데려갑니다\n최대 10마리"
+      },
+      "Toggles": {
+        "FightPicks": "전투 출전 선택",
+        "Loot": "전리품 및 결과",
+        "Treasure": "보물",
+        "Shop": "상점",
+        "Rest": "캠프에서 휴식",
+        "Items": "회복 아이템",
+        "MenusWithoutRun": "AutoDuty 없이 메뉴 처리 (테스트용)"
+      },
+      "TogglesHelp": {
+        "FightPicks": "각 전투마다 최대 3마리의 사역마를 선택해 전투를 시작합니다\n전투 불능 상태의 사역마는 건너뜁니다",
+        "Loot": "전투 후 전리품을 모두 획득합니다\n결과 화면에서 계속을 누릅니다",
+        "Treasure": "보물을 하나 획득합니다: 회복 우선, 그다음 방어, 그다음 공격",
+        "Shop": "코인을 회복 아이템, 비스트 기어, 먹이 하나 순으로 사용합니다\n끝나면 상점에서 나갑니다",
+        "Rest": "HP가 60% 미만인 사역마가 최대 2마리일 때 휴식합니다\n아무도 선택되지 않으면 대신 자신의 90% 회복을 사용합니다",
+        "Items": "HP가 낮을 때 회복 아이템을 사용합니다\n전투 중: 40% 미만  ·  보드 위: 60% 미만",
+        "MenusWithoutRun": "경로 없이 테스트할 때 사용합니다\nLauda에게 말을 걸면 팀 편성, 보드 도전, 시작까지 진행합니다\n보드 위에서는 직접 이동하는 동안에도 위 메뉴 처리가 동작합니다"
+      }
     },
     "LevelingModes": {
       "None": "없음",
       "Support": "자동",
       "Trust_Group": "트러스트 그룹 전체 레벨링",
       "Trust_Solo": "트러스트 플레이어 기준 레벨링"
+    },
+    "Playlist": {
+      "DeleteHelp": "저장된 재생 목록을 삭제합니다\nCtrl을 누른 채로 활성화",
+      "SaveHelp": "입력한 이름으로 현재 재생 목록을 저장합니다\nCtrl을 누른 채로 활성화"
     }
   }
 }

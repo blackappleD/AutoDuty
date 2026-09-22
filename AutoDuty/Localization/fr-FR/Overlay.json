@@ -8,7 +8,19 @@
       "Repair": "Réparation",
       "Equip": "Équiper",
       "Coffers": "Coffres",
-      "TripleTriad": "Triple Triade"
+      "Retire": "Retraite",
+      "TripleTriad": "Triple Triade",
+      "Armoire": "Armoire",
+      "Glamour": "Projections",
+      "AutoRetainer": "Servants",
+      "AutoRetainerMulti": "AR Multi",
+      "Discard": "Jeter",
+      "TripleTriadUse": "TT Utiliser",
+      "TripleTriadSell": "TT Vendre",
+      "ConsumeItems": "Consommer",
+      "ExecuteCommands": "Commandes",
+      "Wait": "Attente(?)",
+      "PlaySound": "Son"
     },
     "Tooltip": {
       "TurnIn": "Cliquez pour aller à la livraison CG et invoquer la livraison CG d'AutoRetainer",

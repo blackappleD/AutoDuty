@@ -8,8 +8,19 @@
       "Repair": "修理装备",
       "Equip": "装备推荐装备",
       "Coffers": "开启宝箱",
+      "Retire": "前往待机点",
       "TripleTriad": "九宫幻卡",
-      "Armoire": "时装衣柜"
+      "Armoire": "时装衣柜",
+      "Glamour": "幻化衣柜",
+      "AutoRetainer": "雇员",
+      "AutoRetainerMulti": "AR 多角色",
+      "Discard": "丢弃物品",
+      "TripleTriadUse": "幻卡登记",
+      "TripleTriadSell": "幻卡出售",
+      "ConsumeItems": "使用物品",
+      "ExecuteCommands": "执行命令",
+      "Wait": "等待(?)",
+      "PlaySound": "提示音"
     },
     "Tooltip": {
       "TurnIn": "点击前往大国防联军补给处，并调用 AutoRetainer 的军票上缴功能",

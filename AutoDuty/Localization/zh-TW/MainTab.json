@@ -40,9 +40,13 @@
     "Busy": "忙碌中...",
     "RequiresVNavmeshAlt": "AutoDuty 需要安裝並載入 vnavmesh 插件以進行正確的導航與移動。請新增第三方倉庫：\nhttps://puni.sh/api/repository/veyn",
     "RequiresBossModAlt": "AutoDuty 需要安裝並載入 BossMod 插件以正確處理機制。請新增第三方倉庫：\nhttps://puni.sh/api/repository/veyn",
+    "DungeonsRemaining": "剩餘副本次數：{0}",
+    "DungeonsRemainingExplanation": "預估在達到每日 100 次副本上限前，您還可以執行的副本數量。",
+    "CurrentVariantPath": "目前異聞路徑",
     "Modes": {
       "Looping": "循環模式(單副本掛機)",
-      "Playlist": "任務列表模式"
+      "Playlist": "任務列表模式",
+      "NoviceHall": "初學者訓練所"
     },
     "DutyModes": {
       "None": "無",
@@ -52,11 +56,62 @@
       "Regular": "迷宮挑戰 (排本)",
       "Trial": "討伐殲滅戰 (排本)",
       "Raid": "大型任務 (排本)",
-      "Variant": "異聞迷宮"
+      "Variant": "異聞迷宮",
+      "NoviceHall": "初學者訓練所",
+      "Crucible": "Crucible"
+    },
+    "Crucible": {
+      "Team": "Crucible 隊伍",
+      "Familiars": "使魔 {0}/{1}",
+      "Familiar": "使魔",
+      "Rank": "等級",
+      "CustomFull": "隊伍已滿（最多 {0} 隻）\n取消勾選一隻後才能選擇其他使魔",
+      "ClearRanks": "清除已儲存的等級",
+      "ClearRanksHelp": "忘記已儲存的等級\n按住 Ctrl 點擊",
+      "NoFamiliars": "目前還沒有已知的使魔。請在 Lauda 處開啟隊伍介面或魔物圖鑑，AutoDuty 才能讀取。",
+      "Menus": "棋盤選單",
+      "TableLegend": "底色highlight：該模式選用的隊伍 · 將滑鼠停留在名稱上可查看屬性",
+      "TableLegendCustom": "已勾選：你要帶上的隊伍 · 將滑鼠停留在名稱上可查看屬性",
+      "NotSeen": "尚未讀取等級\n將在下次組隊時從魔物圖鑑中讀取",
+      "Modes": {
+        "Recommended": "推薦",
+        "Leveling": "練等",
+        "Custom": "自訂"
+      },
+      "ModesHelp": {
+        "Recommended": "帶上等級最高的使魔\n等級相同時優先屬性更好的",
+        "Leveling": "帶上等級最低的使魔，經驗值最少的優先\n每場戰鬥的出戰順序也按此順序",
+        "Custom": "帶上你在下方勾選的使魔\n最多 10 隻"
+      },
+      "Toggles": {
+        "FightPicks": "出戰選擇",
+        "Loot": "戰利品與結算",
+        "Treasure": "寶箱",
+        "Shop": "商店",
+        "Rest": "在營地休息",
+        "Items": "治療道具",
+        "MenusWithoutRun": "不啟動 AutoDuty 也處理選單（測試用）"
+      },
+      "TogglesHelp": {
+        "FightPicks": "為每場戰鬥選擇最多 3 隻使魔並開始戰鬥\n已倒下的使魔會被跳過",
+        "Loot": "戰鬥結束後拾取全部戰利品\n並在結算介面點擊繼續",
+        "Treasure": "拾取一個寶箱：優先治療，其次防禦，最後傷害",
+        "Shop": "按治療道具、獸用裝備、一份飼料的順序花費硬幣\n完成後離開商店",
+        "Rest": "當至多 2 隻使魔血量低於 60% 時進行休息\n若沒有選中任何使魔，則改為使用 90% 的自我治療",
+        "Items": "血量偏低時使用治療道具\n戰鬥中：低於 40%  ·  棋盤上：低於 60%",
+        "MenusWithoutRun": "用於在沒有路徑的情況下測試\n與 Lauda 對話會完成組隊、挑戰棋盤並開始\n在棋盤上時，即使你自己走位，上述選單處理仍會執行"
+      }
     },
     "LevelingModes": {
       "None": "無",
+      "Support": "自動排隊",
+      "Trust_Group": "親信升級",
+      "Trust_Solo": "僅自己",
       "Auto": "自動"
+    },
+    "Playlist": {
+      "DeleteHelp": "刪除已儲存的播放清單\n按住 Ctrl 以啟用",
+      "SaveHelp": "以所填名稱儲存目前的播放清單\n按住 Ctrl 以啟用"
     }
   }
 }

@@ -24,7 +24,7 @@
     "Remove": "X",
     "Position": "좌표:",
     "Note": "메모:",
-    "태그": "태그:",
+    "Tag": "태그:",
     "Conditions": "조건:",
     "Condition": "조건: ",
     "AddNewCondition": "조건을 추가",
@@ -42,6 +42,7 @@
     "XDiff": "X차분: ",
     "YDiff": "Y차분: ",
     "ZDiff": "Z차분: ",
-    "Diff": "차이점: "
+    "Diff": "차이점: ",
+    "NoPartyCoherency": "파티 동조 비활성화"
   }
 }

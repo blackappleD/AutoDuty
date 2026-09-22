@@ -70,7 +70,7 @@
       "AddCoffer": "Add Coffer"
     },
     "Retire": {
-      "LifestreamNotRegistered": ""
+      "LifestreamNotRegistered": " (not registered in Lifestream)"
     },
     "ConsumeItems": {
       "AutoConsumeHelp": "AutoDuty will consume these items on run and between each loop (if status does not exist)",
