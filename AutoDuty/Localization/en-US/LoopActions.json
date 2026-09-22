@@ -7,6 +7,8 @@
       "GearSourceHelp": "Vanilla - Uses Gear from Armory Chest Only\nGearsetter - Asks gearsetter, can move old items to inventory\nStylist - Uses your stylist settings",
       "MoveOldToInventory": "Move old items to inventory",
       "MoveOldToInventoryHelp": "Except for weapons, this will move the gear to be replaced to the inventory.",
+      "MoveOldWeaponsToInventory": "Also move replaced weapons",
+      "MoveOldWeaponsToInventoryHelp": "Weapons cannot be unequipped first (the main hand may never be empty), so the new weapon is equipped via swap and the old one is then moved from the weapon armoury to the inventory. Prevents the main-hand armoury from filling up during levelling.",
       "RequiresGearsetterOrStylist": "* Items outside the armoury chest requires Gearsetter or Stylist plugin"
     },
     "Repair": {

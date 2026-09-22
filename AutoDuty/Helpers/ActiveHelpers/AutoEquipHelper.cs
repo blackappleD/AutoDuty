@@ -69,6 +69,7 @@ namespace AutoDuty.Helpers
             this._statesExecuted = AutoEquipState.None;
             this._index          = 0;
             this._gearset        = null;
+            this._pendingWeaponMove = null;
             PortraitHelper.Invoke();
         }
 
@@ -117,12 +118,39 @@ namespace AutoDuty.Helpers
         private List<(uint ItemId, InventoryType? SourceInventory, byte? SourceInventorySlot, RaptureGearsetModule.GearsetItemIndex TargetSlot)>? _gearset           = null;
         private int                                                                                                                               _index             = 0;
 
+        /// <summary>
+        /// Weapons cannot be moved to the bag before equipping (the main hand may never be empty),
+        /// so the swap happens first and the replaced weapon - now sitting in the armoury source
+        /// slot - is queued here to be moved on the next tick (one inventory action per tick).
+        /// </summary>
+        private (InventoryType Container, ushort Slot)? _pendingWeaponMove = null;
+
         private void AutoEquipGearSetterUpdate(IFramework framework)
         {
             if (!EzThrottler.Check("AutoEquipGearSetter"))
                 return;
 
             EzThrottler.Throttle("AutoEquipGearSetter", 50);
+
+            if (this._pendingWeaponMove != null)
+            {
+                (InventoryType container, ushort slot) = this._pendingWeaponMove.Value;
+                this._pendingWeaponMove = null;
+
+                if (InventoryManager.Instance()->GetInventoryContainer(container)->Items[slot].ItemId != 0)
+                {
+                    (InventoryType inv, short bagSlot) = InventoryHelper.GetFirstAvailableSlot(InventoryHelper.Bag);
+
+                    if (bagSlot < 0)
+                        this.DebugLog("Replaced weapon left in armoury because inventory is full");
+                    else
+                    {
+                        InventoryManager.Instance()->MoveItemSlot(container, slot, inv, (ushort)bagSlot, true);
+                        this.DebugLog("Moving replaced weapon from armoury to inventory");
+                    }
+                }
+                return;
+            }
 
             if (!this._statesExecuted.HasFlag(AutoEquipState.Updating_Gearset))
             {
@@ -165,15 +193,15 @@ namespace AutoDuty.Helpers
                         }
                         else
                         {
-                            (InventoryType inv, ushort slot) = InventoryHelper.GetFirstAvailableSlot(InventoryHelper.Bag);
+                            (InventoryType inv, short slot) = InventoryHelper.GetFirstAvailableSlot(InventoryHelper.Bag);
 
-                            if (slot <= 0)
+                            if (slot < 0)
                             {
                                 this.DebugLog("Moving to inventory ignored because no empty inventory slot found.. somehow");
                             }
                             else
                             {
-                                InventoryManager.Instance()->MoveItemSlot(InventoryType.EquippedItems, (ushort)equipSlotIndex, inv, slot, true);
+                                InventoryManager.Instance()->MoveItemSlot(InventoryType.EquippedItems, (ushort)equipSlotIndex, inv, (ushort)slot, true);
                                 this.DebugLog("Moving old item to inventory");
                                 return;
                             }
@@ -186,6 +214,15 @@ namespace AutoDuty.Helpers
                     if (InventoryManager.Instance()->GetInventoryContainer(InventoryType.EquippedItems)->Items[(int)equipSlotIndex].ItemId == itemId)
                     {
                         this.DebugLog($"Successfully Equipped {itemData.Value.Name} to {equipSlotIndex.ToCustomString()}");
+
+                        // Weapons are excluded from the pre-equip move above (the main hand may never
+                        // be empty), so the old weapon was swapped into the armoury source slot.
+                        // Queue moving it to the bag so the weapon armoury does not fill up over time.
+                        if (this.ActionConfig.GearsetterOldWeaponsToInventory &&
+                            equipSlotIndex is RaptureGearsetModule.GearsetItemIndex.MainHand or RaptureGearsetModule.GearsetItemIndex.OffHand &&
+                            inventoryType.Value is InventoryType.ArmoryMainHand or InventoryType.ArmoryOffHand)
+                            this._pendingWeaponMove = (inventoryType.Value, (ushort)sourceInventorySlot);
+
                         this._index++;
                     }
                 }

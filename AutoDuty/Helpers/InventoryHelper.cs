@@ -95,27 +95,32 @@ namespace AutoDuty.Helpers
         internal static void EquipGear(Item item, InventoryType type, int slotIndex, RaptureGearsetModule.GearsetItemIndex targetSlot) => 
             InventoryManager.Instance()->MoveItemSlot(type, (ushort)slotIndex, InventoryType.EquippedItems, (ushort)targetSlot, true);
 
-        internal static (InventoryType, ushort) GetFirstAvailableSlot(params InventoryType[] types)
+        /// <summary>
+        /// Returns the first container with a free slot and that slot's index, or
+        /// (<see cref="InventoryType.Invalid"/>, -1) when every container is full.
+        /// Slot 0 is a valid result; only a negative slot means "no free slot".
+        /// </summary>
+        internal static (InventoryType, short) GetFirstAvailableSlot(params InventoryType[] types)
         {
             foreach (InventoryType type in types)
             {
-                ushort slot = GetFirstAvailableSlot(type);
-                if(slot > 0)
+                short slot = GetFirstAvailableSlot(type);
+                if(slot >= 0)
                     return (type, slot);
             }
 
-            return (InventoryType.Invalid, 0);
+            return (InventoryType.Invalid, -1);
         }
 
-        internal static ushort GetFirstAvailableSlot(InventoryType container)
+        internal static short GetFirstAvailableSlot(InventoryType container)
         {
             InventoryContainer* cont = InventoryManager.Instance()->GetInventoryContainer(container);
             for (int i = 0; i < cont->Size; i++)
             {
                 if (cont->Items[i].ItemId == 0)
-                    return (ushort)i;
+                    return (short)i;
             }
-            return 0;
+            return -1;
         }
 
         internal static ushort CurrentItemLevel => UIState.Instance()->CurrentItemLevel;

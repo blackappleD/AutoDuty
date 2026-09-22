@@ -7,6 +7,8 @@
       "GearSourceHelp": "Vanilla：アーマリーチェスト内の装備のみを使用します。\nGearsetter：Gearsettarの推奨装備を使用します。古装備は設定により所持品へ移動できます。\nStylist：Stylistの設定を使用します。",
       "MoveOldToInventory": "旧装備を所持品へ移動",
       "MoveOldToInventoryHelp": "メインアームとサブアームを除き、旧装備を所持品へ移動します。",
+      "MoveOldWeaponsToInventory": "交換した武器もカバンへ移動",
+      "MoveOldWeaponsToInventoryHelp": "武器は先に外せない（メインハンドは常に装備が必要）ため、新しい武器を入れ替えで装備した後、古い武器をアーマリーチェストからカバンへ移動します。レベリング中にメインハンド欄が満杯になるのを防ぎます。",
       "RequiresGearsetterOrStylist": "* アーマリーチェスト外の装備にはGearsetterまたはStylistが必要です"
     },
     "Repair": {

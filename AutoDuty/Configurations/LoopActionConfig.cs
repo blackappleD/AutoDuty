@@ -236,6 +236,8 @@ public class AutoEquipLoopActionConfig : ActiveLoopActionConfig<AutoEquipHelper,
 
     [JsonProperty] public bool GearsetterOldToInventory { get; set; }
 
+    [JsonProperty] public bool GearsetterOldWeaponsToInventory { get; set; }
+
     public override void OnGuiSettings()
     {
         
@@ -275,6 +277,20 @@ public class AutoEquipLoopActionConfig : ActiveLoopActionConfig<AutoEquipHelper,
                 }
 
                 ImGuiComponents.HelpMarker(Loc.Get("LoopActions.AutoEquip.MoveOldToInventoryHelp"));
+
+                using (ImRaii.Disabled(!this.GearsetterOldToInventory))
+                {
+                    ImGui.Indent();
+                    bool oldWeaponsToInventory = this.GearsetterOldWeaponsToInventory;
+                    if (ImGui.Checkbox(Loc.Get("LoopActions.AutoEquip.MoveOldWeaponsToInventory"), ref oldWeaponsToInventory))
+                    {
+                        this.GearsetterOldWeaponsToInventory = oldWeaponsToInventory;
+                        ConfigurationProfileV2.Save();
+                    }
+
+                    ImGuiComponents.HelpMarker(Loc.Get("LoopActions.AutoEquip.MoveOldWeaponsToInventoryHelp"));
+                    ImGui.Unindent();
+                }
                 ImGui.Unindent();
             }
 

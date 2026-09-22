@@ -7,6 +7,8 @@
       "GearSourceHelp": "Vanilla - Utilise l'équipement du coffre d'armes uniquement\nGearsetter - Demande à Gearsetter, peut déplacer les anciens objets dans l'inventaire\nStylist - Utilise vos paramètres Stylist",
       "MoveOldToInventory": "Déplacer les anciens objets dans l'inventaire",
       "MoveOldToInventoryHelp": "Sauf pour les armes, ceci déplacera l'équipement à remplacer dans l'inventaire.",
+      "MoveOldWeaponsToInventory": "Déplacer aussi les armes remplacées",
+      "MoveOldWeaponsToInventoryHelp": "Une arme ne peut pas être retirée au préalable (l’arme principale ne peut jamais être vide) : la nouvelle arme est donc équipée par échange, puis l’ancienne est déplacée de l’arsenal vers l’inventaire. Évite que l’arsenal d’armes principales ne se remplisse pendant le levelling.",
       "RequiresGearsetterOrStylist": "* Les objets hors du coffre d'armes nécessitent le plugin Gearsetter ou Stylist"
     },
     "Repair": {

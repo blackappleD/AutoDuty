@@ -7,6 +7,8 @@
       "GearSourceHelp": "Vanilla - 무기고 내부만 사용\nGearsetter - gearsetter에 문의하여 오래된 장비를 소지품으로 이동 가능\nStylist - stylist 설정 사용",
       "MoveOldToInventory": "오래된 장비를 소지품으로 이동",
       "MoveOldToInventoryHelp": "무기 이외의 교체 대상 장비를 소지품으로 이동합니다.",
+      "MoveOldWeaponsToInventory": "교체된 무기도 가방으로 이동",
+      "MoveOldWeaponsToInventoryHelp": "무기는 먼저 해제할 수 없으므로(주무기는 항상 장착 필요) 새 무기를 교체 장착한 뒤 이전 무기를 병기고에서 가방으로 옮깁니다. 레벨링 중 주무기 병기고가 가득 차는 것을 방지합니다.",
       "RequiresGearsetterOrStylist": "* 무기고 외부 장비는 Gearsetter 또는 Stylist가 필요합니다"
     },
     "Repair": {

@@ -7,6 +7,8 @@
       "GearSourceHelp": "原版 - 僅使用兵装庫(Armory Chest)裝備\n裝備管理器 - 調用 Gearsetter，可將淘汰裝備移至背包\n造型師 - 使用 Stylist 插件設置",
       "MoveOldToInventory": "將舊物品移至背包",
       "MoveOldToInventoryHelp": "除武器外，將被替換的裝備移至背包。",
+      "MoveOldWeaponsToInventory": "同時將被替換的武器移至背包",
+      "MoveOldWeaponsToInventoryHelp": "武器無法先卸下（主手不允許為空），因此會先交換裝備新武器，再把舊武器從兵裝庫移到背包。可避免練級過程中主手兵裝庫被塞滿。",
       "RequiresGearsetterOrStylist": "* 兵裝庫外的物品需要 Gearsetter 或 Stylist 插件"
     },
     "Repair": {
