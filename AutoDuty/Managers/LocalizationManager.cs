@@ -3,10 +3,11 @@ namespace AutoDuty.Managers;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Windows;
+using Configurations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ECommons.DalamudServices;
+using ECommons.Throttlers;
 
 internal static class LocalizationManager
 {
@@ -141,13 +142,16 @@ internal static class LocalizationManager
         if (translation != null)
             return translation;
 
-        Svc.Log.Warning($"Missing translation key in {ConfigurationMain.Instance.Language}: {key}");
+        if(EzThrottler.Throttle($"MissingTranslationKey-{key}~{ConfigurationMain.Instance.Language}", 30_000))
+            Svc.Log.Warning($"Missing translation key in {ConfigurationMain.Instance.Language}: {key}");
 
         translation = BaseTranslation.GetTranslation(key);
 
         if (translation != null)
             return translation;
-        Svc.Log.Error($"Missing translation key in base language {BASE_LANGUAGE}: {key}");
+
+        if (EzThrottler.Throttle($"MissingTranslationKeyBaseLang-{key}~{BASE_LANGUAGE}", 30_000))
+            Svc.Log.Error($"Missing translation key in base language {BASE_LANGUAGE}: {key}");
         return key;
     }
 

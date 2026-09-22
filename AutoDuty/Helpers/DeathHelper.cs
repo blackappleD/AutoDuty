@@ -75,7 +75,7 @@ namespace AutoDuty.Helpers
             if (Plugin.taskManager.IsBusy)
                 Plugin.taskManager.Abort();
             
-            if (AutoDuty.Configuration.DutyModeEnum.EqualsAny(DutyMode.Regular, DutyMode.Trial, DutyMode.Raid, DutyMode.Variant))
+            if (AutoDuty.Configuration.Meta.DutyModeEnum.EqualsAny(DutyMode.Regular, DutyMode.Trial, DutyMode.Raid, DutyMode.Variant))
             {
                 bool yesNo = GenericHelpers.TryGetAddonByName("SelectYesno", out AtkUnitBase* addonSelectYesno) && GenericHelpers.IsAddonReady(addonSelectYesno);
                 bool dead  = PartyHelper.PartyDead();

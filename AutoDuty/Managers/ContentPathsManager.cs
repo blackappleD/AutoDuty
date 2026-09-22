@@ -1,5 +1,4 @@
 ﻿using AutoDuty.Helpers;
-using AutoDuty.Windows;
 using ECommons;
 using ECommons.DalamudServices;
 using ECommons.ExcelServices;
@@ -12,6 +11,7 @@ namespace AutoDuty.Managers
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using Configurations;
     using Data;
     using Newtonsoft.Json;
     using static Data.Classes;
@@ -20,7 +20,7 @@ namespace AutoDuty.Managers
     {
         internal static Dictionary<uint, ContentPathContainer> DictionaryPaths = [];
 
-        internal class ContentPathContainer
+        public class ContentPathContainer
         {
             public ContentPathContainer(Content content)
             {
@@ -55,7 +55,7 @@ namespace AutoDuty.Managers
 
                 if (this.Paths.Count > 1)
                 {
-                    if (AutoDuty.Configuration.PathSelectionsByPath.TryGetValue(this.Content.TerritoryType, out Dictionary<string, JobWithRole>? jobConfig))
+                    if (AutoDuty.Configuration.Meta.PathSelectionsByPath.TryGetValue(this.Content.TerritoryType, out Dictionary<string, JobWithRole>? jobConfig))
                         if(jobConfig != null)
                             foreach ((string? pathName, JobWithRole pathJobs) in jobConfig)
                                 if (pathJobs.HasJob((Job)job))
@@ -73,7 +73,7 @@ namespace AutoDuty.Managers
                                 }
 
                     //temporary while w2w gets integrated
-                    if (!defaultPath.W2WFound && AutoDuty.Configuration.W2WJobs.HasJob(job.Value))
+                    if (!defaultPath.W2WFound && AutoDuty.Configuration.DutyConfig.W2WJobs.HasJob(job.Value))
                         for (int index = 0; index < this.Paths.Count; index++)
                         {
                             string curPath = this.Paths[index].Name;
@@ -93,7 +93,7 @@ namespace AutoDuty.Managers
                 this.Paths.Add(new DutyPath(name, this));
         }
 
-        internal class DutyPath
+        public class DutyPath
         {
             public DutyPath(string filePath, ContentPathContainer container)
             {
@@ -108,7 +108,7 @@ namespace AutoDuty.Managers
             {
                 Match pathMatch = RegexHelper.PathFileRegex().Match(this.FileName);
 
-                string pathFileColor = AutoDuty.Configuration.DoNotUpdatePathFiles.Contains(this.FileName) ? ImGuiHelper.pathFileColorNoUpdate : ImGuiHelper.pathFileColor;
+                string pathFileColor = ConfigurationMain.Instance.DoNotUpdatePathFiles.Contains(this.FileName) ? ImGuiHelper.pathFileColorNoUpdate : ImGuiHelper.pathFileColor;
                 this.ColoredNameString = pathMatch.Success ?
                                              $"<0.8,0.8,1>{pathMatch.Groups[4]}</>{pathFileColor}{pathMatch.Groups[5]}</>" :
                                              this.FileName;

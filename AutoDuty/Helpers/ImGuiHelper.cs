@@ -34,6 +34,8 @@ namespace AutoDuty.Helpers
         public static readonly Vector4 StateGoodColor = new(0, 1, 0, 1);
         public static readonly Vector4 StateBadColor  = new(1, 0, 0, 1);
 
+        public static Vector4 AccentRed { get; } = new(0.85f, 0.35f, 0.35f, 1f);
+
 
         public const string idColor               = "<0.5,0.5,1>";
         public const string dutyColor             = "<0,1,0>";
@@ -135,10 +137,10 @@ namespace AutoDuty.Helpers
             ImGui.SameLine();
         }
 
-        internal static IDisposable RequiresPlugin(ExternalPlugin plugins, string id, string? message = null, bool inline = false, bool write = true)
+        internal static EndUnconditionally RequiresPlugin(ExternalPlugin plugins, string id, string? message = null, bool inline = false, bool write = true)
         {
             if (plugins == ExternalPlugin.None)
-                return new EndUnconditionally();
+                return new EndUnconditionally(() => { }, true);
 
             ExternalPlugin[] pluginsArray = plugins.GetFlags();
 
@@ -173,19 +175,20 @@ namespace AutoDuty.Helpers
                                                       ImGui.SameLine();
                                                   ImGui.Text(message ?? $"{(inline ? "| " : "\t")} requires ");
                                                   ImGui.SameLine(0, 1);
-                                                  ImGui.TextColored(LinkColor, string.Join(",^", pluginsArray.Select(plugin => plugin.GetExternalPluginName())));
+                                                  ImGui.TextColored(LinkColor, string.Join(", ", pluginsArray.Select(plugin => plugin.GetExternalPluginName())));
 
                                                   ImGui.SameLine(0, 5);
                                                   if (ImGui.Button($"Install##InstallExternalPlugin_{plugins}_{id}"))
                                                       PluginInstaller.InstallPlugin(plugins);
-                                              }, true);
+                                              }, false);
             }
         }
 
 
-        private struct EndUnconditionally(Action endAction, bool success) : IDisposable
+        public struct EndUnconditionally(Action endAction, bool success) : IDisposable
         {
-            private Action EndAction { get; } = endAction;
+            public bool    Success   => success;
+            public Action? EndAction => endAction;
 
             private bool Disposed { get; set; } = false;
 

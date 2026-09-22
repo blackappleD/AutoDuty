@@ -81,7 +81,7 @@ namespace AutoDuty.Helpers
                     }
 
 
-                    if (Configuration.LevelingListExperimentalEntries)
+                    if (Configuration.DutyConfig.LevelingListExperimentalEntries)
                         ids = ids.Concat(levelingListExperimental);
 
                     levelingDuties = [.. ids.Select(id => ContentHelper.DictionaryContent.GetValueOrDefault(id)).Where(c => c != null).Cast<Content>().OrderBy(x => x.ClassJobLevelRequired).ThenBy(x => x.ItemLevelRequired).ThenBy(x => x.ExVersion).ThenBy(x => x.DawnIndex)];

@@ -271,10 +271,10 @@ namespace AutoDuty.Managers
         {
             if (!on)
             {
-                if (Configuration.AutoManageRotationPluginState)
+                if (Configuration.DutyConfig.AutoManageRotationPluginState)
                 {
                     this.autoManageRotationPluginState          = true;
-                    Configuration.AutoManageRotationPluginState = false;
+                    Configuration.DutyConfig.AutoManageRotationPluginState = false;
                 }
 
                 if(rotationPlugins)
@@ -283,7 +283,7 @@ namespace AutoDuty.Managers
             else
             {
                 if (this.autoManageRotationPluginState)
-                    Configuration.AutoManageRotationPluginState = true;
+                    Configuration.DutyConfig.AutoManageRotationPluginState = true;
 
                 if(rotationPlugins)
                     Plugin.SetRotationPluginSettings(true, true);
@@ -783,7 +783,7 @@ namespace AutoDuty.Managers
             taskManager.Enqueue(() => BossCheck(),                                                             "Boss-BossCheck", new TaskManagerConfiguration(int.MaxValue));
             taskManager.Enqueue(() => { Plugin.bossObject = null; },                                           "Boss-ClearBossObject");
 
-            if (Configuration.LootTreasure)
+            if (Configuration.DutyConfig.LootTreasure)
             {
                 
                 taskManager.EnqueueDelay(1000);

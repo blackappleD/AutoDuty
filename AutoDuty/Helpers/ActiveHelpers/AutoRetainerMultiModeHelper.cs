@@ -8,15 +8,15 @@ namespace AutoDuty.Helpers
     using ECommons.Automation;
     using FFXIVClientStructs.FFXIV.Client.Game;
     using System;
+    using Configurations;
 
-    internal class AutoRetainerMultiModeHelper : ActiveHelperBase<AutoRetainerMultiModeHelper>
+    public class AutoRetainerMultiModeHelper : ActiveHelperBase<AutoRetainerMultiModeHelper, AutoRetainerMultiModeLoopActionConfig>
     {
-        protected override string Name { get; } = nameof(AutoRetainerMultiModeHelper);
-        protected override string DisplayName { get; } = "AutoRetainerMultiMode";
+        public override string Name { get; } = nameof(AutoRetainerMultiModeHelper);
+        public override string DisplayName { get; } = "AutoRetainerMultiMode";
 
         public override string[]? Commands { get; init; } = ["arm", "autoretainermulti"];
         public override string? CommandDescription { get; init; } = "Runs one cycle of AutoRetainer's Multi Mode";
-
 
         protected override int TimeOut => (int)(TimeSpan.MillisecondsPerHour * 2);
 
@@ -77,7 +77,7 @@ namespace AutoDuty.Helpers
                 this.CID = Player.CID;
 
                 this.autoRetainerStarted = true;
-                AutoRetainer_IPCSubscriber.EnableSingleMultiMode(Configuration.AutoRetainerMultiModeType);
+                AutoRetainer_IPCSubscriber.EnableSingleMultiMode(this.ActionConfig.MultiModeType);
                 this.priorStage = Plugin.Stage;
 
                 if (Plugin.Stage is not (Stage.Stopped or Stage.Paused))
@@ -95,7 +95,7 @@ namespace AutoDuty.Helpers
                 }
 
                 this.DebugLog("Multi-mode finished. Moving Home now");
-                Lifestream_IPCSubscriber.ChangeCharacter(Windows.ConfigurationMain.Instance.charByCID[this.CID]);
+                Lifestream_IPCSubscriber.ChangeCharacter(ConfigurationMain.Instance.charByCID[this.CID]);
             }
         }
     }

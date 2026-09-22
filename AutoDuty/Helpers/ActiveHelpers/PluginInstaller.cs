@@ -1,16 +1,17 @@
 ﻿namespace AutoDuty.Helpers
 {
-    using System.Linq;
-    using System.Threading.Tasks;
     using Dalamud.Plugin.Services;
     using ECommons.Reflection;
     using ECommons.Throttlers;
+    using global::AutoDuty.Configurations;
     using IPC;
+    using System.Linq;
+    using System.Threading.Tasks;
 
-    internal class PluginInstaller : ActiveHelperBase<PluginInstaller>
+    public class PluginInstaller : ActiveHelperBase<PluginInstaller, LoopActionConfigBare>
     {
-        protected override string Name        { get; } = "Plugin Installer";
-        protected override string DisplayName { get; } = "Plugin Installer";
+        public override string Name        { get; } = "Plugin Installer";
+        public override string DisplayName { get; } = "Plugin Installer";
 
         private static ExternalPlugin pluginsToInstall;
         private        Task<bool>?    installTask;

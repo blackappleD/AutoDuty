@@ -24,6 +24,7 @@ namespace AutoDuty.Windows
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using Configurations;
 
     internal static class BuildTab
     {

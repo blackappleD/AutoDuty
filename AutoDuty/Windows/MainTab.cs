@@ -14,6 +14,7 @@ namespace AutoDuty.Windows
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Configurations;
     using Dalamud.Interface;
     using Dalamud.Interface.Utility;
     using Data;
@@ -40,7 +41,7 @@ namespace AutoDuty.Windows
         {
             MainWindow.CurrentTabName = "Main";
             
-            DutyMode     dutyMode     = AutoDuty.Configuration.DutyModeEnum;
+            DutyMode     dutyMode     = AutoDuty.Configuration.Meta.DutyModeEnum;
             LevelingMode levelingMode = Plugin.LevelingModeEnum;
 
             static void DrawSearchBar()
@@ -79,8 +80,8 @@ namespace AutoDuty.Windows
                         Dictionary<string, JobWithRole>? pathSelection    = null;
                         JobWithRole                      curJob = Player.Job.JobToJobWithRole();
                         using (ImRaii.Disabled(curPath <= 0                                                                                           ||
-                                               !AutoDuty.Configuration.PathSelectionsByPath.ContainsKey(Plugin.CurrentTerritoryContent.TerritoryType) ||
-                                               !(pathSelection = AutoDuty.Configuration.PathSelectionsByPath[Plugin.CurrentTerritoryContent.TerritoryType])!.Any(kvp => kvp.Value.HasJob(Player.Job))))
+                                               !AutoDuty.Configuration.Meta.PathSelectionsByPath.ContainsKey(Plugin.CurrentTerritoryContent.TerritoryType) ||
+                                               !(pathSelection = AutoDuty.Configuration.Meta.PathSelectionsByPath[Plugin.CurrentTerritoryContent.TerritoryType])!.Any(kvp => kvp.Value.HasJob(Player.Job))))
                         {
                             if (ImGui.Button(Loc.Get("MainTab.ClearSavedPath")))
                             {
@@ -88,7 +89,7 @@ namespace AutoDuty.Windows
                                     pathSelection[keyValuePair.Key] &= ~curJob;
 
                                 PathSelectionHelper.RebuildDefaultPaths(Plugin.CurrentTerritoryContent.TerritoryType);
-                                Configuration.Save();
+                                ConfigurationProfileV2.Save();
                                 if (!InDungeon)
                                     container.SelectPath(out Plugin.currentPath);
                             }
@@ -104,7 +105,7 @@ namespace AutoDuty.Windows
                                 {
                                     curPath = path.Index;
                                     PathSelectionHelper.AddPathSelectionEntry(Plugin.CurrentTerritoryContent!.TerritoryType);
-                                    Dictionary<string, JobWithRole> pathJobs = AutoDuty.Configuration.PathSelectionsByPath[Plugin.CurrentTerritoryContent.TerritoryType]!;
+                                    Dictionary<string, JobWithRole> pathJobs = AutoDuty.Configuration.Meta.PathSelectionsByPath[Plugin.CurrentTerritoryContent.TerritoryType]!;
                                     pathJobs.TryAdd(path.Value.FileName, JobWithRole.None);
                                     
                                     foreach (string jobsKey in pathJobs.Keys) 
@@ -114,7 +115,7 @@ namespace AutoDuty.Windows
 
                                     PathSelectionHelper.RebuildDefaultPaths(Plugin.CurrentTerritoryContent.TerritoryType);
 
-                                    Configuration.Save();
+                                    ConfigurationProfileV2.Save();
                                     Plugin.currentPath = curPath;
                                     Plugin.LoadPath();
                                 }
@@ -134,11 +135,11 @@ namespace AutoDuty.Windows
 
             static void DrawTerminationNotice()
             {
-                if (AutoDuty.Configuration.EnableTerminationActions &&
-                    (AutoDuty.Configuration.StopLevel      ||
-                     AutoDuty.Configuration.StopNoRestedXP ||
-                     AutoDuty.Configuration.StopItemQty    ||
-                     AutoDuty.Configuration.TerminationBLUSpellsEnabled))
+                if (AutoDuty.Configuration.Loop.Termination.Enabled &&
+                    (AutoDuty.Configuration.Loop.Termination.StopLevel      ||
+                     AutoDuty.Configuration.Loop.Termination.StopNoRestedXP ||
+                     AutoDuty.Configuration.Loop.Termination.StopItemQty    ||
+                     AutoDuty.Configuration.Loop.Termination.TerminationBLUSpellsEnabled))
                     ImGui.TextColoredWrapped(EzColor.Cyan, Loc.Get("MainTab.TerminationNotice"));
             }
 
@@ -182,6 +183,13 @@ namespace AutoDuty.Windows
                         ImGui.Spacing();
                     }
 
+                    if (Plugin.CurrentTerritoryContent?.DutyModes.HasFlag(DutyMode.Crucible) == true)
+                    {
+                        DrawCrucibleMenuToggles();
+                        ImGui.Separator();
+                        ImGui.Spacing();
+                    }
+
                     DrawPathSelection();
                     if (!Plugin.States.HasFlag(PluginState.Looping) && !Plugin.Overlay.IsOpen)
                         MainWindow.GotoAndActions();
@@ -217,7 +225,7 @@ namespace AutoDuty.Windows
                             using ImRaii.ItemWidthDisposable _ = ImRaii.ItemWidth(150 * ImGuiHelpers.GlobalScale);
                             ImGui.AlignTextToFramePadding();
                             ImGui.Text(Loc.Get("MainTab.CurrentVariantPath"));
-                            using ImRaii.DisabledDisposable __ = ImRaii.Disabled(AutoDuty.Configuration.AutoDutyModeEnum == AutoDutyMode.Playlist);
+                            using ImRaii.DisabledDisposable __ = ImRaii.Disabled(AutoDuty.Configuration.Meta.AutoDutyModeEnum == AutoDutyMode.Playlist);
                             ImGui.SameLine();
                             byte variantPath = Plugin.VariantPath;
                             ImGui.InputByte($"###Path", ref variantPath, 1);
@@ -228,9 +236,9 @@ namespace AutoDuty.Windows
 
                         if (!ImGui.BeginListBox("##MainList", new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y))) return;
 
-                        if ((VNavmesh_IPCSubscriber.IsEnabled || AutoDuty.Configuration.UsingAlternativeMovementPlugin) &&
-                            (BossMod_IPCSubscriber.IsEnabled  || AutoDuty.Configuration.UsingAlternativeBossPlugin)     &&
-                            (RSR_IPCSubscriber.IsEnabled      || BossMod_IPCSubscriber.IsEnabled || AutoDuty.Configuration.UsingAlternativeRotationPlugin))
+                        if ((VNavmesh_IPCSubscriber.IsEnabled || AutoDuty.Configuration.DutyConfig.UsingAlternativeMovementPlugin) &&
+                            (BossMod_IPCSubscriber.IsEnabled  || AutoDuty.Configuration.DutyConfig.UsingAlternativeBossPlugin)     &&
+                            (RSR_IPCSubscriber.IsEnabled      || BossMod_IPCSubscriber.IsEnabled || AutoDuty.Configuration.DutyConfig.UsingAlternativeRotationPlugin))
                         {
                             foreach ((PathAction Value, int Index) item in Plugin.Actions.Select((Value, Index) => (Value, Index))) item.Value.DrawCustomText(item.Index, () => ItemClicked(item));
                             //var text = item.Value.Name.StartsWith("<--", StringComparison.InvariantCultureIgnoreCase) ? item.Value.Note : $"{item.Value.ToCustomString()}";
@@ -254,11 +262,11 @@ namespace AutoDuty.Windows
                         }
                         else
                         {
-                            if (!VNavmesh_IPCSubscriber.IsEnabled && !AutoDuty.Configuration.UsingAlternativeMovementPlugin)
+                            if (!VNavmesh_IPCSubscriber.IsEnabled && !AutoDuty.Configuration.DutyConfig.UsingAlternativeMovementPlugin)
                                 ImGui.TextColored(new Vector4(255, 0, 0, 1), Loc.Get("MainTab.RequiresVNavmesh"));
-                            if (!BossMod_IPCSubscriber.IsEnabled && !AutoDuty.Configuration.UsingAlternativeBossPlugin)
+                            if (!BossMod_IPCSubscriber.IsEnabled && !AutoDuty.Configuration.DutyConfig.UsingAlternativeBossPlugin)
                                 ImGui.TextColored(new Vector4(255, 0, 0, 1), Loc.Get("MainTab.RequiresBossMod"));
-                            if (!Wrath_IPCSubscriber.IsEnabled && !RSR_IPCSubscriber.IsEnabled && !BossMod_IPCSubscriber.IsEnabled && !AutoDuty.Configuration.UsingAlternativeRotationPlugin)
+                            if (!Wrath_IPCSubscriber.IsEnabled && !RSR_IPCSubscriber.IsEnabled && !BossMod_IPCSubscriber.IsEnabled && !AutoDuty.Configuration.DutyConfig.UsingAlternativeRotationPlugin)
                                 ImGui.TextColored(new Vector4(255, 0, 0, 1), Loc.Get("MainTab.RequiresRotation"));
                         }
                         ImGui.EndListBox();
@@ -277,18 +285,18 @@ namespace AutoDuty.Windows
                     ImGui.TextColored(ImGuiHelper.StateGoodColor, Loc.Get("MainTab.SelectMode"));
                     ImGui.SameLine(0);
                     ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-                    if (ImGui.BeginCombo("##AutoDutyModeEnum", Loc.Get($"MainTab.Modes.{AutoDuty.Configuration.AutoDutyModeEnum}")))
+                    if (ImGui.BeginCombo("##AutoDutyModeEnum", Loc.Get($"MainTab.Modes.{AutoDuty.Configuration.Meta.AutoDutyModeEnum}")))
                     {
                         foreach (AutoDutyMode mode in Enum.GetValues(typeof(AutoDutyMode)))
-                            if (ImGui.Selectable(Loc.Get($"MainTab.Modes.{mode}"), AutoDuty.Configuration.AutoDutyModeEnum == mode))
+                            if (ImGui.Selectable(Loc.Get($"MainTab.Modes.{mode}"), AutoDuty.Configuration.Meta.AutoDutyModeEnum == mode))
                             {
-                                AutoDuty.Configuration.AutoDutyModeEnum = mode;
-                                Configuration.Save();
+                                AutoDuty.Configuration.Meta.AutoDutyModeEnum = mode;
+                                ConfigurationProfileV2.Save();
                             }
 
                         if (ImGui.Selectable(Loc.Get("MainTab.Modes.NoviceHall")))
                         {
-                            AutoDuty.Configuration.AutoDutyModeEnum = AutoDutyMode.Playlist;
+                            AutoDuty.Configuration.Meta.AutoDutyModeEnum = AutoDutyMode.Playlist;
                             LoadPlaylist(NoviceHelper.CreatePlaylist());
                         }
                         ImGui.EndCombo();
@@ -303,13 +311,13 @@ namespace AutoDuty.Windows
                         if (ImGui.Button(Loc.Get("MainTab.Run")))
                         {
                             bool synced = !QueueHelper.ShouldBeUnSynced();
-                            if (AutoDuty.Configuration.DutyModeEnum == DutyMode.None)
+                            if (AutoDuty.Configuration.Meta.DutyModeEnum == DutyMode.None)
                                 MainWindow.ShowPopup(Loc.Get("MainTab.Error"), Loc.Get("MainTab.ErrorSelectVersion"));
-                            else if (Svc.Party.PartyId > 0 && AutoDuty.Configuration.DutyModeEnum is DutyMode.Support or DutyMode.Squadron or DutyMode.Trust)
+                            else if (Svc.Party.PartyId > 0 && AutoDuty.Configuration.Meta.DutyModeEnum is DutyMode.Support or DutyMode.Squadron or DutyMode.Trust)
                                 MainWindow.ShowPopup(Loc.Get("MainTab.Error"), Loc.Get("MainTab.ErrorNotInParty"));
-                            else if (AutoDuty.Configuration is { DutyModeEnum: DutyMode.Regular, OverridePartyValidation: false } && synced && UniversalParty.Length < 4)
+                            else if (AutoDuty.Configuration is { Meta.DutyModeEnum: DutyMode.Regular, DutyConfig.OverridePartyValidation: false } && synced && UniversalParty.Length < 4)
                                 MainWindow.ShowPopup(Loc.Get("MainTab.Error"), Loc.Get("MainTab.ErrorGroupOf4"));
-                            else if (AutoDuty.Configuration is { DutyModeEnum: DutyMode.Regular, OverridePartyValidation: false } && synced && !ObjectHelper.PartyValidation())
+                            else if (AutoDuty.Configuration is { Meta.DutyModeEnum: DutyMode.Regular, DutyConfig.OverridePartyValidation: false } && synced && !ObjectHelper.PartyValidation())
                                 MainWindow.ShowPopup(Loc.Get("MainTab.Error"), Loc.Get("MainTab.ErrorPartyMakeup"));
                             else if (ContentPathsManager.DictionaryPaths.ContainsKey(Plugin.CurrentTerritoryContent?.TerritoryType ?? 0))
                                 Plugin.Run();
@@ -323,11 +331,10 @@ namespace AutoDuty.Windows
                     }
                 }
 
-
                 
                 using (ImRaii.Disabled(Plugin.States.HasFlag(PluginState.Looping)))
                 {
-                    switch (AutoDuty.Configuration.AutoDutyModeEnum)
+                    switch (AutoDuty.Configuration.Meta.AutoDutyModeEnum)
                     {
                         case AutoDutyMode.Looping:
                         {
@@ -340,32 +347,32 @@ namespace AutoDuty.Windows
                             }
 
                             ImGui.AlignTextToFramePadding();
-                            ImGui.TextColored(AutoDuty.Configuration.DutyModeEnum == DutyMode.None ? ImGuiHelper.StateBadColor : ImGuiHelper.StateGoodColor, Loc.Get("MainTab.SelectDutyMode"));
+                            ImGui.TextColored(AutoDuty.Configuration.Meta.DutyModeEnum == DutyMode.None ? ImGuiHelper.StateBadColor : ImGuiHelper.StateGoodColor, Loc.Get("MainTab.SelectDutyMode"));
                             ImGui.SameLine(0);
                             ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-                            if (ImGui.BeginCombo("##DutyModeEnum", Loc.Get($"MainTab.DutyModes.{AutoDuty.Configuration.DutyModeEnum}")))
+                            if (ImGui.BeginCombo("##DutyModeEnum", Loc.Get($"MainTab.DutyModes.{AutoDuty.Configuration.Meta.DutyModeEnum}"), ImGuiComboFlags.HeightLargest))
                             {
                                 foreach (DutyMode mode in Enum.GetValues(typeof(DutyMode)))
                                     //if(mode is not DutyMode.NoviceHall)
-                                    if (ImGui.Selectable(Loc.Get($"MainTab.DutyModes.{mode}"), AutoDuty.Configuration.DutyModeEnum == mode))
+                                    if (ImGui.Selectable(Loc.Get($"MainTab.DutyModes.{mode}"), AutoDuty.Configuration.Meta.DutyModeEnum == mode))
                                     {
-                                        AutoDuty.Configuration.DutyModeEnum = mode;
-                                        Configuration.Save();
+                                        AutoDuty.Configuration.Meta.DutyModeEnum = mode;
+                                        ConfigurationProfileV2.Save();
                                     }
 
                                 ImGui.EndCombo();
                             }
                             ImGui.PopItemWidth();
 
-                            if (AutoDuty.Configuration.DutyModeEnum != DutyMode.None)
+                            if (AutoDuty.Configuration.Meta.DutyModeEnum != DutyMode.None)
                             {
-                                if (AutoDuty.Configuration.DutyModeEnum is DutyMode.Support or DutyMode.Trust)
+                                if (AutoDuty.Configuration.Meta.DutyModeEnum is DutyMode.Support or DutyMode.Trust)
                                 {
                                     ImGui.AlignTextToFramePadding();
                                     ImGui.TextColored(Plugin.LevelingModeEnum == LevelingMode.None ? ImGuiHelper.StateBadColor : ImGuiHelper.StateGoodColor, Loc.Get("MainTab.SelectLevelingMode"));
                                     ImGui.SameLine(0);
 
-                                    ImGuiComponents.HelpMarker(Loc.Get("MainTab.LevelingModeHelp", AutoDuty.Configuration.DutyModeEnum != DutyMode.Trust ?
+                                    ImGuiComponents.HelpMarker(Loc.Get("MainTab.LevelingModeHelp", AutoDuty.Configuration.Meta.DutyModeEnum != DutyMode.Trust ?
                                                                                                        string.Empty : Loc.Get("MainTab.LevelingModeHelpTrust")));
                                     ImGui.SameLine(0);
                                     ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
@@ -378,27 +385,26 @@ namespace AutoDuty.Windows
                                         if (ImGui.Selectable(Loc.Get("MainTab.LevelingModes.None"), Plugin.LevelingModeEnum == LevelingMode.None))
                                         {
                                             Plugin.LevelingModeEnum = LevelingMode.None;
-                                                Configuration.Save();
+                                               ConfigurationProfileV2.Save();
                                         }
 
-                                        LevelingMode autoLevelMode = (AutoDuty.Configuration.DutyModeEnum == DutyMode.Support ? LevelingMode.Support : LevelingMode.Trust_Group);
+                                        LevelingMode autoLevelMode = (AutoDuty.Configuration.Meta.DutyModeEnum == DutyMode.Support ? LevelingMode.Support : LevelingMode.Trust_Group);
                                         if (ImGui.Selectable(Loc.Get("MainTab.LevelingModes."+autoLevelMode)+"##LevelingModeComboAuto", Plugin.LevelingModeEnum == autoLevelMode))
                                         {
                                             Plugin.LevelingModeEnum = autoLevelMode;
-                                                Configuration.Save();
-                                            if (AutoDuty.Configuration.AutoEquipRecommendedGear)
-                                                AutoEquipHelper.Invoke();
+                                            ConfigurationProfileV2.Save();
+
+                                            AutoDuty.Configuration.Loop.Pre.Actions.RunConfig<AutoEquipLoopActionConfig>();
                                         }
 
-                                        if (AutoDuty.Configuration.DutyModeEnum == DutyMode.Trust)
-                                            if (ImGui.Selectable(Loc.Get("MainTab.LevelingModes."+"Trust_Solo")+"##LevelingModeComboTrustGroup", Plugin.LevelingModeEnum == LevelingMode.Trust_Solo))
+                                        if (AutoDuty.Configuration.Meta.DutyModeEnum == DutyMode.Trust)
+                                            if (ImGui.Selectable(Loc.Get("MainTab.LevelingModes." + "Trust_Solo") + "##LevelingModeComboTrustGroup", Plugin.LevelingModeEnum == LevelingMode.Trust_Solo))
                                             {
                                                 Plugin.LevelingModeEnum = LevelingMode.Trust_Solo;
-                                                    Configuration.Save();
-                                                if (AutoDuty.Configuration.AutoEquipRecommendedGear)
-                                                    AutoEquipHelper.Invoke();
-                                            }
+                                                ConfigurationProfileV2.Save();
 
+                                                AutoDuty.Configuration.Loop.Pre.Actions.RunConfig<AutoEquipLoopActionConfig>();
+                                            }
 
                                         ImGui.EndCombo();
                                     }
@@ -406,33 +412,47 @@ namespace AutoDuty.Windows
                                     ImGui.PopItemWidth();
                                 }
 
-                                if (AutoDuty.Configuration.DutyModeEnum == DutyMode.Support && levelingMode == LevelingMode.Support)
-                                    if (ImGui.Checkbox(Loc.Get("MainTab.PreferTrust"), ref AutoDuty.Configuration.PreferTrustOverSupportLeveling))
-                                            Configuration.Save();
+                                if (AutoDuty.Configuration.Meta.DutyModeEnum == DutyMode.Support && levelingMode == LevelingMode.Support)
+                                {
+                                    bool preferTrust = AutoDuty.Configuration.Meta.PreferTrustOverSupportLeveling;
+                                    if (ImGui.Checkbox(Loc.Get("MainTab.PreferTrust"), ref preferTrust))
+                                    {
+                                        AutoDuty.Configuration.Meta.PreferTrustOverSupportLeveling = preferTrust;
+                                        ConfigurationProfileV2.Save();
+                                    }
+                                }
 
                                 if (Plugin.LevelingEnabled)
                                 {
-                                    bool experimentalEntries = AutoDuty.Configuration.LevelingListExperimentalEntries;
+                                    bool experimentalEntries = AutoDuty.Configuration.DutyConfig.LevelingListExperimentalEntries;
                                     if (ImGui.Checkbox("Include Testing/Unstable Dungeons", ref experimentalEntries))
                                     {
-                                        AutoDuty.Configuration.LevelingListExperimentalEntries = experimentalEntries;
-                                        Configuration.Save();
+                                        AutoDuty.Configuration.DutyConfig.LevelingListExperimentalEntries = experimentalEntries;
+                                       ConfigurationProfileV2.Save();
                                     }
 
                                     ImGuiEx.HelpMarker($"Adds more dungeons into the leveling list\nThese dungeons are currently in testing for reliability\nPlease report if you have issues with them");
                                 }
 
-                                if (AutoDuty.Configuration.DutyModeEnum == DutyMode.Squadron)
-                                    if (ImGui.Checkbox(Loc.Get("MainTab.UseLowestMembers"), ref AutoDuty.Configuration.SquadronAssignLowestMembers))
-                                            Configuration.Save();
+                                if (AutoDuty.Configuration.Meta.DutyModeEnum == DutyMode.Squadron)
+                                {
+                                    bool squadronLowest = AutoDuty.Configuration.Meta.SquadronAssignLowestMembers;
+                                    if (ImGui.Checkbox(Loc.Get("MainTab.UseLowestMembers"), ref squadronLowest))
+                                    {
+                                        AutoDuty.Configuration.Meta.SquadronAssignLowestMembers = squadronLowest;
+                                        ConfigurationProfileV2.Save();
+                                    }
+                                }
 
-                                if (AutoDuty.Configuration.DutyModeEnum == DutyMode.Trust && Player.Available)
+                                if (AutoDuty.Configuration.Meta.DutyModeEnum == DutyMode.Crucible && Player.Available)
+                                    DrawCrucible();
+
+                                if (AutoDuty.Configuration.Meta.DutyModeEnum == DutyMode.Trust && Player.Available)
                                 {
                                     ImGui.Separator();
                                     if (DutySelected is { Content.TrustMembers.Count: > 0 })
                                     {
                                         ImGuiEx.LineCentered(() => ImGuiEx.TextUnderlined(Loc.Get("MainTab.SelectTrustParty")));
-
 
                                         TrustHelper.ResetTrustIfInvalid();
                                         for (int i = 0; i < AutoDuty.Configuration.SelectedTrustMembers.Length; i++)
@@ -487,11 +507,22 @@ namespace AutoDuty.Windows
 
                                 DrawSearchBar();
                                 ImGui.SameLine();
-                                if (ImGui.Checkbox(Loc.Get("MainTab.HideUnavailable"), ref AutoDuty.Configuration.HideUnavailableDuties))
-                                        Configuration.Save();
-                                if (AutoDuty.Configuration.DutyModeEnum is DutyMode.Regular or DutyMode.Trial or DutyMode.Raid)
-                                    if (ImGuiEx.CheckboxWrapped(Loc.Get("MainTab.Unsynced"), ref AutoDuty.Configuration.Unsynced))
-                                            Configuration.Save();
+                                bool hideUnavailableDuties = AutoDuty.Configuration.Meta.HideUnavailableDuties;
+                                if (ImGui.Checkbox(Loc.Get("MainTab.HideUnavailable"), ref hideUnavailableDuties))
+                                {
+                                    AutoDuty.Configuration.Meta.HideUnavailableDuties = hideUnavailableDuties;
+                                    ConfigurationProfileV2.Save();
+                                }
+
+                                if (AutoDuty.Configuration.Meta.DutyModeEnum is DutyMode.Regular or DutyMode.Trial or DutyMode.Raid)
+                                {
+                                    bool metaUnsynced = AutoDuty.Configuration.Meta.Unsynced;
+                                    if (ImGuiEx.CheckboxWrapped(Loc.Get("MainTab.Unsynced"), ref metaUnsynced))
+                                    {
+                                        AutoDuty.Configuration.Meta.Unsynced = metaUnsynced;
+                                        ConfigurationProfileV2.Save();
+                                    }
+                                }
                             }
 
                             break;
@@ -500,7 +531,7 @@ namespace AutoDuty.Windows
                             ImGui.Separator();
                             break;
                         default:
-                            AutoDuty.Configuration.AutoDutyModeEnum = AutoDutyMode.Looping;
+                            AutoDuty.Configuration.Meta.AutoDutyModeEnum = AutoDutyMode.Looping;
                             break;
                     }
                     if (Player.Available)
@@ -511,7 +542,6 @@ namespace AutoDuty.Windows
                                 ConfigurationMain.Instance.dutyCountSinceReset.Clear();
                         }
 
-
                         ImGui.SameLine();
                         ImGui.Text($"|{Loc.Get("MainTab.DungeonsRemaining", Math.Max(0, 100 - ConfigurationMain.Instance.dutyCountSinceReset.GetValueOrDefault(Player.CID, 0)))}");
                         ImGuiComponents.HelpMarker(Loc.Get("MainTab.DungeonsRemainingExplanation"));
@@ -519,7 +549,7 @@ namespace AutoDuty.Windows
 
                     DrawTerminationNotice();
 
-                    if (AutoDuty.Configuration.AutoDutyModeEnum == AutoDutyMode.Playlist)
+                    if (AutoDuty.Configuration.Meta.AutoDutyModeEnum == AutoDutyMode.Playlist)
                     {
                         using ImRaii.DisabledDisposable _ = ImRaii.Disabled(Plugin.States != PluginState.None);
 
@@ -554,7 +584,7 @@ namespace AutoDuty.Windows
                                 
                                 LoadPlaylist(ConfigurationMain.Instance.Playlists[0]);
 
-                                Configuration.Save();
+                               ConfigurationProfileV2.Save();
                             }
                         }
 
@@ -581,7 +611,7 @@ namespace AutoDuty.Windows
                                     ConfigurationMain.Instance.Playlists[index] = clone;
                                 }
 
-                                Configuration.Save();
+                                ConfigurationProfileV2.Save();
                             }
                         }
 
@@ -597,14 +627,14 @@ namespace AutoDuty.Windows
                     {
                         ImGuiEx.TextWrapped(new Vector4(255, 1, 0, 1), Loc.Get("MainTab.SwitchCombatJob"));
                     }
-                    else if (Player.Job == Job.BLU && AutoDuty.Configuration.DutyModeEnum is not (DutyMode.Regular or DutyMode.Trial or DutyMode.Raid))
+                    else if (Player.Job == Job.BLU && AutoDuty.Configuration.Meta.DutyModeEnum is not (DutyMode.Regular or DutyMode.Trial or DutyMode.Raid))
                     {
                         ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.BlueMageRestriction"));
                     }
                     else if (VNavmesh_IPCSubscriber.IsEnabled && BossMod_IPCSubscriber.IsEnabled)
                     {
                         if (PlayerHelper.IsReady)
-                            switch (AutoDuty.Configuration.AutoDutyModeEnum)
+                            switch (AutoDuty.Configuration.Meta.AutoDutyModeEnum)
                             {
                                 case AutoDutyMode.Looping:
                                     if (Plugin.LevelingModeEnum != LevelingMode.None)
@@ -626,10 +656,10 @@ namespace AutoDuty.Windows
                                             ImGuiEx.TextWrapped(new Vector4(0, 1, 0, 1), Loc.Get("MainTab.LevelingModeStatus", Player.Level.ToString(), ilvl.ToString()));
                                             foreach ((Content Value, int Index) item in LevelingHelper.LevelingDuties.Select((value, index) => (Value: value, Index: index)))
                                             {
-                                                if (AutoDuty.Configuration.DutyModeEnum == DutyMode.Trust && !item.Value.DutyModes.HasFlag(DutyMode.Trust))
+                                                if (AutoDuty.Configuration.Meta.DutyModeEnum == DutyMode.Trust && !item.Value.DutyModes.HasFlag(DutyMode.Trust))
                                                     continue;
                                                 bool disabled = !item.Value.CanRun();
-                                                if (!AutoDuty.Configuration.HideUnavailableDuties || !disabled)
+                                                if (!AutoDuty.Configuration.Meta.HideUnavailableDuties || !disabled)
                                                     using (ImRaii.Disabled(disabled))
                                                     {
                                                         ImGuiEx.TextWrapped(item.Value == Plugin.CurrentTerritoryContent ? new Vector4(0, 1, 1, 1) : new Vector4(1, 1, 1, 1),
@@ -647,7 +677,7 @@ namespace AutoDuty.Windows
                                     }
                                     else
                                     {
-                                        Dictionary<uint, Content> dictionary = ContentHelper.DictionaryContent.Where(x => x.Value.DutyModes.HasFlag(AutoDuty.Configuration.DutyModeEnum)).ToDictionary();
+                                        Dictionary<uint, Content> dictionary = ContentHelper.DictionaryContent.Where(x => x.Value.DutyModes.HasFlag(AutoDuty.Configuration.Meta.DutyModeEnum)).ToDictionary();
 
                                         if (dictionary.Count > 0 && PlayerHelper.IsReady)
                                         {
@@ -661,7 +691,7 @@ namespace AutoDuty.Windows
                                                 bool canRun = content.CanRun(level);
                                                 using (ImRaii.Disabled(!canRun))
                                                 {
-                                                    if (AutoDuty.Configuration.HideUnavailableDuties && !canRun)
+                                                    if (AutoDuty.Configuration.Meta.HideUnavailableDuties && !canRun)
                                                         continue;
                                                     if (ImGui.Selectable($"L{content.ClassJobLevelRequired} ({content.TerritoryType}) {content.Name}", DutySelected?.ID == content.TerritoryType))
                                                     {
@@ -699,8 +729,6 @@ namespace AutoDuty.Windows
                                             //ImGui.SameLine(0, 0);
                                             ContentPathsManager.ContentPathContainer entryContainer = ContentPathsManager.DictionaryPaths[entry.Id];
                                             Content                                  entryContent   = ContentHelper.DictionaryContent[entry.Id];
-
-
 
                                             ImGui.PushItemWidth(80f.Scale());
                                             if (ImGui.InputInt($"##Playlist{i}Count", ref entry.count, step: 1, stepFast: 2, @"%dx")) 
@@ -761,7 +789,6 @@ namespace AutoDuty.Windows
                                                     entryIlvl = (ushort) gearset->ItemLevel;
                                                 }
 
-
                                                 short level = PlayerHelper.GetCurrentLevelFromSheet(entryJob);
                                                 entryIlvl ??= InventoryHelper.CurrentItemLevel;
                                                 DrawSearchBar();
@@ -796,7 +823,6 @@ namespace AutoDuty.Windows
                                                     ImGui.EndCombo();
                                                 }
                                             }
-
 
                                             ImGui.PopItemWidth();
                                             ImGui.SameLine();
@@ -838,7 +864,6 @@ namespace AutoDuty.Windows
                                                 Plugin.PlaylistCurrent.Entries.RemoveAt(i);
                                         }
 
-
                                         if (ImGuiComponents.IconButton("PlaylistAdd", FontAwesomeIcon.Plus)) 
                                             Plugin.PlaylistCurrent.Entries.Add(new PlaylistEntry { DutyMode = Plugin.PlaylistCurrent.Entries.Count != 0 ? Plugin.PlaylistCurrent.Entries.Last().DutyMode : DutyMode.Support });
 
@@ -857,6 +882,230 @@ namespace AutoDuty.Windows
                     }
                     ImGui.EndListBox();
                 }
+            }
+        }
+
+        private static void DrawCrucible()
+        {
+            ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = AutoDuty.Configuration.Meta.Crucible;
+
+            ImGui.Separator();
+            ImGuiEx.LineCentered(() => ImGuiEx.TextUnderlined(Loc.Get("MainTab.Crucible.Team")));
+
+            foreach (CrucibleTeamMode mode in Enum.GetValues<CrucibleTeamMode>())
+            {
+                if (mode != CrucibleTeamMode.Recommended)
+                    ImGui.SameLine();
+                if (ImGui.RadioButton(Loc.Get($"MainTab.Crucible.Modes.{mode}"), crucible.TeamMode == mode) && crucible.TeamMode != mode)
+                {
+                    crucible.TeamMode = mode;
+                    ConfigurationProfileV2.Save();
+                }
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.ModesHelp.{mode}"));
+            }
+
+            List<uint>                                  team   = CrucibleTeam.For(crucible.TeamMode);
+            IReadOnlyDictionary<uint, CrucibleFamiliar> cached = CrucibleTeam.Familiars;
+            List<uint>                                  owned  = CrucibleTeam.Owned().ToList();
+
+            if (ImGui.CollapsingHeader($"{Loc.Get("MainTab.Crucible.Familiars", team.Count, CrucibleTeam.TeamSize)}###CrucibleFamiliars"))
+            {
+                using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl || cached.Count == 0))
+                    if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearRanks")))
+                        CrucibleTeam.ClearSaved();
+
+                if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                    ImGui.SetTooltip(Loc.Get("MainTab.Crucible.ClearRanksHelp"));
+
+                if (owned.Count == 0)
+                    ImGuiEx.TextWrapped(Loc.Get("MainTab.Crucible.NoFamiliars"));
+                else
+                    DrawCrucibleFamiliarTable(crucible, team, cached, owned);
+            }
+
+            if (ImGui.CollapsingHeader($"{Loc.Get("MainTab.Crucible.Menus")}###CrucibleMenus"))
+                DrawCrucibleMenuToggles();
+        }
+
+        private static readonly Vector4 CruciblePickedRow = new(0.25f, 0.55f, 0.95f, 0.18f);
+        private static readonly Vector4 CrucibleFaded     = new(1f, 1f, 1f, 0.45f);
+
+        private static void DrawCrucibleFamiliarTable(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible, List<uint> team,
+                                                      IReadOnlyDictionary<uint, CrucibleFamiliar> cached, List<uint> owned)
+        {
+            bool custom = crucible.TeamMode == CrucibleTeamMode.Custom;
+
+            IEnumerable<uint> rows = crucible.TeamMode switch
+            {
+                CrucibleTeamMode.Leveling    => owned.OrderBy(x => CrucibleTeam.LevelingKey(x)).ThenBy(x => x),
+                CrucibleTeamMode.Recommended => owned.OrderByDescending(x => cached.TryGetValue(x, out CrucibleFamiliar? f) ? f.Rank : -1)
+                                                     .ThenByDescending(x => cached.TryGetValue(x, out CrucibleFamiliar? f) ? f.Score() : -1)
+                                                     .ThenBy(x => x),
+                _ => owned
+            };
+
+            float scale     = ImGuiHelpers.GlobalScale;
+            float rowHeight = ImGui.GetFrameHeightWithSpacing();
+            float height    = Math.Min(owned.Count + 1, 12) * rowHeight + 4 * scale;
+
+            const ImGuiTableFlags flags = ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.BordersOuter | ImGuiTableFlags.ScrollY | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.PadOuterX;
+            if (!ImGui.BeginTable("##CrucibleTable", 6, flags, new Vector2(0, height)))
+                return;
+
+            ImGui.TableSetupScrollFreeze(0, 1);
+            ImGui.TableSetupColumn("##pick",                                 ImGuiTableColumnFlags.WidthFixed, ImGui.GetFrameHeight());
+            ImGui.TableSetupColumn("No.",                                    ImGuiTableColumnFlags.WidthFixed, 28 * scale);
+            ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.Familiar"),    ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.Rank"),        ImGuiTableColumnFlags.WidthFixed, 36 * scale);
+            ImGui.TableSetupColumn("EXP",                                    ImGuiTableColumnFlags.WidthFixed, 90 * scale);
+            ImGui.TableSetupColumn("HP",                                     ImGuiTableColumnFlags.WidthFixed, 44 * scale);
+            ImGui.TableHeadersRow();
+
+            foreach (uint number in rows)
+            {
+                cached.TryGetValue(number, out CrucibleFamiliar? familiar);
+                bool picked = team.Contains(number);
+
+                ImGui.TableNextRow(ImGuiTableRowFlags.None, ImGui.GetFrameHeight());
+                if (picked && !custom)
+                    ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg1, ImGui.ColorConvertFloat4ToU32(CruciblePickedRow));
+
+                ImGui.TableNextColumn();
+                bool full = !picked && team.Count >= CrucibleTeam.TeamSize;
+                using (ImRaii.Disabled(!custom || full))
+                    if (ImGui.Checkbox($"##CruciblePick{number}", ref picked))
+                        CrucibleTeam.SetCustomPick(number, picked);
+                if (custom && full && ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                    ImGui.SetTooltip(Loc.Get("MainTab.Crucible.CustomFull", CrucibleTeam.TeamSize));
+
+                ImGui.TableNextColumn();
+                ImGui.AlignTextToFramePadding();
+                RightAligned(number.ToString(), CrucibleFaded);
+
+                ImGui.TableNextColumn();
+                ImGui.AlignTextToFramePadding();
+                ImGui.TextUnformatted(CrucibleTeam.NameOf(number));
+                if (ImGui.IsItemHovered())
+                    DrawCrucibleFamiliarTooltip(number, familiar);
+
+                ImGui.TableNextColumn();
+                ImGui.AlignTextToFramePadding();
+                if (familiar is { Rank: > 0 })
+                    Centered(familiar.Rank.ToString(), null);
+                else
+                    Centered("—", CrucibleFaded);
+
+                ImGui.TableNextColumn();
+                float share = CrucibleUi.ExpShare(familiar?.Exp ?? "");
+                if (familiar is { Exp.Length: > 0 })
+                    ImGui.ProgressBar(share, new Vector2(-1, ImGui.GetFrameHeight()), familiar.Exp);
+                else
+                {
+                    ImGui.AlignTextToFramePadding();
+                    Centered("—", CrucibleFaded);
+                }
+
+                ImGui.TableNextColumn();
+                ImGui.AlignTextToFramePadding();
+                if (familiar is { Hp: > 0 })
+                    RightAligned(familiar.Hp.ToString(), null);
+                else
+                    RightAligned("—", CrucibleFaded);
+            }
+
+            ImGui.EndTable();
+
+            ImGui.TextColored(CrucibleFaded, Loc.Get(custom ? "MainTab.Crucible.TableLegendCustom" : "MainTab.Crucible.TableLegend"));
+
+            static void RightAligned(string text, Vector4? color)
+            {
+                ImGui.SetCursorPosX(ImGui.GetCursorPosX() + Math.Max(0, ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(text).X));
+                Text(text, color);
+            }
+
+            static void Centered(string text, Vector4? color)
+            {
+                ImGui.SetCursorPosX(ImGui.GetCursorPosX() + Math.Max(0, (ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(text).X) / 2));
+                Text(text, color);
+            }
+
+            static void Text(string text, Vector4? color)
+            {
+                if (color is { } c)
+                    ImGui.TextColored(c, text);
+                else
+                    ImGui.TextUnformatted(text);
+            }
+        }
+
+        private static void DrawCrucibleFamiliarTooltip(uint number, CrucibleFamiliar? familiar)
+        {
+            ImGui.BeginTooltip();
+
+            ImGui.TextUnformatted($"No. {number}  {CrucibleTeam.NameOf(number)}");
+
+            if (familiar is not { Rank: > 0 })
+            {
+                ImGui.TextColored(CrucibleFaded, Loc.Get("MainTab.Crucible.NotSeen"));
+            }
+            else
+            {
+                if (familiar.Classification.Length > 0)
+                    ImGui.TextColored(CrucibleFaded, familiar.Classification);
+
+                ImGui.Separator();
+                if (ImGui.BeginTable("##CrucibleStats", 2, ImGuiTableFlags.SizingFixedFit))
+                {
+                    Stat("Rank",             familiar.Rank.ToString());
+                    Stat("EXP",              familiar.Exp.Length > 0 ? familiar.Exp : "—");
+                    Stat("HP",               familiar.Hp.ToString());
+                    Stat("Strength",         familiar.Strength.ToString());
+                    Stat("Intelligence",     familiar.Intelligence.ToString());
+                    Stat("Constitution",     familiar.Constitution.ToString());
+                    Stat("Phys. Resistance", familiar.PhysicalResistance.ToString());
+                    Stat("Mag. Resistance",  familiar.MagicResistance.ToString());
+                    ImGui.EndTable();
+                }
+            }
+
+            ImGui.EndTooltip();
+
+            static void Stat(string label, string value)
+            {
+                ImGui.TableNextRow();
+                ImGui.TableNextColumn();
+                ImGui.TextColored(CrucibleFaded, label);
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted(value);
+            }
+        }
+
+        private static void DrawCrucibleMenuToggles()
+        {
+            ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = AutoDuty.Configuration.Meta.Crucible;
+
+            Toggle("FightPicks", crucible.FightPicks, v => crucible.FightPicks = v);
+            ImGui.SameLine();
+            Toggle("Loot", crucible.Loot, v => crucible.Loot = v);
+            ImGui.SameLine();
+            Toggle("Treasure", crucible.Treasure, v => crucible.Treasure = v);
+            Toggle("Shop", crucible.Shop, v => crucible.Shop = v);
+            ImGui.SameLine();
+            Toggle("Rest", crucible.Rest, v => crucible.Rest = v);
+            ImGui.SameLine();
+            Toggle("Items", crucible.Items, v => crucible.Items = v);
+            return;
+
+            static void Toggle(string key, bool value, Action<bool> set)
+            {
+                if (ImGui.Checkbox(Loc.Get($"MainTab.Crucible.Toggles.{key}"), ref value))
+                {
+                    set(value);
+                    ConfigurationProfileV2.Save();
+                }
+                if (ImGui.IsItemHovered())
+                    ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.TogglesHelp.{key}"));
             }
         }
 
@@ -896,7 +1145,7 @@ namespace AutoDuty.Windows
                             }
                         }
 
-                        Configuration.Save();
+                       ConfigurationProfileV2.Save();
                     }
                 }
 
