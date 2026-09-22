@@ -3,6 +3,12 @@
   <PropertyGroup>
     <Authors></Authors>
     <Company></Company>
+    <!-- Dalamud locates a plugin's entry dll as "{InternalName}.dll", so the assembly
+         name must match InternalName in AutoDuty-bld.json. RootNamespace is pinned
+         because "AutoDuty-bld" is not a valid identifier and would break the logical
+         names of embedded resources (e.g. AutoDuty.Properties.Resources). -->
+    <AssemblyName>AutoDuty-bld</AssemblyName>
+    <RootNamespace>AutoDuty</RootNamespace>
     <Version>0.0.0.0</Version>
     <Description>AutoDuty</Description>
     <Copyright></Copyright>

@@ -1,4 +1,4 @@
-name: Build & Publish to Dynamis Latest
+name: Build & Publish AutoDuty-bld
 
 on:
   release:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag to build (e.g. 0.0.0.33501)'
+        description: 'Release tag to build (e.g. 0.0.0.34801)'
         required: true
 
 jobs:
@@ -48,12 +48,12 @@ jobs:
         run: dotnet build --configuration Release AutoDuty/AutoDuty.csproj -p:AssemblyVersion=${{ env.VERSION }}
 
       - name: Rename zip to AutoDuty-bld.zip
-        run: mv AutoDuty/bin/Release/AutoDuty/latest.zip AutoDuty/bin/Release/AutoDuty/AutoDuty-bld.zip
+        run: mv AutoDuty/bin/Release/AutoDuty-bld/latest.zip AutoDuty/bin/Release/AutoDuty-bld/AutoDuty-bld.zip
 
       - name: 'Upload to GitHub release'
         run: |
             TAG="${{ env.VERSION }}"
-            gh release upload "$TAG" AutoDuty/bin/Release/AutoDuty/AutoDuty-bld.zip --clobber --repo "${{ github.repository }}"
+            gh release upload "$TAG" AutoDuty/bin/Release/AutoDuty-bld/AutoDuty-bld.zip --clobber --repo "${{ github.repository }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}
         shell: bash

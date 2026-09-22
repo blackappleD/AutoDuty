@@ -1,15 +1,14 @@
-name: Build & Publish to Dynamis Testing
+name: Build & Publish AutoDuty-bld Testing
 
 on:
   release:
     types: [prereleased]
 
-permissions:
-  actions: write
-
 jobs:
   Build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       DALAMUD_HOME: /tmp/dalamud
     steps:
@@ -34,31 +33,12 @@ jobs:
       - name: Build Project
         run: dotnet build --configuration Release AutoDuty/AutoDuty.csproj -p:AssemblyVersion=${{ github.ref_name }}
 
-      - name: Print Release Body
-        run: |
-          echo "${{ github.event.release.body }} AssemblyVersion=${{ github.ref_name }}"
-          
-      - name: Publish Version
-        uses: PunishXIV/dynamis-action@v1
-        id: dynamis
-        with:
-          plugin_id: 54
-          internal_name: "AutoDuty"
-          version_number: ${{ github.ref_name }}
-          path: "AutoDuty/bin/Release/AutoDuty/latest.zip"
-          type: "testing"
-          dalamud_version: "15"
-          changelog: ${{ github.event.release.body }}
-        env:
-          PUBLISHER_KEY: ${{ secrets.PUBLISHER_KEY }}
+      - name: Rename zip to AutoDuty-bld.zip
+        run: mv AutoDuty/bin/Release/AutoDuty-bld/latest.zip AutoDuty/bin/Release/AutoDuty-bld/AutoDuty-bld.zip
 
-      - name: Github Releases To Discord
-        uses: SethCohen/github-releases-to-discord@v1.15.0
-        with:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}
-          color: "2105893"
-          username: "TESTING Release Changelog"
-          avatar_url: "https://s3.puni.sh/media/plugin/54/icon-15ug2vnr9m1.png"
-          footer_title: "Testing Changelog"
-          footer_icon_url: "https://s3.puni.sh/media/plugin/54/icon-15ug2vnr9m1.png"
-          footer_timestamp: true
+      - name: 'Upload to GitHub prerelease'
+        run: |
+            gh release upload "${{ github.ref_name }}" AutoDuty/bin/Release/AutoDuty-bld/AutoDuty-bld.zip --clobber --repo "${{ github.repository }}"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
