@@ -13,7 +13,7 @@ namespace AutoDuty.Helpers
     public class GCTurninHelper : ActiveHelperBase<GCTurninHelper, GCTurnInLoopActionConfig>
     {
         public override string Name        { get; } = nameof(GCTurninHelper);
-        public override string DisplayName { get; } = "GC Turnin";
+        public override string DisplayNameKey { get; } = "LoopActions.GCTurnIn.Name";
 
         public override string[]? Commands { get; init; } = ["turnin", "gcturnin"];
         public override string? CommandDescription { get; init; } = "Automatically turns in items into the Grand Company Supply";

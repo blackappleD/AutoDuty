@@ -1,0 +1,16 @@
+{
+  "Helpers": {
+    "ExitDuty": {
+      "Name": "コンテンツ退出"
+    },
+    "PluginInstaller": {
+      "Name": "プラグインインストール"
+    },
+    "Portrait": {
+      "Name": "ポートレート更新"
+    },
+    "Queue": {
+      "Name": "申請中 {0}：{1}"
+    }
+  }
+}

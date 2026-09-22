@@ -78,8 +78,17 @@ namespace AutoDuty.Helpers
     public abstract class ActiveHelperBase<T,C> : IActiveHelper where T : ActiveHelperBase<T,C>, new() 
                                                                 where C : LoopActionConfig<C>, new()
     {
-        public abstract string Name        { get; }
-        public abstract string DisplayName { get; }
+        public abstract string Name { get; }
+
+        /// <summary>
+        /// Localization key backing <see cref="DisplayName"/>, or <see cref="string.Empty"/> for helpers
+        /// that have no user facing name. Kept separate from the resolved text so the key can be captured
+        /// in static constructors (which run before the localization files are loaded) while the display
+        /// text itself is resolved per frame and follows language switches.
+        /// </summary>
+        public abstract string DisplayNameKey { get; }
+
+        public virtual string DisplayName => this.DisplayNameKey.Length == 0 ? string.Empty : Loc.Get(this.DisplayNameKey);
 
         public virtual string[]? Commands           { get; init; }
         public virtual string?   CommandDescription { get; init; }
@@ -145,7 +154,7 @@ namespace AutoDuty.Helpers
             if(this.TimeOut > 0)
                 SchedulerHelper.ScheduleAction($"Helper_{this.Name}_TimeOut", this.Stop, this.TimeOut);
 
-            if (this.DisplayName != string.Empty)
+            if (this.DisplayNameKey.Length > 0)
                 Plugin.action = this.DisplayName;
             Svc.Framework.Update += this.HelperUpdate;
         }
@@ -173,7 +182,7 @@ namespace AutoDuty.Helpers
             if (State == ActionState.Running)
                 this.InfoLog(this.Name + " finished");
 
-            if (this.DisplayName != string.Empty)
+            if (this.DisplayNameKey.Length > 0)
                 Plugin.action = string.Empty;
 
             SchedulerHelper.DescheduleAction($"Helper_{this.Name}_TimeOut");

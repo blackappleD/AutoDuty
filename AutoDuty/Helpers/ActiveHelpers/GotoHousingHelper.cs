@@ -15,7 +15,7 @@ namespace AutoDuty.Helpers
     public class GotoHousingHelper : ActiveHelperBase<GotoHousingHelper, LoopActionConfigBare>
     {
         public override string Name        { get; } = nameof(GotoHousingHelper);
-        public override string DisplayName { get; } = string.Empty;
+        public override string DisplayNameKey { get; } = string.Empty;
 
         protected override string[] AddonsToClose { get; } = ["SelectYesno", "SelectString", "HousingWardSelection", "HousingWardSelectionDialog"];
 

@@ -26,7 +26,7 @@ namespace AutoDuty.Helpers
         }
 
         public override string Name        { get; } = nameof(CofferHelper);
-        public override string DisplayName { get; } = "Opening Coffers";
+        public override string DisplayNameKey { get; } = "LoopActions.Coffers.Name";
 
         protected override unsafe void HelperUpdate(IFramework framework)
         {

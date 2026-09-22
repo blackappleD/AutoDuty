@@ -1,13 +1,16 @@
 {
   "LoopActions": {
     "Hint": "Maintenez CTRL pour supprimer une entrée",
+    "Executing": "Exécution : {0}",
     "AutoEquip": {
+      "Name": "Équiper l’équipement recommandé",
       "GearSourceHelp": "Vanilla - Utilise l'équipement du coffre d'armes uniquement\nGearsetter - Demande à Gearsetter, peut déplacer les anciens objets dans l'inventaire\nStylist - Utilise vos paramètres Stylist",
       "MoveOldToInventory": "Déplacer les anciens objets dans l'inventaire",
       "MoveOldToInventoryHelp": "Sauf pour les armes, ceci déplacera l'équipement à remplacer dans l'inventaire.",
       "RequiresGearsetterOrStylist": "* Les objets hors du coffre d'armes nécessitent le plugin Gearsetter ou Stylist"
     },
     "Repair": {
+      "Name": "Réparer l’équipement",
       "Self": "Soi-même",
       "SelfHelp": "Utilisera de la Matière noire pour réparer soi-même (Nécessite des artisans de niveau suffisant !)",
       "CityNpc": "PNJ de ville",
@@ -19,36 +22,45 @@
       "GrandCompanyInn": "Auberge de Grande Compagnie"
     },
     "AutoRetainer": {
+      "Name": "AutoRetainer",
       "PreferredSummoningBell": "Emplacement de cloche d'invocation préféré : ",
       "PreferredSummoningBellHelp": "Quel que soit l'emplacement choisi, s'il y a une cloche d'invocation dans l'endroit où vous êtes quand ceci est invoqué, elle sera utilisée à la place",
       "WaitingUpTo": "Attente jusqu'à...",
       "Seconds": "secondes"
     },
     "PlaylistPreLoop": {
+      "Name": "Playlist : pré-boucle",
       "Help": "En mode liste de lecture, change le set d'équipement pour celui indiqué par la première entrée"
     },
     "PlaylistSwitchLoop": {
+      "Name": "Playlist : changement de mission",
       "Help": "En mode liste de lecture, change le set d'équipement pour celui indiqué par l'entrée suivante et bascule la boucle active sur l'entrée suivante, le cas échéant"
     },
     "TripleTriadSell": {
+      "Name": "Vente de cartes TT",
       "SlotsOccupied": "Emplacements occupés",
       "CardCount": "Nombre de cartes"
     },
     "Extract": {
+      "Name": "Extraction de matérias",
       "Equipped": "Équipé",
       "All": "Tout"
     },
     "GCTurnIn": {
+      "Name": "Livraison CG",
       "InventorySlotsLeft": "Emplacements d'inventaire restants à",
       "UseGCAetheryteTicket": "Utiliser un ticket d'éthérite CG"
     },
     "Armoire": {
+      "Name": "Armoire",
       "Help": "Confie les objets à l'armoire entre les boucles"
     },
     "Glamour": {
+      "Name": "Penderie à projection",
       "Help": "Confie les objets à l'armoire à projections entre les boucles"
     },
     "Desynth": {
+      "Name": "Recyclage",
       "OnlySkillUps": "Uniquement les montées de compétence",
       "ItemLevelLimit": "Limite de niveau d'objet",
       "ItemLevelLimitHelp": "Arrête le recyclage d'un objet une fois que votre compétence de recyclage atteint le niveau de l'objet + cette limite.",
@@ -59,6 +71,7 @@
       "Categories": "Catégories de recyclage"
     },
     "Coffers": {
+      "Name": "Ouverture des coffres",
       "Help": "AutoDuty ouvrira les coffres d'équipement (comme les armes de paladin) entre chaque boucle",
       "OpenCoffersWithGearset": "Ouvrir les coffres avec le set : ",
       "CurrentGearset": "Set d'équipement actuel",
@@ -70,9 +83,11 @@
       "AddCoffer": "Ajouter un coffre"
     },
     "Retire": {
+      "Name": "Retraite",
       "LifestreamNotRegistered": " (non enregistré dans Lifestream)"
     },
     "ConsumeItems": {
+      "Name": "Consommer des objets",
       "AutoConsumeHelp": "AutoDuty consommera ces objets au lancement et entre chaque boucle (si le statut n'existe pas)",
       "IgnoreStatus": "Ignorer le statut",
       "IgnoreStatusHelp": "AutoDuty consommera ces objets au lancement et entre chaque boucle à chaque fois (même si le statut existe déjà)",
@@ -83,12 +98,28 @@
       "AddItem": "Ajouter un objet"
     },
     "ExecuteCommands": {
-      "ExecuteCommandsHelp": "Exécuter des commandes au début de toutes les boucles\nPar exemple {0}"
+      "Name": "Exécuter des commandes",
+      "ExecuteCommandsHelp": "Exécuter des commandes au début de toutes les boucles\nPar exemple {0}",
+      "CommandInputHint": "saisir une commande commençant par /",
+      "AddCommand": "Ajouter une commande"
     },
     "Wait": {
+      "Name": "Attente",
       "WaitTime": "(s) Temps d'attente entre les boucles",
       "WaitOnPlugins": "Attend que les plugins indiqués aient terminé leurs actions",
       "WaitTimeHelp": "Retardera tous les processus entre-boucles d'AutoDuty de X secondes."
+    },
+    "AutoRetainerMultiMode": {
+      "Name": "AutoRetainer MultiMode"
+    },
+    "TripleTriadUse": {
+      "Name": "Enregistrement des cartes"
+    },
+    "Discard": {
+      "Name": "Jeter des objets"
+    },
+    "PlaySound": {
+      "Name": "Jouer un son"
     }
   }
 }

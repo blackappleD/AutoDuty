@@ -18,7 +18,7 @@ namespace AutoDuty.Helpers
     public class GotoHelper : ActiveHelperBase<GotoHelper, LoopActionConfigBare>
     {
         public override string Name        { get; } = nameof(GotoHelper);
-        public override string DisplayName { get; } = string.Empty;
+        public override string DisplayNameKey { get; } = string.Empty;
 
         public override string[]? Commands { get; init; } = ["goto", "go"];
         public override string? CommandDescription { get; init; } = "Goes to a specific location in the game world\ttargets: inn / barracks / gc / bell / apartment / home / fc";

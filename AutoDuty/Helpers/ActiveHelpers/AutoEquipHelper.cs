@@ -40,7 +40,7 @@ namespace AutoDuty.Helpers
         private GearsetUpdateSource source;
 
         public override string Name        => nameof(AutoEquipHelper);
-        public override string DisplayName => "Equip Recommended Gear";
+        public override string DisplayNameKey => "LoopActions.AutoEquip.Name";
 
         protected override int TimeOut { get; set; }
 

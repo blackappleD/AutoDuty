@@ -1,13 +1,16 @@
 {
   "LoopActions": {
     "Hint": "按住 CTRL 可刪除項目",
+    "Executing": "正在執行：{0}",
     "AutoEquip": {
+      "Name": "裝備推薦裝備",
       "GearSourceHelp": "原版 - 僅使用兵装庫(Armory Chest)裝備\n裝備管理器 - 調用 Gearsetter，可將淘汰裝備移至背包\n造型師 - 使用 Stylist 插件設置",
       "MoveOldToInventory": "將舊物品移至背包",
       "MoveOldToInventoryHelp": "除武器外，將被替換的裝備移至背包。",
       "RequiresGearsetterOrStylist": "* 兵裝庫外的物品需要 Gearsetter 或 Stylist 插件"
     },
     "Repair": {
+      "Name": "修理裝備",
       "Self": "自行修理",
       "SelfHelp": "使用暗物質自行修理 (需要對應等級的生產職業)",
       "CityNpc": "主城 NPC",
@@ -19,36 +22,45 @@
       "GrandCompanyInn": "冒險者分隊軍營"
     },
     "AutoRetainer": {
+      "Name": "AutoRetainer（自動僱員）",
       "PreferredSummoningBell": "首選傳喚鈴位置：",
       "PreferredSummoningBellHelp": "無論選擇哪個位置，如果你當前所在地有傳喚鈴，將優先前往該位置",
       "WaitingUpTo": "最多等待...",
       "Seconds": "秒"
     },
     "PlaylistPreLoop": {
+      "Name": "播放清單循環前操作",
       "Help": "處於播放清單模式時，切換到第一個項目指定的套裝"
     },
     "PlaylistSwitchLoop": {
+      "Name": "播放清單副本切換",
       "Help": "處於播放清單模式時，切換到下一個項目指定的套裝，並在適用時將目前循環切換到下一個播放清單項目"
     },
     "TripleTriadSell": {
+      "Name": "出售幻卡",
       "SlotsOccupied": "佔用格數",
       "CardCount": "卡片數量"
     },
     "Extract": {
+      "Name": "精煉魔晶石",
       "Equipped": "已裝備",
       "All": "全部"
     },
     "GCTurnIn": {
+      "Name": "繳納軍票",
       "InventorySlotsLeft": "剩餘背包格數 @",
       "UseGCAetheryteTicket": "使用大國防聯軍傳送券"
     },
     "Armoire": {
+      "Name": "時裝衣櫃",
       "Help": "在每次循環之間將物品存入時裝衣櫃"
     },
     "Glamour": {
+      "Name": "幻化衣櫃",
       "Help": "在每次循環之間將物品存入幻化衣櫃"
     },
     "Desynth": {
+      "Name": "分解裝備",
       "OnlySkillUps": "僅提升分解熟練度時分解",
       "ItemLevelLimit": "物品等級限制",
       "ItemLevelLimitHelp": "當你的分解技能達到物品等級 + 此限制時，停止分解該物品。",
@@ -59,6 +71,7 @@
       "Categories": "分解類別"
     },
     "Coffers": {
+      "Name": "開啟裝備箱",
       "Help": "AutoDuty 將在每次循環之間開啟裝備箱（例如騎士武器箱）",
       "OpenCoffersWithGearset": "使用套裝開啟寶箱：",
       "CurrentGearset": "當前套裝",
@@ -70,9 +83,11 @@
       "AddCoffer": "新增寶箱"
     },
     "Retire": {
+      "Name": "前往待機點",
       "LifestreamNotRegistered": "（未在 Lifestream 中註冊）"
     },
     "ConsumeItems": {
+      "Name": "使用消耗品",
       "AutoConsumeHelp": "AutoDuty 將在運行時和每次循環間使用這些物品（如果狀態不存在）",
       "IgnoreStatus": "忽略狀態",
       "IgnoreStatusHelp": "AutoDuty 將在運行時和每次循環間始終使用這些物品（即使狀態已存在）",
@@ -83,12 +98,28 @@
       "AddItem": "新增物品"
     },
     "ExecuteCommands": {
-      "ExecuteCommandsHelp": "在所有循環開始時執行命令\n例：{0}"
+      "Name": "執行指令",
+      "ExecuteCommandsHelp": "在所有循環開始時執行命令\n例：{0}",
+      "CommandInputHint": "輸入以 / 開頭的指令",
+      "AddCommand": "新增指令"
     },
     "Wait": {
+      "Name": "等待",
       "WaitTime": "（秒）循環間等待時間",
       "WaitOnPlugins": "等待指定插件完成其操作",
       "WaitTimeHelp": "將所有 AutoDuty 循環間處理延遲 X 秒。"
+    },
+    "AutoRetainerMultiMode": {
+      "Name": "AutoRetainer 多角色模式"
+    },
+    "TripleTriadUse": {
+      "Name": "登錄幻卡"
+    },
+    "Discard": {
+      "Name": "捨棄物品"
+    },
+    "PlaySound": {
+      "Name": "播放提示音"
     }
   }
 }

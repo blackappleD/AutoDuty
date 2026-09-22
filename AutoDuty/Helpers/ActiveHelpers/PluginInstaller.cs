@@ -11,7 +11,7 @@
     public class PluginInstaller : ActiveHelperBase<PluginInstaller, LoopActionConfigBare>
     {
         public override string Name        { get; } = "Plugin Installer";
-        public override string DisplayName { get; } = "Plugin Installer";
+        public override string DisplayNameKey { get; } = "Helpers.PluginInstaller.Name";
 
         private static ExternalPlugin pluginsToInstall;
         private        Task<bool>?    installTask;

@@ -1,13 +1,16 @@
 {
   "LoopActions": {
     "Hint": "Hold CTRL to delete an entry",
+    "Executing": "Executing: {0}",
     "AutoEquip": {
+      "Name": "Equip Recommended Gear",
       "GearSourceHelp": "Vanilla - Uses Gear from Armory Chest Only\nGearsetter - Asks gearsetter, can move old items to inventory\nStylist - Uses your stylist settings",
       "MoveOldToInventory": "Move old items to inventory",
       "MoveOldToInventoryHelp": "Except for weapons, this will move the gear to be replaced to the inventory.",
       "RequiresGearsetterOrStylist": "* Items outside the armoury chest requires Gearsetter or Stylist plugin"
     },
     "Repair": {
+      "Name": "Repair Gear",
       "Self": "Self",
       "SelfHelp": "Will use DarkMatter to Self Repair (Requires Leveled Crafters!)",
       "CityNpc": "CityNpc",
@@ -19,36 +22,45 @@
       "GrandCompanyInn": "Grand Company Inn"
     },
     "AutoRetainer": {
+      "Name": "AutoRetainer",
       "PreferredSummoningBell": "Preferred Summoning Bell Location: ",
       "PreferredSummoningBellHelp": "No matter what location is chosen, if there is a summoning bell in the location you are in when this is invoked it will go there instead",
       "WaitingUpTo": "Waiting up to...",
       "Seconds": "seconds"
     },
     "PlaylistPreLoop": {
+      "Name": "Playlist Pre Loop",
       "Help": "If in playlist mode, changes gear set to the first entry's specified gearset"
     },
     "PlaylistSwitchLoop": {
+      "Name": "Playlist Duty Switch",
       "Help": "If in playlist mode, changes gear set to the next entry's specified gearset, and switches the active loop to the next playlist entry, if applicable"
     },
     "TripleTriadSell": {
+      "Name": "Selling TTT Cards",
       "SlotsOccupied": "Slots occupied",
       "CardCount": "Card count"
     },
     "Extract": {
+      "Name": "Extracting Materia",
       "Equipped": "Equipped",
       "All": "All"
     },
     "GCTurnIn": {
+      "Name": "GC Turnin",
       "InventorySlotsLeft": "Inventory Slots Left @",
       "UseGCAetheryteTicket": "Use GC Aetheryte Ticket"
     },
     "Armoire": {
+      "Name": "Armoire",
       "Help": "Will entrust items to the armoire between loops"
     },
     "Glamour": {
+      "Name": "Glamour Chest",
       "Help": "Will entrust items to the glamour chest between loops"
     },
     "Desynth": {
+      "Name": "Desynthing",
       "OnlySkillUps": "Only Skill Ups",
       "ItemLevelLimit": "Item Level Limit",
       "ItemLevelLimitHelp": "Stops desynthesising an item once your desynthesis skill reaches the Item Level + this limit.",
@@ -59,6 +71,7 @@
       "Categories": "Desynth Categories"
     },
     "Coffers": {
+      "Name": "Opening Coffers",
       "Help": "AutoDuty will open gear coffers (like paladin arms) between each loop",
       "OpenCoffersWithGearset": "Open Coffers with Gearset: ",
       "CurrentGearset": "Current Gearset",
@@ -70,9 +83,11 @@
       "AddCoffer": "Add Coffer"
     },
     "Retire": {
+      "Name": "Retire",
       "LifestreamNotRegistered": " (not registered in Lifestream)"
     },
     "ConsumeItems": {
+      "Name": "Consume Items",
       "AutoConsumeHelp": "AutoDuty will consume these items on run and between each loop (if status does not exist)",
       "IgnoreStatus": "Ignore Status",
       "IgnoreStatusHelp": "AutoDuty will consume these items on run and between each loop every time (even if status does exists)",
@@ -83,11 +98,27 @@
       "AddItem": "Add Item"
     },
     "ExecuteCommands": {
-      "ExecuteCommandsHelp": "Execute commands\nFor example {0}"
+      "Name": "Execute Commands",
+      "ExecuteCommandsHelp": "Execute commands\nFor example {0}",
+      "CommandInputHint": "enter command starting with /",
+      "AddCommand": "Add Command"
     },
     "Wait": {
+      "Name": "Wait",
       "WaitTime": "(ms) Wait time",
       "WaitOnPlugins": "Waits on the specified plugins to be done with their actions"
+    },
+    "AutoRetainerMultiMode": {
+      "Name": "AutoRetainer MultiMode"
+    },
+    "TripleTriadUse": {
+      "Name": "Registering Cards"
+    },
+    "Discard": {
+      "Name": "Discarding Items"
+    },
+    "PlaySound": {
+      "Name": "Play Sound"
     }
   }
 }

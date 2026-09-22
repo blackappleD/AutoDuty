@@ -1,13 +1,16 @@
 {
   "LoopActions": {
     "Hint": "CTRL을 누른 채 항목을 삭제",
+    "Executing": "실행 중: {0}",
     "AutoEquip": {
+      "Name": "추천 장비 착용",
       "GearSourceHelp": "Vanilla - 무기고 내부만 사용\nGearsetter - gearsetter에 문의하여 오래된 장비를 소지품으로 이동 가능\nStylist - stylist 설정 사용",
       "MoveOldToInventory": "오래된 장비를 소지품으로 이동",
       "MoveOldToInventoryHelp": "무기 이외의 교체 대상 장비를 소지품으로 이동합니다.",
       "RequiresGearsetterOrStylist": "* 무기고 외부 장비는 Gearsetter 또는 Stylist가 필요합니다"
     },
     "Repair": {
+      "Name": "장비 수리",
       "Self": "자가수리",
       "SelfHelp": "다크 매터로 자가 수리합니다 (제작 숙련도 필요)",
       "CityNpc": "도시 NPC",
@@ -19,36 +22,45 @@
       "GrandCompanyInn": "그랜드 컴퍼니 병사"
     },
     "AutoRetainer": {
+      "Name": "AutoRetainer (집사)",
       "PreferredSummoningBell": "선호 집사 초의종 위치: ",
       "PreferredSummoningBellHelp": "어떤 위치를 선택하든 실행 시 현재 위치에 집사 초의종이 있으면 그곳을 우선합니다",
       "WaitingUpTo": "최대 대기 시간...",
       "Seconds": "초"
     },
     "PlaylistPreLoop": {
+      "Name": "재생목록 루프 전 동작",
       "Help": "재생 목록 모드일 때 첫 번째 항목에 지정된 장비 세트로 변경합니다"
     },
     "PlaylistSwitchLoop": {
+      "Name": "재생목록 임무 전환",
       "Help": "재생 목록 모드일 때 다음 항목에 지정된 장비 세트로 변경하고, 해당되는 경우 실행 중인 반복 작업을 다음 항목으로 전환합니다"
     },
     "TripleTriadSell": {
+      "Name": "TT 카드 판매",
       "SlotsOccupied": "사용 슬롯",
       "CardCount": "카드 수"
     },
     "Extract": {
+      "Name": "마테리아 정제",
       "Equipped": "장착 중",
       "All": "모두"
     },
     "GCTurnIn": {
+      "Name": "총사령부 납품",
       "InventorySlotsLeft": "소지품 빈 칸이 @ 이하일 때",
       "UseGCAetheryteTicket": "텔레포  이용권(총사령부) 사용"
     },
     "Armoire": {
+      "Name": "추억의 보관함",
       "Help": "반복 작업 사이에 아이템을 추억의 보관함에 맡깁니다"
     },
     "Glamour": {
+      "Name": "환상 옷장",
       "Help": "반복 작업 사이에 아이템을 환상 옷장에 맡깁니다"
     },
     "Desynth": {
+      "Name": "아이템 분해",
       "OnlySkillUps": "스킬 상승만",
       "ItemLevelLimit": "아이템 레벨 상한",
       "ItemLevelLimitHelp": "분해 스킬이 '아이템 레벨 + 이 값'에 도달하면, 해당 아이템의 분해를 중단합니다.",
@@ -59,6 +71,7 @@
       "Categories": "분해 카테고리"
     },
     "Coffers": {
+      "Name": "상자 개봉",
       "Help": "반복 작업마다 장비 상자(나이트 무기 상자 등)를 개봉합니다",
       "OpenCoffersWithGearset": "개봉 시 기어셋: ",
       "CurrentGearset": "현재 기어셋",
@@ -70,9 +83,11 @@
       "AddCoffer": "상자 추가"
     },
     "Retire": {
+      "Name": "대기 장소로 이동",
       "LifestreamNotRegistered": " (Lifestream에 등록되지 않음)"
     },
     "ConsumeItems": {
+      "Name": "아이템 사용",
       "AutoConsumeHelp": "실행 중 및 각 반복 작업 간에 대상 상태가 없는 경우 이 아이템들을 사용합니다",
       "IgnoreStatus": "상태 무시",
       "IgnoreStatusHelp": "실행 중 및 각 반복 작업 간에 상태 유무와 관계없이 매번 이 아이템들을 사용합니다",
@@ -83,12 +98,28 @@
       "AddItem": "아이템 추가"
     },
     "ExecuteCommands": {
-      "ExecuteCommandsHelp": "모든 반복 작업 시작 시 명령어 실행\n예: {0}"
+      "Name": "명령어 실행",
+      "ExecuteCommandsHelp": "모든 반복 작업 시작 시 명령어 실행\n예: {0}",
+      "CommandInputHint": "/ 로 시작하는 명령어 입력",
+      "AddCommand": "명령어 추가"
     },
     "Wait": {
+      "Name": "대기",
       "WaitTime": "(초) 반복 작업 간 대기 시간",
       "WaitOnPlugins": "지정한 플러그인의 작업이 끝날 때까지 대기합니다",
       "WaitTimeHelp": "반복 작업 간 처리를 X초 지연시킵니다."
+    },
+    "AutoRetainerMultiMode": {
+      "Name": "AutoRetainer 멀티 모드"
+    },
+    "TripleTriadUse": {
+      "Name": "TT 카드 등록"
+    },
+    "Discard": {
+      "Name": "아이템 폐기"
+    },
+    "PlaySound": {
+      "Name": "소리 재생"
     }
   }
 }

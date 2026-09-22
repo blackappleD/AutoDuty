@@ -1,0 +1,16 @@
+{
+  "Helpers": {
+    "ExitDuty": {
+      "Name": "Exiting Duty"
+    },
+    "PluginInstaller": {
+      "Name": "Plugin Installer"
+    },
+    "Portrait": {
+      "Name": "Updating Portrait"
+    },
+    "Queue": {
+      "Name": "Queueing {0}: {1}"
+    }
+  }
+}

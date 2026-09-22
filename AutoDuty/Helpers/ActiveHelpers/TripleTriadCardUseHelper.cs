@@ -14,7 +14,7 @@ namespace AutoDuty.Helpers
     public class TripleTriadCardUseHelper : ActiveHelperBase<TripleTriadCardUseHelper, TripleTriadUseLoopActionConfig>
     {
         public override string Name        { get; } = nameof(TripleTriadCardUseHelper);
-        public override string DisplayName { get; } = "Registering Cards";
+        public override string DisplayNameKey { get; } = "LoopActions.TripleTriadUse.Name";
 
         public override string[]? Commands { get; init; } = ["ttreg", "registercards"];
         public override string? CommandDescription { get; init; } = "Automatically registers Triple Triad cards in your inventory";

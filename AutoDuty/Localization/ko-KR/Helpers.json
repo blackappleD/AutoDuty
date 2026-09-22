@@ -1,0 +1,16 @@
+{
+  "Helpers": {
+    "ExitDuty": {
+      "Name": "임무 나가기"
+    },
+    "PluginInstaller": {
+      "Name": "플러그인 설치"
+    },
+    "Portrait": {
+      "Name": "초상화 갱신"
+    },
+    "Queue": {
+      "Name": "신청 중 {0}: {1}"
+    }
+  }
+}

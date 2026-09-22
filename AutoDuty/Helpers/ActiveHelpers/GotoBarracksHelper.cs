@@ -12,7 +12,7 @@ namespace AutoDuty.Helpers
     public class GotoBarracksHelper : ActiveHelperBase<GotoBarracksHelper, LoopActionConfigBare>
     {
         public override string Name        => nameof(GotoBarracksHelper);
-        public override string DisplayName => string.Empty;
+        public override string DisplayNameKey => string.Empty;
 
         protected override string[] AddonsToClose { get; } = ["SelectYesno"];
 

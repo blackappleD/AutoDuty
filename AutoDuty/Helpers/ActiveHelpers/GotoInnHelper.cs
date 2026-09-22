@@ -15,7 +15,7 @@ namespace AutoDuty.Helpers
     {
 
         public override string Name        => nameof(GotoInnHelper);
-        public override string DisplayName => string.Empty;
+        public override string DisplayNameKey => string.Empty;
         protected override int    TimeOut     { get; set; } = 600_000;
 
         protected override string[] AddonsToClose { get; } = ["SelectYesno", "SelectString", "Talk"];

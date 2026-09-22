@@ -63,10 +63,10 @@ public abstract class LoopActionConfig
                 {
                     System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(current.TypeHandle);
 
-                    string             name     = type.GetProperty(nameof(LoopActionConfig<>.Name), BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy)?.GetValue(null) as string ?? string.Empty;
+                    string             nameKey  = type.GetProperty(nameof(LoopActionConfig<>.NameKey), BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy)?.GetValue(null) as string ?? string.Empty;
                     LoopActionCategory category = (LoopActionCategory)(type.GetProperty(nameof(LoopActionConfig<>.LoopActionCategory), BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy)?.GetValue(null) ?? LoopActionCategory.Global);
 
-                    Tuple<Type, string> item = new(type, name);
+                    Tuple<Type, string> item = new(type, nameKey);
 
                     foreach (LoopActionCategory value in Enum.GetValues<LoopActionCategory>())
                         if (category.HasFlag(value))
@@ -93,11 +93,18 @@ public abstract class LoopActionConfig
 public abstract class LoopActionConfig<C> : LoopActionConfig where C : LoopActionConfig<C>, new()
 {
     public static LoopActionCategory LoopActionCategory { get; set; } = LoopActionCategory.Global;
-    public static string             Name               { get; set; } = null!;
+    /// <summary>
+    /// Localization key for the action's display name. Static constructors run before the localization
+    /// files are loaded, so only the key is captured there; <see cref="Name"/> resolves it per frame,
+    /// which also makes the labels follow a language switch.
+    /// </summary>
+    public static string             NameKey            { get; set; } = string.Empty;
+
+    public static string             Name               => NameKey.Length == 0 ? string.Empty : Loc.Get(NameKey);
 
     public abstract string         OverlayName     { get; }
     public virtual  ExternalPlugin RequiredPlugins => ExternalPlugin.None;
-    public virtual  string         ActionText      => "Executing: " + Name;
+    public virtual  string         ActionText      => Loc.Get("LoopActions.Executing", Name);
     public virtual  bool           Locked          => false;
     public virtual  string?        HelpText        => null;
 
@@ -146,7 +153,7 @@ public abstract class LoopActionConfig<C> : LoopActionConfig where C : LoopActio
         if (this.HasConfig)
         {
             ImGui.SetItemAllowOverlap();
-            ImGui.Selectable($"##LoopAction{Name}", ref this.configOpen);
+            ImGui.Selectable($"##LoopAction{NameKey}", ref this.configOpen);
             ImGui.SameLine(0, 0);
             ImGuiHelper.DrawIcon(this.configOpen ? FontAwesomeIcon.CaretDown : FontAwesomeIcon.CaretRight);
             ImGui.SameLine(0, 0);
@@ -193,7 +200,7 @@ public abstract class LoopActionConfig<C> : LoopActionConfig where C : LoopActio
 public class LoopActionConfigBare : LoopActionConfig<LoopActionConfigBare>
 {
     static LoopActionConfigBare() => 
-        Name = string.Empty;
+        NameKey = string.Empty;
 
     public override    string OverlayName                 { get; } = null!;
     protected override void   RunInternal(ref bool queue) => throw new NotImplementedException();
@@ -206,7 +213,7 @@ public abstract class ActiveLoopActionConfig<T,C> : LoopActionConfig<C> where T 
     public ActiveHelperBase<T,C> Helper => ActiveHelper.GetHelper<T,C>();
 
     static ActiveLoopActionConfig() => 
-        Name = ActiveHelper.GetHelper<T,C>().DisplayName;
+        NameKey = ActiveHelper.GetHelper<T,C>().DisplayNameKey;
 
     public virtual bool ShouldRun() => true;
 
@@ -793,7 +800,7 @@ public class RetireLoopActionConfig : LoopActionConfig<RetireLoopActionConfig>
 {
     static RetireLoopActionConfig()
     {
-        Name = "Retire";
+        NameKey = "LoopActions.Retire.Name";
         LoopActionCategory = LoopActionCategory.Pre;
     }
 
@@ -862,7 +869,7 @@ public class ConsumeItemsLoopActionConfig : LoopActionConfig<ConsumeItemsLoopAct
 {
     static ConsumeItemsLoopActionConfig()
     {
-        Name = "Consume Items";
+        NameKey = "LoopActions.ConsumeItems.Name";
         LoopActionCategory = LoopActionCategory.Pre;
     }
 
@@ -1013,7 +1020,7 @@ public class ExecuteCommandsLoopActionConfig : LoopActionConfig<ExecuteCommandsL
 {
     static ExecuteCommandsLoopActionConfig()
     {
-        Name = "Execute Commands";
+        NameKey = "LoopActions.ExecuteCommands.Name";
         LoopActionCategory = LoopActionCategory.Pre | LoopActionCategory.Termination;
     }
 
@@ -1041,7 +1048,7 @@ public class ExecuteCommandsLoopActionConfig : LoopActionConfig<ExecuteCommandsL
     {
         ImGui.Indent();
         ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - 185 * ImGuiHelpers.GlobalScale);
-        if (ImGui.InputTextWithHint($"##Commands{checkbox}_{id}", "enter command starting with /", ref curCommand, 500, ImGuiInputTextFlags.EnterReturnsTrue))
+        if (ImGui.InputTextWithHint($"##Commands{checkbox}_{id}", Loc.Get("LoopActions.ExecuteCommands.CommandInputHint"), ref curCommand, 500, ImGuiInputTextFlags.EnterReturnsTrue))
             if (!curCommand.IsNullOrEmpty() && curCommand[0] == '/' && (ImGui.IsKeyDown(ImGuiKey.Enter) || ImGui.IsKeyDown(ImGuiKey.KeypadEnter)))
             {
                 commands.Add(curCommand);
@@ -1054,7 +1061,7 @@ public class ExecuteCommandsLoopActionConfig : LoopActionConfig<ExecuteCommandsL
         ImGui.SameLine(0, 5);
         using (ImRaii.Disabled(curCommand.IsNullOrEmpty() || curCommand[0] != '/'))
         {
-            if (ImGui.Button($"Add Command##CommandButton{checkbox}_{id}"))
+            if (ImGui.Button($"{Loc.Get("LoopActions.ExecuteCommands.AddCommand")}##CommandButton{checkbox}_{id}"))
             {
                 commands.Add(curCommand);
                 ConfigurationProfileV2.Save();
@@ -1091,7 +1098,7 @@ public class ExecuteCommandsLoopActionConfig : LoopActionConfig<ExecuteCommandsL
 public class WaitLoopActionConfig : LoopActionConfig<WaitLoopActionConfig>
 {
     static WaitLoopActionConfig() => 
-        Name = "Wait";
+        NameKey = "LoopActions.Wait.Name";
 
     [Flags]
     public enum WaitPlugins
@@ -1154,7 +1161,7 @@ public class WaitLoopActionConfig : LoopActionConfig<WaitLoopActionConfig>
 public class PlaylistPreLoopActionConfig : LoopActionConfig<PlaylistPreLoopActionConfig>
 {
     static PlaylistPreLoopActionConfig() =>
-            Name = "Playlist Pre Loop";
+            NameKey = "LoopActions.PlaylistPreLoop.Name";
 
     public override string? HelpText    => Loc.Get("LoopActions.PlaylistPreLoop.Help");
 
@@ -1179,7 +1186,7 @@ public class PlaylistPreLoopActionConfig : LoopActionConfig<PlaylistPreLoopActio
 public class PlaylistSwitchLoopActionConfig : LoopActionConfig<PlaylistSwitchLoopActionConfig>
 {
     static PlaylistSwitchLoopActionConfig() =>
-            Name = "Playlist Duty Switch";
+            NameKey = "LoopActions.PlaylistSwitchLoop.Name";
 
     public override string? HelpText    => Loc.Get("LoopActions.PlaylistSwitchLoop.Help");
     public override string  OverlayName { get; } = null!;
@@ -1243,7 +1250,7 @@ public class PlaySoundLoopActionConfig : LoopActionConfig<PlaySoundLoopActionCon
 {
     static PlaySoundLoopActionConfig()
     {
-        Name = "Play Sound";
+        NameKey = "LoopActions.PlaySound.Name";
         LoopActionCategory = LoopActionCategory.Termination;
     }
 

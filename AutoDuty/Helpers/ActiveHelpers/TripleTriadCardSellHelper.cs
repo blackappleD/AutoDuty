@@ -19,7 +19,7 @@ namespace AutoDuty.Helpers
     public class TripleTriadCardSellHelper : ActiveHelperBase<TripleTriadCardSellHelper, TripleTriadSellLoopActionConfig>
     {
         public override string Name        { get; } = nameof(TripleTriadCardSellHelper);
-        public override string DisplayName { get; } = "Selling TTT Cards";
+        public override string DisplayNameKey { get; } = "LoopActions.TripleTriadSell.Name";
 
         public override string[]? Commands           { get; init; } = ["ttsell", "sellcards"];
         public override string?   CommandDescription { get; init; } = "Sells Triple Triad cards to the vendor in Gold Saucer";

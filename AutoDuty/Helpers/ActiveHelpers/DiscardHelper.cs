@@ -8,7 +8,7 @@
     public class DiscardHelper : ActiveHelperBase<DiscardHelper, DiscardItemsLoopActionConfig>
     {
         public override string Name        { get; } = nameof(DiscardHelper);
-        public override string DisplayName { get; } = "Discarding Items";
+        public override string DisplayNameKey { get; } = "LoopActions.Discard.Name";
 
         private bool started = false;
 

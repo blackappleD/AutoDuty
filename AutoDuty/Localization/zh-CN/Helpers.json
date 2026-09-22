@@ -1,0 +1,16 @@
+{
+  "Helpers": {
+    "ExitDuty": {
+      "Name": "退出副本"
+    },
+    "PluginInstaller": {
+      "Name": "插件安装"
+    },
+    "Portrait": {
+      "Name": "更新肖像"
+    },
+    "Queue": {
+      "Name": "正在排本 {0}：{1}"
+    }
+  }
+}

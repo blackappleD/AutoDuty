@@ -1,13 +1,16 @@
 {
   "LoopActions": {
     "Hint": "CTRLを押しながらクリックで項目を削除",
+    "Executing": "実行中：{0}",
     "AutoEquip": {
+      "Name": "推奨装備に更新",
       "GearSourceHelp": "Vanilla：アーマリーチェスト内の装備のみを使用します。\nGearsetter：Gearsettarの推奨装備を使用します。古装備は設定により所持品へ移動できます。\nStylist：Stylistの設定を使用します。",
       "MoveOldToInventory": "旧装備を所持品へ移動",
       "MoveOldToInventoryHelp": "メインアームとサブアームを除き、旧装備を所持品へ移動します。",
       "RequiresGearsetterOrStylist": "* アーマリーチェスト外の装備にはGearsetterまたはStylistが必要です"
     },
     "Repair": {
+      "Name": "装備修理",
       "Self": "自己",
       "SelfHelp": "ダークマターで自己修理します（クラフター育成が必要）",
       "CityNpc": "都市内NPC",
@@ -19,36 +22,45 @@
       "GrandCompanyInn": "グランドカンパニー兵舎"
     },
     "AutoRetainer": {
+      "Name": "AutoRetainer（リテイナー）",
       "PreferredSummoningBell": "優先呼び鈴位置: ",
       "PreferredSummoningBellHelp": "どの場所を選んでも、実行時に現在地に呼び鈴があればそちらを優先します",
       "WaitingUpTo": "最大待機時間...",
       "Seconds": "秒"
     },
     "PlaylistPreLoop": {
+      "Name": "プレイリスト：ループ前処理",
       "Help": "プレイリストモードの場合、最初のエントリで指定されたギアセットに変更します"
     },
     "PlaylistSwitchLoop": {
+      "Name": "プレイリスト：コンテンツ切替",
       "Help": "プレイリストモードの場合、次のエントリで指定されたギアセットに変更し、該当すれば実行中のループを次のエントリへ切り替えます"
     },
     "TripleTriadSell": {
+      "Name": "TTカード売却",
       "SlotsOccupied": "使用枠",
       "CardCount": "カード枚数"
     },
     "Extract": {
+      "Name": "マテリア精製",
       "Equipped": "装備中",
       "All": "すべて"
     },
     "GCTurnIn": {
+      "Name": "GC納品",
       "InventorySlotsLeft": "所持品の空き枠が @ 以下で",
       "UseGCAetheryteTicket": "転送網利用券（GC）を使用"
     },
     "Armoire": {
+      "Name": "愛蔵品キャビネット",
       "Help": "ループ間にアイテムを愛蔵品に収納します"
     },
     "Glamour": {
+      "Name": "ミラージュドレッサー",
       "Help": "ループ間にアイテムをミラージュドレッサーに収納します"
     },
     "Desynth": {
+      "Name": "アイテム分解",
       "OnlySkillUps": "スキル上昇のみ",
       "ItemLevelLimit": "アイテムレベル上限",
       "ItemLevelLimitHelp": "分解スキルが「アイテムレベル + この値」に達すると、そのアイテムの分解を停止します。",
@@ -59,6 +71,7 @@
       "Categories": "分解カテゴリ"
     },
     "Coffers": {
+      "Name": "装備箱の開封",
       "Help": "ループごとに装備箱（ナイトの武器箱など）を開封します",
       "OpenCoffersWithGearset": "開封時のギアセット: ",
       "CurrentGearset": "現在のギアセット",
@@ -70,9 +83,11 @@
       "AddCoffer": "装備箱を追加"
     },
     "Retire": {
+      "Name": "待機場所へ移動",
       "LifestreamNotRegistered": "（Lifestreamに未登録）"
     },
     "ConsumeItems": {
+      "Name": "アイテム使用",
       "AutoConsumeHelp": "実行中と各ループ間で、対象ステータスがない場合にこれらのアイテムを使用します",
       "IgnoreStatus": "ステータス無視",
       "IgnoreStatusHelp": "実行中と各ループ間で、ステータス有無に関係なく毎回これらのアイテムを使用します",
@@ -83,12 +98,28 @@
       "AddItem": "アイテム追加"
     },
     "ExecuteCommands": {
-      "ExecuteCommandsHelp": "ループ処理開始前にコマンドを実行\n例：{0}"
+      "Name": "コマンド実行",
+      "ExecuteCommandsHelp": "ループ処理開始前にコマンドを実行\n例：{0}",
+      "CommandInputHint": "/ で始まるコマンドを入力",
+      "AddCommand": "コマンドを追加"
     },
     "Wait": {
+      "Name": "待機",
       "WaitTime": "（秒）ループ間の待機時間",
       "WaitOnPlugins": "指定したプラグインの処理が終わるまで待機します",
       "WaitTimeHelp": "ループ間処理をX秒遅延させます。"
+    },
+    "AutoRetainerMultiMode": {
+      "Name": "AutoRetainer マルチモード"
+    },
+    "TripleTriadUse": {
+      "Name": "TTカード登録"
+    },
+    "Discard": {
+      "Name": "アイテム破棄"
+    },
+    "PlaySound": {
+      "Name": "サウンド再生"
     }
   }
 }

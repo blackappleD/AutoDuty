@@ -12,7 +12,7 @@ namespace AutoDuty.Helpers
     public class ExtractHelper : ActiveHelperBase<ExtractHelper, ExtractLoopActionConfig>
     {
         public override string Name        => nameof(ExtractHelper);
-        public override string DisplayName => "Extracting Materia";
+        public override string DisplayNameKey => "LoopActions.Extract.Name";
 
         public override string[]? Commands { get; init; } = ["extract"];
         public override string? CommandDescription { get; init; } = "Extract's materia from equipment";
@@ -57,7 +57,7 @@ namespace AutoDuty.Helpers
                 return;
             }
 
-            Plugin.action = "Extracting Materia";
+            Plugin.action = this.DisplayName;
 
             if (InventoryManager.Instance()->GetEmptySlotsInBag() < 1)
             {

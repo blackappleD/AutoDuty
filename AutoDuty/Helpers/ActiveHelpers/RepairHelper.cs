@@ -17,7 +17,7 @@ namespace AutoDuty.Helpers
     public class RepairHelper : ActiveHelperBase<RepairHelper, RepairLoopActionConfig>
     {
         public override string   Name          { get; } = nameof(RepairHelper);
-        public override string   DisplayName   { get; } = "Repair Gear";
+        public override string   DisplayNameKey { get; } = "LoopActions.Repair.Name";
 
         public override string[]? Commands { get; init; } = ["repair"];
         public override string? CommandDescription { get; init; } = "Repairs your gear";

@@ -19,7 +19,7 @@ using EventHandler = FFXIVClientStructs.FFXIV.Client.Game.Event.EventHandler;
 public class GlamourChestHelper : ActiveHelperBase<GlamourChestHelper, GlamourLoopActionConfig>
 {
     public override    string    Name               { get; }       = nameof(GlamourChestHelper);
-    public override    string    DisplayName        { get; }       = "Glamour Chest";
+    public override    string    DisplayNameKey     { get; }       = "LoopActions.Glamour.Name";
     public override    string[]? Commands           { get; init; } = ["glamour"];
     public override    string?   CommandDescription { get; init; } = "Stores items in your inventory to the Glamour Chest.";
     protected override int       UpdateBaseThrottle { get; set; }  = 125;
@@ -66,7 +66,7 @@ public class GlamourChestHelper : ActiveHelperBase<GlamourChestHelper, GlamourLo
             return;
         }
 
-        Plugin.action = "Glamour Chest";
+        Plugin.action = this.DisplayName;
 
         if(Svc.Targets.Target == null || Svc.Targets.Target.Struct()->EventHandler->Info.EventId != 721347)
         {

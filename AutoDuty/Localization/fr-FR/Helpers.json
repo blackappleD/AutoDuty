@@ -1,0 +1,16 @@
+{
+  "Helpers": {
+    "ExitDuty": {
+      "Name": "Sortie de la mission"
+    },
+    "PluginInstaller": {
+      "Name": "Installation de plugins"
+    },
+    "Portrait": {
+      "Name": "Mise à jour du portrait"
+    },
+    "Queue": {
+      "Name": "File d’attente {0} : {1}"
+    }
+  }
+}

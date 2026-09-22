@@ -18,7 +18,7 @@ namespace AutoDuty.Helpers
     public class AutoRetainerHelper : ActiveHelperBase<AutoRetainerHelper, AutoRetainerLoopActionConfig>
     {
         public override string Name        { get; } = nameof(AutoRetainerHelper);
-        public override string DisplayName { get; } = "AutoRetainer";
+        public override string DisplayNameKey { get; } = "LoopActions.AutoRetainer.Name";
 
         public override string[]? Commands { get; init; } = ["ar", "autoretainer"];
         public override string? CommandDescription { get; init; } = "Automatically manages retainers using the AutoRetainer plugin";

@@ -10,7 +10,7 @@
     public class PortraitHelper : ActiveHelperBase<PortraitHelper, LoopActionConfigBare>
     {
         public override string Name        { get; } = nameof(PortraitHelper);
-        public override string DisplayName { get; } = "Updating Portrait";
+        public override string DisplayNameKey { get; } = "Helpers.Portrait.Name";
         protected override int    TimeOut     { get; set; } = 10_000;
 
         internal override void Start()

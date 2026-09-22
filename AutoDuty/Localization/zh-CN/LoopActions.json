@@ -1,13 +1,16 @@
 {
   "LoopActions": {
     "Hint": "按住 CTRL 可删除条目",
+    "Executing": "正在执行：{0}",
     "AutoEquip": {
+      "Name": "装备推荐装备",
       "GearSourceHelp": "原版 - 仅使用兵装库(Armory Chest)装备\n装备管理器 - 调用 Gearsetter，可将淘汰装备移至背包\n造型师 - 使用 Stylist 插件设置",
       "MoveOldToInventory": "将旧物品移至背包",
       "MoveOldToInventoryHelp": "除武器外，将被替换的装备移至背包。",
       "RequiresGearsetterOrStylist": "* 兵装库外的物品需要 Gearsetter 或 Stylist 插件"
     },
     "Repair": {
+      "Name": "修理装备",
       "Self": "自行修理",
       "SelfHelp": "使用暗物质自行修理 (需要对应等级的生产职业)",
       "CityNpc": "主城 NPC",
@@ -19,36 +22,45 @@
       "GrandCompanyInn": "冒险者分队军营"
     },
     "AutoRetainer": {
+      "Name": "AutoRetainer（自动雇员）",
       "PreferredSummoningBell": "首选传唤铃位置：",
       "PreferredSummoningBellHelp": "无论选择哪个位置，如果你当前所在地有传唤铃，将优先前往该位置",
       "WaitingUpTo": "最多等待...",
       "Seconds": "秒"
     },
     "PlaylistPreLoop": {
+      "Name": "播放列表循环前操作",
       "Help": "处于播放列表模式时，切换到第一个条目指定的套装"
     },
     "PlaylistSwitchLoop": {
+      "Name": "播放列表副本切换",
       "Help": "处于播放列表模式时，切换到下一个条目指定的套装，并在适用时将当前循环切换到下一个播放列表条目"
     },
     "TripleTriadSell": {
+      "Name": "出售幻卡",
       "SlotsOccupied": "占用格数",
       "CardCount": "卡片数量"
     },
     "Extract": {
+      "Name": "精制魔晶石",
       "Equipped": "已装备",
       "All": "全部"
     },
     "GCTurnIn": {
+      "Name": "军票上缴",
       "InventorySlotsLeft": "剩余背包格数 @",
       "UseGCAetheryteTicket": "使用大国防联军传送券"
     },
     "Armoire": {
+      "Name": "时装衣柜",
       "Help": "在每次循环之间将物品存入时装衣柜"
     },
     "Glamour": {
+      "Name": "幻化衣柜",
       "Help": "在每次循环之间将物品存入幻化衣柜"
     },
     "Desynth": {
+      "Name": "分解装备",
       "OnlySkillUps": "仅提升分解熟练度时分解",
       "ItemLevelLimit": "物品等级限制",
       "ItemLevelLimitHelp": "当你的分解技能达到物品等级 + 此限制时，停止分解该物品。",
@@ -59,6 +71,7 @@
       "Categories": "分解类别"
     },
     "Coffers": {
+      "Name": "开启宝箱",
       "Help": "AutoDuty 将在每次循环之间开启装备箱（例如骑士武器箱）",
       "OpenCoffersWithGearset": "使用套装开启宝箱：",
       "CurrentGearset": "当前套装",
@@ -70,9 +83,11 @@
       "AddCoffer": "添加宝箱"
     },
     "Retire": {
+      "Name": "前往待机点",
       "LifestreamNotRegistered": "（未在 Lifestream 中注册）"
     },
     "ConsumeItems": {
+      "Name": "使用消耗品",
       "AutoConsumeHelp": "AutoDuty 将在运行时和每次循环间使用这些物品（如果状态不存在）",
       "IgnoreStatus": "忽略状态",
       "IgnoreStatusHelp": "AutoDuty 将在运行时和每次循环间始终使用这些物品（即使状态已存在）",
@@ -83,12 +98,28 @@
       "AddItem": "添加物品"
     },
     "ExecuteCommands": {
-      "ExecuteCommandsHelp": "在所有循环开始时执行命令\n例：{0}"
+      "Name": "执行命令",
+      "ExecuteCommandsHelp": "在所有循环开始时执行命令\n例：{0}",
+      "CommandInputHint": "输入以 / 开头的命令",
+      "AddCommand": "添加命令"
     },
     "Wait": {
+      "Name": "等待",
       "WaitTime": "（秒）循环间等待时间",
       "WaitOnPlugins": "等待指定插件完成其操作",
       "WaitTimeHelp": "将所有 AutoDuty 循环间处理延迟 X 秒。"
+    },
+    "AutoRetainerMultiMode": {
+      "Name": "AutoRetainer 多角色模式"
+    },
+    "TripleTriadUse": {
+      "Name": "登记幻卡"
+    },
+    "Discard": {
+      "Name": "丢弃物品"
+    },
+    "PlaySound": {
+      "Name": "播放提示音"
     }
   }
 }

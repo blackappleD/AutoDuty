@@ -552,12 +552,14 @@ public class ConfigurationProfileV2
 
                     void DrawLoopActions(List<Tuple<Type, string>> tuples)
                     {
-                        foreach ((Type type, string name) in tuples)
+                        foreach ((Type type, string nameKey) in tuples)
                         {
                             if (!shownTypes.Add(type))
                                 continue;
 
-                            if (ImGui.Selectable($"{name}##{id}_{type}_{name}") && Activator.CreateInstance(type) is LoopActionConfig actionConfig)
+                            string name = nameKey.Length == 0 ? string.Empty : Loc.Get(nameKey);
+
+                            if (ImGui.Selectable($"{name}##{id}_{type}_{nameKey}") && Activator.CreateInstance(type) is LoopActionConfig actionConfig)
                             {
                                 this.Add(actionConfig);
                                 Save();

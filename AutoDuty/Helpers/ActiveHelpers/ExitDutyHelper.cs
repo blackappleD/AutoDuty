@@ -11,7 +11,7 @@ namespace AutoDuty.Helpers
     public class ExitDutyHelper : ActiveHelperBase<ExitDutyHelper, LoopActionConfigBare>
     {
         public override string Name        => nameof(ExitDutyHelper);
-        public override string DisplayName => "Exiting Duty";
+        public override string DisplayNameKey => "Helpers.ExitDuty.Name";
 
         public override string[]? Commands           { get; init; } = ["exitduty"];
         public override string?   CommandDescription { get; init; } = "Exits the current duty if you are not in combat";

@@ -20,7 +20,7 @@ namespace AutoDuty.Helpers
     public class DesynthHelper : ActiveHelperBase<DesynthHelper, DesynthLoopActionConfig>
     {
         public override string Name        => nameof(DesynthHelper);
-        public override string DisplayName => "Desynthing";
+        public override string DisplayNameKey => "LoopActions.Desynth.Name";
 
         public override string[]? Commands { get; init; } = ["desynth"];
         public override string? CommandDescription { get; init; } = "Desynth's items in your inventory";

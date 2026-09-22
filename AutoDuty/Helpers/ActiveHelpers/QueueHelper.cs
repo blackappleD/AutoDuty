@@ -45,12 +45,13 @@ namespace AutoDuty.Helpers
                 Svc.Log.Info($"Queueing: {dutyMode}: {content.Name}");
 
                 Instance.Start();
-                Plugin.action = $"Queueing {_dutyMode}: {content.Name}";
+                Plugin.action = Loc.Get("Helpers.Queue.Name", _dutyMode, content.Name);
             }
         }
 
-        public override string Name        => nameof(QueueHelper);
-        public override string DisplayName => $"Queueing {_dutyMode}: {_content?.Name}";
+        public override string Name           => nameof(QueueHelper);
+        public override string DisplayNameKey => "Helpers.Queue.Name";
+        public override string DisplayName    => Loc.Get(this.DisplayNameKey, _dutyMode, _content?.Name ?? string.Empty);
 
         internal override void Stop()
         {

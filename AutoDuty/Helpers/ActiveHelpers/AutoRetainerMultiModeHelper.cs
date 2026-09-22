@@ -13,7 +13,7 @@ namespace AutoDuty.Helpers
     public class AutoRetainerMultiModeHelper : ActiveHelperBase<AutoRetainerMultiModeHelper, AutoRetainerMultiModeLoopActionConfig>
     {
         public override string Name { get; } = nameof(AutoRetainerMultiModeHelper);
-        public override string DisplayName { get; } = "AutoRetainerMultiMode";
+        public override string DisplayNameKey { get; } = "LoopActions.AutoRetainerMultiMode.Name";
 
         public override string[]? Commands { get; init; } = ["arm", "autoretainermulti"];
         public override string? CommandDescription { get; init; } = "Runs one cycle of AutoRetainer's Multi Mode";

@@ -19,7 +19,7 @@ using EventHandler = FFXIVClientStructs.FFXIV.Client.Game.Event.EventHandler;
 public class ArmoireHelper : ActiveHelperBase<ArmoireHelper, ArmoireLoopActionConfig>
 {
     public override    string    Name               { get; }       = nameof(ArmoireHelper);
-    public override    string    DisplayName        { get; }       = "Armoire";
+    public override    string    DisplayNameKey     { get; }       = "LoopActions.Armoire.Name";
     public override    string[]? Commands           { get; init; } = ["armoire"];
     public override    string?   CommandDescription { get; init; } = "Stores items in your inventory to the Armoire.";
     protected override int       UpdateBaseThrottle { get; set; }  = 125;
@@ -57,7 +57,7 @@ public class ArmoireHelper : ActiveHelperBase<ArmoireHelper, ArmoireLoopActionCo
             return;
         }
 
-        Plugin.action = "Armoire";
+        Plugin.action = this.DisplayName;
 
         if(Svc.Targets.Target == null || Svc.Targets.Target.Struct()->EventHandler->Info.EventId != 720978)
         {
