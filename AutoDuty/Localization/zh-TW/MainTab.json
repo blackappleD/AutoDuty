@@ -68,6 +68,7 @@
       "CustomFull": "隊伍已滿（最多 {0} 隻）\n取消勾選一隻後才能選擇其他使魔",
       "ClearRanks": "清除已儲存的等級",
       "ClearRanksHelp": "忘記已儲存的等級\n按住 Ctrl 點擊",
+      "ClearCustoms": "清除自訂使魔",
       "NoFamiliars": "目前還沒有已知的使魔。請在 Lauda 處開啟隊伍介面或魔物圖鑑，AutoDuty 才能讀取。",
       "Menus": "棋盤選單",
       "TableLegend": "底色highlight：該模式選用的隊伍 · 將滑鼠停留在名稱上可查看屬性",
@@ -82,6 +83,16 @@
         "Recommended": "帶上等級最高的使魔\n等級相同時優先屬性更好的",
         "Leveling": "帶上等級最低的使魔，經驗值最少的優先\n每場戰鬥的出戰順序也按此順序",
         "Custom": "帶上你在下方勾選的使魔\n最多 10 隻"
+      },
+      "LevelingModes": {
+        "Full": "滿編隊伍",
+        "Minus_3": "上限 -3",
+        "Only_3": "僅 3 隻"
+      },
+      "LevelingModesHelp": {
+        "Full": "使用隊伍的全部人數",
+        "Minus_3": "比最大數量少帶 3 隻使魔",
+        "Only_3": "每次只帶 3 隻使魔"
       },
       "Toggles": {
         "FightPicks": "出戰選擇",
