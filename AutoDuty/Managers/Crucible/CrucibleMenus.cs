@@ -123,9 +123,15 @@ namespace AutoDuty.Managers
 
             if (CrucibleUi.TryReady(CrucibleUi.ResultWindow, out AtkUnitBase* result))
             {
+                if (ConfigurationMain.Instance.GetCurrentConfig.DutyConfig.AutoExitDuty || Plugin.currentLoop < ConfigurationMain.Instance.GetCurrentConfig.Meta.LoopTimes)
+                {
                 this.Status = "Finishing the board";
                 Screens.Result.Continue(result);
                 this.next = now + Retry;
+                } else
+                {
+                    Plugin.Stage = Stage.Stopped;
+                }
             }
         }
 
