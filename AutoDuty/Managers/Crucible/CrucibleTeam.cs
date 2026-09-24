@@ -55,15 +55,25 @@ namespace AutoDuty.Managers
 
     internal static unsafe class CrucibleTeam
     {
-        public static int TeamSize(uint? id = null) => (id ?? Plugin.CurrentTerritoryContent?.TerritoryType) switch
+        public static int TeamSize(uint? id = null, CrucibleLevelingMode? levelingMode = null)
         {
-            1339u => 10,
-            1340u => 12,
-            1341u => 14,
-            1342u => 12,
-            1343u => 15,
-            _ => 10
-        };
+            int size = (id ?? Plugin.CurrentTerritoryContent?.TerritoryType) switch
+            {
+                1339u => 10,
+                1340u => 12,
+                1341u => 14,
+                1342u => 12,
+                1343u => 15,
+                _ => 10
+            };
+
+            return (levelingMode ?? ConfigurationMain.Instance.GetCurrentConfig.Meta.Crucible.LevelingMode) switch
+            {
+                CrucibleLevelingMode.Minus_3 => size - 3,
+                CrucibleLevelingMode.Only_3 => 3,
+                CrucibleLevelingMode.Full => size
+            };
+        }
 
 
         public const int FightSize = 3;
