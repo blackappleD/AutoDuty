@@ -309,7 +309,7 @@ namespace AutoDuty.IPC
         {
             if (_curLease == null)
             {
-                _curLease = WrathIPCWrapper.RegisterForLeaseWithCallback("AutoDuty", "AutoDuty", null);
+                _curLease = WrathIPCWrapper.RegisterForLeaseWithCallback(Svc.PluginInterface.InternalName, "AutoDuty", null);
 
                 if (_curLease == null && IsEnabled)
                 {
