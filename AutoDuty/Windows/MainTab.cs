@@ -918,6 +918,14 @@ namespace AutoDuty.Windows
                 if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
                     ImGui.SetTooltip(Loc.Get("MainTab.Crucible.ClearRanksHelp"));
 
+                if (crucible is { TeamMode: CrucibleTeamMode.Custom, CustomTeam.Count: > 0 })
+                {
+                    ImGui.SameLine();
+                    using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl))
+                        if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearCustoms")))
+                            crucible.CustomTeam.Clear();
+                }
+
                 if (owned.Count == 0)
                     ImGuiEx.TextWrapped(Loc.Get("MainTab.Crucible.NoFamiliars"));
                 else

@@ -68,6 +68,7 @@
       "CustomFull": "Team is full ({0} max)\nUntick one to pick another",
       "ClearRanks": "Clear saved ranks",
       "ClearRanksHelp": "Forget saved ranks\nHold Ctrl and click",
+      "ClearCustoms": "Clear custom familiars",
       "NoFamiliars": "No familiars known yet. Open the team or bestiary at Lauda so AutoDuty can read them.",
       "Menus": "Board Menus",
       "TableLegend": "Shaded: the team this mode takes · Hover a name for stats",
