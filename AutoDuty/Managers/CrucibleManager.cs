@@ -139,24 +139,34 @@ namespace AutoDuty.Managers
 
         private unsafe bool OpenBoard(uint board)
         {
+            void DebugLog(string message) => 
+                Svc.Log.Debug($"Crucible Open Board: {message}");
+
             if (CrucibleUi.IsOpen(CrucibleUi.TeamWindow))
+            {
+                DebugLog("Done");
                 return true;
+            }
 
             if (!EzThrottler.Throttle("CrucibleOpenBoard", 300))
                 return false;
 
             if (CrucibleUi.TryReady(CrucibleUi.BoardList, out AtkUnitBase* list))
             {
+                DebugLog("Board List available");
+
                 if (this.boardStep == 0)
                 {
+                    DebugLog("Board List Highlight");
                     Screens.StageList.Highlight(list, board);
                     this.boardStep = 1;
                 }
                 else
                 {
+                    DebugLog("Board List Select");
                     Screens.StageList.Open(list, board);
                     this.boardStep = 0;
-                    EzThrottler.Throttle("CrucibleOpenBoard", 1000, true);
+                    EzThrottler.Throttle("CrucibleOpenBoard", 250, true);
                 }
 
                 return false;
@@ -164,6 +174,8 @@ namespace AutoDuty.Managers
 
             if (CrucibleUi.TryReady("SelectIconString", out AtkUnitBase* iconMenu))
             {
+                DebugLog("Pre board Select");
+
                 AddonSelectIconString * select = (AddonSelectIconString*) iconMenu;
                 ref PopupMenu           iconPopMenu = ref select->PopupMenu.PopupMenu;
                 if (iconPopMenu.EntryNames == null)
@@ -175,22 +187,25 @@ namespace AutoDuty.Managers
                         continue;
 
                     string entry = MemoryHelper.ReadSeStringNullTerminated((nint)iconPopMenu.EntryNames[i].Value).TextValue;
-                    
-                    if(entry.Contains(QuestAlternativeText, StringComparison.OrdinalIgnoreCase))
+
+                    DebugLog($"Pre board Select. Entry: {entry} | {QuestAlternativeText} | {entry.Contains(QuestAlternativeText, StringComparison.OrdinalIgnoreCase)}");
+
+                    if (entry.Contains(QuestAlternativeText, StringComparison.OrdinalIgnoreCase))
                     {
                         AddonHelper.FireCallBack(iconMenu, true, i);
                         break;
                     }
                 }
 
-                EzThrottler.Throttle("CrucibleOpenBoard", 600, true);
+                EzThrottler.Throttle("CrucibleOpenBoard", 250, true);
                 return false;
             }
 
             if (CrucibleUi.TryReady("SelectString", out AtkUnitBase* menu))
             {
+                DebugLog("Main Select");
                 ChooseChallenge(menu);
-                EzThrottler.Throttle("CrucibleOpenBoard", 600, true);
+                EzThrottler.Throttle("CrucibleOpenBoard", 250, true);
                 return false;
             }
 
@@ -207,7 +222,7 @@ namespace AutoDuty.Managers
                 return false;
 
             ObjectHelper.InteractWithObject(lauda, false);
-            EzThrottler.Throttle("CrucibleOpenBoard", 2000, true);
+            EzThrottler.Throttle("CrucibleOpenBoard", 200, true);
             return false;
         }
 
