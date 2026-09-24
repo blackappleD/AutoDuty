@@ -105,6 +105,9 @@ namespace AutoDuty.Helpers
             if (!EzThrottler.Throttle("Turnin", 250))
                 return;
 
+            if (!PlayerHelper.IsValid)
+                return;
+
             if (GotoHelper.State == ActionState.Running)
                 //DebugLog("Goto Running");
                 return;
