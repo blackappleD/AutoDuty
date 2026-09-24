@@ -84,6 +84,16 @@
         "Leveling": "Takes your lowest rank familiars, least EXP first\nThe same order picks who fights each battle",
         "Custom": "Takes the familiars you tick below\nUp to 10"
       },
+      "LevelingModes": {
+        "Full": "Full team",
+        "Minus_3": "-3 Cap",
+        "Only_3": "Only 3"
+      },
+      "LevelingModesHelp": {
+        "Full": "Uses the entire team size",
+        "Minus_3": "Uses 3 less than the maximum amount",
+        "Only_3": "Only uses 3 familiars at a time"
+      },
       "Toggles": {
         "FightPicks": "Fight picks",
         "Loot": "Loot & results",

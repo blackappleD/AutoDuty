@@ -84,8 +84,9 @@ public class ConfigurationProfileV2
         [JsonObject(MemberSerialization.OptOut)]
         public class CrucibleConfig
         {
-            public CrucibleTeamMode TeamMode   { get; set; } = CrucibleTeamMode.Recommended;
-            public List<uint>       CustomTeam { get; set; } = [];
+            public CrucibleTeamMode     TeamMode     { get; set; } = CrucibleTeamMode.Recommended;
+            public CrucibleLevelingMode LevelingMode { get; set; } = CrucibleLevelingMode.Minus_3;
+            public List<uint>           CustomTeam   { get; set; } = [];
 
             public bool FightPicks { get; set; } = true;
             public bool Loot       { get; set; } = true;
