@@ -307,7 +307,8 @@
         "Player": "玩家",
         "Object": "物件",
         "Location": "座標"
-      }
+      },
+      "Jobs": {}
     },
     "Dev": {
       "Header": "開發者設定",

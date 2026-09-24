@@ -905,11 +905,26 @@ namespace AutoDuty.Windows
                     ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.ModesHelp.{mode}"));
             }
 
+            if(crucible.TeamMode == CrucibleTeamMode.Leveling)
+                foreach (CrucibleLevelingMode mode in Enum.GetValues<CrucibleLevelingMode>())
+                {
+                    if (mode != CrucibleLevelingMode.Full)
+                        ImGui.SameLine();
+
+                    if (ImGui.RadioButton(Loc.Get($"MainTab.Crucible.LevelingModes.{mode}"), crucible.LevelingMode == mode) && crucible.LevelingMode != mode)
+                    {
+                        crucible.LevelingMode = mode;
+                        ConfigurationProfileV2.Save();
+                    }
+                    if (ImGui.IsItemHovered())
+                        ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.LevelingModesHelp.{mode}"));
+                }
+
             List<uint>                                  team   = CrucibleTeam.For(crucible.TeamMode);
             IReadOnlyDictionary<uint, CrucibleFamiliar> cached = CrucibleTeam.Familiars;
             List<uint>                                  owned  = CrucibleTeam.Owned().ToList();
 
-            if (ImGui.CollapsingHeader($"{Loc.Get("MainTab.Crucible.Familiars", team.Count, CrucibleTeam.TeamSize)}###CrucibleFamiliars"))
+            if (ImGui.CollapsingHeader($"{Loc.Get("MainTab.Crucible.Familiars", team.Count, CrucibleTeam.TeamSize())}###CrucibleFamiliars"))
             {
                 using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl || cached.Count == 0))
                     if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearRanks")))
@@ -917,6 +932,17 @@ namespace AutoDuty.Windows
 
                 if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
                     ImGui.SetTooltip(Loc.Get("MainTab.Crucible.ClearRanksHelp"));
+
+                if (crucible is { TeamMode: CrucibleTeamMode.Custom, CustomTeam.Count: > 0 })
+                {
+                    ImGui.SameLine();
+                    using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl))
+                        if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearCustoms")))
+                        {
+                            crucible.CustomTeam.Clear();
+                            ConfigurationProfileV2.Save();
+                        }
+                }
 
                 if (owned.Count == 0)
                     ImGuiEx.TextWrapped(Loc.Get("MainTab.Crucible.NoFamiliars"));
@@ -972,12 +998,12 @@ namespace AutoDuty.Windows
                     ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg1, ImGui.ColorConvertFloat4ToU32(CruciblePickedRow));
 
                 ImGui.TableNextColumn();
-                bool full = !picked && team.Count >= CrucibleTeam.TeamSize;
+                bool full = !picked && team.Count >= CrucibleTeam.TeamSize();
                 using (ImRaii.Disabled(!custom || full))
                     if (ImGui.Checkbox($"##CruciblePick{number}", ref picked))
                         CrucibleTeam.SetCustomPick(number, picked);
                 if (custom && full && ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-                    ImGui.SetTooltip(Loc.Get("MainTab.Crucible.CustomFull", CrucibleTeam.TeamSize));
+                    ImGui.SetTooltip(Loc.Get("MainTab.Crucible.CustomFull", CrucibleTeam.TeamSize()));
 
                 ImGui.TableNextColumn();
                 ImGui.AlignTextToFramePadding();

@@ -11,6 +11,7 @@ namespace AutoDuty.Managers
     using System.Linq;
     using System.Text.RegularExpressions;
     using ECommons;
+    using ECommons.UIHelpers;
     using ECommons.UIHelpers.AtkReaderImplementations;
     using Helpers;
 
@@ -35,13 +36,7 @@ namespace AutoDuty.Managers
         private static readonly Regex Number        = new("[0-9]+");
         private static readonly Regex GroupedNumber = new("[0-9][0-9,]*");
         private static readonly Regex LeadingGlyphs = new("^[^\\p{L}]+");
-
-        public readonly record struct TeamRow(string Name, int Rank, int Hp, int Strength, int PhysicalResistance, int Constitution, int Intelligence, int MagicResistance, int CurrentHp);
-
-        public readonly record struct Choice(uint NodeId, uint Param, string Text);
-
-        public readonly record struct ShopEntry(int Index, uint Row, int Price, bool Bought);
-
+        
         public static AtkUnitBase* Ready(string name)
         {
             AtkUnitBase* addon = (AtkUnitBase*)Svc.GameGui.GetAddonByName(name).Address;
@@ -123,32 +118,6 @@ namespace AutoDuty.Managers
             return null;
         }
 
-        public static List<Choice> Choices(AtkUnitBase* addon, uint minParam)
-        {
-            List<Choice> choices = [];
-            for (int i = 0; i < addon->UldManager.NodeListCount; i++)
-            {
-                AtkResNode* node = addon->UldManager.NodeList[i];
-                if (node == null || !node->IsVisible())
-                    continue;
-
-                AtkComponentNode* component = node->GetAsAtkComponentNode();
-                if (component == null || component->Component == null)
-                    continue;
-
-                AtkEvent* evt = node->AtkEventManager.Event;
-                while (evt != null && evt->State.EventType != AtkEventType.ButtonClick)
-                    evt = evt->NextEvent;
-
-                if (evt == null || evt->Param < minParam)
-                    continue;
-
-                choices.Add(new Choice(node->NodeId, evt->Param, AllText(&component->Component->UldManager)));
-            }
-
-            return choices;
-        }
-
         public static int ContextMenuOptionCount(AtkUnitBase* menu)
         {
             int count = 0;
@@ -199,83 +168,17 @@ namespace AutoDuty.Managers
             return items;
         }
 
-        private static class ShopValues
-        {
-            public const int Coins      = 1; 
-            public const int StockCount = 2;
-
-            public const int StockStart   = 3;
-            public const int StockListed  = 0; 
-            public const int StockItem    = 1; 
-            public const int StockPrice   = 2; 
-            public const int StockBought  = 4; 
-
-            public const int HeldStart = 154;
-            public const int HeldItem  = 3;    
-
-            public const int GearStart = 205;
-            public const int GearOwned = 0;    
-            public const int GearItem  = 3;   
-
-            public const int Stride = 5;
-            public const int Slots  = 10;
-        }
-
         public static int ShopCoins(AtkUnitBase* shop) =>
-            shop->AtkValuesCount > ShopValues.Coins ? FirstNumber(shop->AtkValues[ShopValues.Coins].GetValueAsString()) : 0;
+            (int)new ReaderXBMContentsItemShop(shop).Coins;
 
-        public static List<ShopEntry> ShopStock(AtkUnitBase* shop)
-        {
-            List<ShopEntry> stock = [];
-            if (shop->AtkValuesCount <= ShopValues.StockCount)
-                return stock;
+        public static List<ReaderXBMContentsItemShop.StockEntry> ShopStock(AtkUnitBase* shop) => 
+            new ReaderXBMContentsItemShop(shop).StockEntries;
 
-            int count = (int)AsUInt(shop->AtkValues[ShopValues.StockCount]);
-            for (int i = 0; i < count; i++)
-            {
-                int at = ShopValues.StockStart + i * ShopValues.Stride;
-                if (at + ShopValues.StockBought >= shop->AtkValuesCount)
-                    break;
+        public static HashSet<uint> ShopHeldItems(AtkUnitBase* shop) => 
+            new ReaderXBMContentsItemShop(shop).ItemEntriesValid.Select(ie => ie.Id).ToHashSet();
 
-                uint row = AsUInt(shop->AtkValues[at + ShopValues.StockItem]);
-                if (shop->AtkValues[at + ShopValues.StockListed].Byte == 0 || row == 0)
-                    continue;
-
-                stock.Add(new ShopEntry(i, row,
-                                        FirstNumber(shop->AtkValues[at + ShopValues.StockPrice].GetValueAsString()),
-                                        shop->AtkValues[at + ShopValues.StockBought].Byte != 0));
-            }
-
-            return stock;
-        }
-
-        public static int ShopHeldItems(AtkUnitBase* shop)
-        {
-            int held = 0;
-            for (int k = 0; k < ShopValues.Slots; k++)
-            {
-                int at = ShopValues.HeldStart + k * ShopValues.Stride + ShopValues.HeldItem;
-                if (at < shop->AtkValuesCount && AsUInt(shop->AtkValues[at]) != 0)
-                    held++;
-            }
-
-            return held;
-        }
-
-        public static HashSet<uint> ShopOwnedGear(AtkUnitBase* shop)
-        {
-            HashSet<uint> owned = [];
-            for (int k = 0; k < ShopValues.Slots; k++)
-            {
-                int at = ShopValues.GearStart + k * ShopValues.Stride;
-                if (at + ShopValues.GearItem >= shop->AtkValuesCount || shop->AtkValues[at + ShopValues.GearOwned].Byte == 0)
-                    continue;
-
-                owned.Add(AsUInt(shop->AtkValues[at + ShopValues.GearItem]));
-            }
-
-            return owned;
-        }
+        public static HashSet<uint> ShopOwnedGear(AtkUnitBase* shop) => 
+            new ReaderXBMContentsItemShop(shop).OwnedEntriesOwned.Select(ge => ge.Id).ToHashSet();
 
         public static IEnumerable<uint> BestiaryShowing(AtkUnitBase* notebook)
         {
@@ -322,41 +225,18 @@ namespace AutoDuty.Managers
                    };
         }
 
-        public static List<TeamRow>? Team()
+        public static List<ReaderXBMPetParty.MonsterEntry>? Team(ReaderXBMPetParty? party = null)
         {
-            AtkUnitBase* addon = Ready(TeamWindow);
-            if (addon == null)
-                return null;
-
-            AtkComponentList* list = (AtkComponentList*)addon->GetComponentByNodeId(TeamList);
-            if (list == null)
-                return null;
-
-            List<TeamRow> rows = new(list->ListLength);
-            for (int i = 0; i < list->ListLength; i++)
+            if (party == null)
             {
-                AtkComponentListItemRenderer* renderer = list->GetItemRenderer(i);
-                if (renderer == null)
+                AtkUnitBase* addon = Ready(TeamWindow);
+                if (addon == null)
                     return null;
 
-                AtkUldManager* uld  = &((AtkComponentBase*)renderer)->UldManager;
-                string         name = Text(uld, 17, visibleOnly: true);
-
-                if (name.Length == 0)
-                    break;
-
-                rows.Add(new TeamRow(name,
-                                     Digits(Text(uld, 9)),
-                                     MaxOf(Text(uld, 19)),
-                                     Digits(ComponentText(uld, 25, 3)),
-                                     Digits(ComponentText(uld, 26, 3)),
-                                     Digits(ComponentText(uld, 27, 3)),
-                                     Digits(ComponentText(uld, 28, 3)),
-                                     Digits(ComponentText(uld, 29, 3)),
-                                     CurrentOf(Text(uld, 19))));
+                party = new ReaderXBMPetParty(addon);
             }
 
-            return rows;
+            return party.TeamEntries;
         }
 
         public static CrucibleFamiliar? FamiliarDetail(string window)
@@ -475,6 +355,7 @@ namespace AutoDuty.Managers
             {
                 private const uint RestOrReturnButton = 21;
 
+                public static int  GetTeamSize(AtkUnitBase*  party)          => (int) new ReaderXBMPetParty(party).TeamSize;
                 public static void Pick(AtkUnitBase*         party, int row) => AddonHelper.FireCallBack(party, true, 1, row);
                 public static void OpenRowMenu(AtkUnitBase*  party, int row) => AddonHelper.FireCallBack(party, true, 2, row);
                 public static void OpenBestiary(AtkUnitBase* party) => AddonHelper.FireCallBack(party, true, 5);
@@ -522,9 +403,8 @@ namespace AutoDuty.Managers
 
             internal static class Treasure
             {
-                public const uint FirstItemParam = 2;
-
-                public static bool Take(AtkUnitBase* treasure, uint nodeId) => ClickButton(treasure, nodeId);
+                public static void Close(AtkUnitBase* treasure) => AddonHelper.FireCallBack(treasure, true, 0);
+                public static void Take(AtkUnitBase* treasure, uint nodeId) => AddonHelper.FireCallBack(treasure, true, 2, nodeId);
             }
 
             internal static class Result

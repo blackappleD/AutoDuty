@@ -19,15 +19,15 @@
       "Tag": "None",
       "Name": "MoveTo",
       "Position": {
-        "X": -700.0,
+        "X": -700.0002,
         "Y": 0.0,
-        "Z": -8.000015
+        "Z": -8.000067
       },
       "Arguments": [
         ""
       ],
       "Conditions": [],
-      "Note": "",
+      "Note": "1",
       "Flags": "None"
     },
     {
@@ -64,7 +64,7 @@
           "originLoc": {
             "X": -700.0,
             "Y": 0.0,
-            "Z": -7.0
+            "Z": -8.0
           },
           "target": "Player",
           "targetId": 0,
@@ -85,14 +85,14 @@
       "Name": "Boss",
       "Position": {
         "X": 120.0,
-        "Y": -4.1618966E-09,
-        "Z": 2.0
+        "Y": 9.5363004E-07,
+        "Z": -420.0
       },
       "Arguments": [
         ""
       ],
       "Conditions": [],
-      "Note": "Fight 1",
+      "Note": "",
       "Flags": "None"
     },
     {
@@ -149,30 +149,15 @@
       "Tag": "None",
       "Name": "MoveTo",
       "Position": {
-        "X": -700.00085,
+        "X": -695.0,
         "Y": 0.0,
-        "Z": -17.0
+        "Z": -16.0
       },
       "Arguments": [
         ""
       ],
       "Conditions": [],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "Wait",
-      "Position": {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0
-      },
-      "Arguments": [
-        "500"
-      ],
-      "Conditions": [],
-      "Note": "",
+      "Note": "2",
       "Flags": "None"
     },
     {
@@ -184,7 +169,7 @@
         "Z": 0.0
       },
       "Arguments": [
-        "-1"
+        "+2"
       ],
       "Conditions": [
         {
@@ -192,12 +177,12 @@
           "origin": "Location",
           "originId": 0,
           "originLoc": {
-            "X": -700.0,
+            "X": -695.0,
             "Y": 0.0,
-            "Z": -17.0
+            "Z": -16.5
           },
-          "target": "Player",
-          "targetId": 0,
+          "target": "Object",
+          "targetId": 2015483,
           "targetLoc": {
             "X": 0.0,
             "Y": 0.0,
@@ -212,36 +197,6 @@
     },
     {
       "Tag": "None",
-      "Name": "Boss",
-      "Position": {
-        "X": 113.0,
-        "Y": -4.1618966E-09,
-        "Z": -2.0
-      },
-      "Arguments": [
-        ""
-      ],
-      "Conditions": [],
-      "Note": "Fight 2",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "Wait",
-      "Position": {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0
-      },
-      "Arguments": [
-        "500"
-      ],
-      "Conditions": [],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
       "Name": "ModifyIndex",
       "Position": {
         "X": 0.0,
@@ -257,9 +212,9 @@
           "origin": "Location",
           "originId": 0,
           "originLoc": {
-            "X": -700.0,
+            "X": -695.0,
             "Y": 0.0,
-            "Z": -17.0
+            "Z": -16.0
           },
           "target": "Player",
           "targetId": 0,
@@ -268,8 +223,8 @@
             "Y": 0.0,
             "Z": 0.0
           },
-          "operatorValue": ">",
-          "distance": 1.0
+          "operatorValue": "<",
+          "distance": 100.0
         }
       ],
       "Note": "",
@@ -279,15 +234,15 @@
       "Tag": "None",
       "Name": "Wait",
       "Position": {
-        "X": -700.0,
+        "X": 0.0,
         "Y": 0.0,
-        "Z": -26.0
+        "Z": 0.0
       },
       "Arguments": [
         "5000"
       ],
       "Conditions": [],
-      "Note": "Shop 3",
+      "Note": "",
       "Flags": "None"
     },
     {
@@ -307,36 +262,6 @@
     },
     {
       "Tag": "None",
-      "Name": "MoveTo",
-      "Position": {
-        "X": -695.0,
-        "Y": 0.0,
-        "Z": -34.0
-      },
-      "Arguments": [
-        ""
-      ],
-      "Conditions": [],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "Wait",
-      "Position": {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0
-      },
-      "Arguments": [
-        "500"
-      ],
-      "Conditions": [],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
       "Name": "ModifyIndex",
       "Position": {
         "X": 0.0,
@@ -344,7 +269,7 @@
         "Z": 0.0
       },
       "Arguments": [
-        "-1"
+        "+2"
       ],
       "Conditions": [
         {
@@ -354,7 +279,7 @@
           "originLoc": {
             "X": -700.0,
             "Y": 0.0,
-            "Z": -34.0
+            "Z": -16.0
           },
           "target": "Player",
           "targetId": 0,
@@ -375,14 +300,14 @@
       "Name": "Boss",
       "Position": {
         "X": 120.0,
-        "Y": 9.5363004E-07,
-        "Z": -430.0
+        "Y": 0.0,
+        "Z": -420.0
       },
       "Arguments": [
         ""
       ],
       "Conditions": [],
-      "Note": "Fight 4",
+      "Note": "",
       "Flags": "None"
     },
     {
@@ -419,7 +344,7 @@
           "originLoc": {
             "X": -700.0,
             "Y": 0.0,
-            "Z": -34.0
+            "Z": -16.0
           },
           "target": "Player",
           "targetId": 0,
@@ -439,15 +364,15 @@
       "Tag": "None",
       "Name": "Wait",
       "Position": {
-        "X": -695.0,
+        "X": -700.0,
         "Y": 0.0,
-        "Z": -44.0
+        "Z": -23.0
       },
       "Arguments": [
         "5000"
       ],
       "Conditions": [],
-      "Note": "Rest Site 5",
+      "Note": "3",
       "Flags": "None"
     },
     {
@@ -462,136 +387,6 @@
         "IsReady"
       ],
       "Conditions": [],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "MoveTo",
-      "Position": {
-        "X": -700.0,
-        "Y": 0.0,
-        "Z": -50.0
-      },
-      "Arguments": [
-        ""
-      ],
-      "Conditions": [],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "Wait",
-      "Position": {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0
-      },
-      "Arguments": [
-        "500"
-      ],
-      "Conditions": [],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "ModifyIndex",
-      "Position": {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0
-      },
-      "Arguments": [
-        "-1"
-      ],
-      "Conditions": [
-        {
-          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
-          "origin": "Location",
-          "originId": 0,
-          "originLoc": {
-            "X": -700.0,
-            "Y": 0.0,
-            "Z": -50.0
-          },
-          "target": "Player",
-          "targetId": 0,
-          "targetLoc": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          },
-          "operatorValue": "<",
-          "distance": 1.0
-        }
-      ],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "Boss",
-      "Position": {
-        "X": 120.0,
-        "Y": -4.1618966E-09,
-        "Z": -1.0
-      },
-      "Arguments": [
-        ""
-      ],
-      "Conditions": [],
-      "Note": "Fight 6",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "Wait",
-      "Position": {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0
-      },
-      "Arguments": [
-        "500"
-      ],
-      "Conditions": [],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "ModifyIndex",
-      "Position": {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0
-      },
-      "Arguments": [
-        "-1"
-      ],
-      "Conditions": [
-        {
-          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
-          "origin": "Location",
-          "originId": 0,
-          "originLoc": {
-            "X": -700.0,
-            "Y": 0.0,
-            "Z": -50.0
-          },
-          "target": "Player",
-          "targetId": 0,
-          "targetLoc": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          },
-          "operatorValue": ">",
-          "distance": 1.0
-        }
-      ],
       "Note": "",
       "Flags": "None"
     },
@@ -601,13 +396,13 @@
       "Position": {
         "X": -705.0,
         "Y": 0.0,
-        "Z": -58.0
+        "Z": -31.0
       },
       "Arguments": [
         "5000"
       ],
       "Conditions": [],
-      "Note": "Treasure 7",
+      "Note": "4",
       "Flags": "None"
     },
     {
@@ -631,13 +426,13 @@
       "Position": {
         "X": -700.0,
         "Y": 0.0,
-        "Z": -65.0
+        "Z": -38.0
       },
       "Arguments": [
         ""
       ],
       "Conditions": [],
-      "Note": "",
+      "Note": "5",
       "Flags": "None"
     },
     {
@@ -674,7 +469,7 @@
           "originLoc": {
             "X": -700.0,
             "Y": 0.0,
-            "Z": -65.0
+            "Z": -38.0
           },
           "target": "Player",
           "targetId": 0,
@@ -695,14 +490,14 @@
       "Name": "Boss",
       "Position": {
         "X": 120.0,
-        "Y": 9.5363004E-07,
-        "Z": -425.0
+        "Y": -4.1618966E-09,
+        "Z": 0.0
       },
       "Arguments": [
         ""
       ],
       "Conditions": [],
-      "Note": "Fight 8",
+      "Note": "",
       "Flags": "None"
     },
     {
@@ -739,7 +534,7 @@
           "originLoc": {
             "X": -700.0,
             "Y": 0.0,
-            "Z": -65.0
+            "Z": -38.0
           },
           "target": "Player",
           "targetId": 0,
@@ -749,7 +544,7 @@
             "Z": 0.0
           },
           "operatorValue": ">",
-          "distance": 1.0
+          "distance": 10.0
         }
       ],
       "Note": "",
@@ -759,15 +554,15 @@
       "Tag": "None",
       "Name": "Wait",
       "Position": {
-        "X": -700.0,
+        "X": -695.0,
         "Y": 0.0,
-        "Z": -74.0
+        "Z": -46.0
       },
       "Arguments": [
         "5000"
       ],
       "Conditions": [],
-      "Note": "Treasure 9",
+      "Note": "6",
       "Flags": "None"
     },
     {
@@ -782,6 +577,136 @@
         "IsReady"
       ],
       "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "MoveTo",
+      "Position": {
+        "X": -695.0,
+        "Y": 0.0,
+        "Z": -55.0
+      },
+      "Arguments": [
+        ""
+      ],
+      "Conditions": [],
+      "Note": "7",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
+          "origin": "Location",
+          "originId": 0,
+          "originLoc": {
+            "X": -700.0,
+            "Y": 0.0,
+            "Z": -55.0
+          },
+          "target": "Player",
+          "targetId": 0,
+          "targetLoc": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          },
+          "operatorValue": "<",
+          "distance": 10.0
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Boss",
+      "Position": {
+        "X": 120.0,
+        "Y": 9.5363004E-07,
+        "Z": -420.0
+      },
+      "Arguments": [
+        ""
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
+          "origin": "Location",
+          "originId": 0,
+          "originLoc": {
+            "X": -700.0,
+            "Y": 0.0,
+            "Z": -55.0
+          },
+          "target": "Player",
+          "targetId": 0,
+          "targetLoc": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          },
+          "operatorValue": ">",
+          "distance": 10.0
+        }
+      ],
       "Note": "",
       "Flags": "None"
     },
@@ -791,43 +716,13 @@
       "Position": {
         "X": -695.0,
         "Y": 0.0,
-        "Z": -82.0
+        "Z": -64.0
       },
       "Arguments": [
         "5000"
       ],
       "Conditions": [],
-      "Note": "Rest Site 10",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "WaitFor",
-      "Position": {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0
-      },
-      "Arguments": [
-        "IsReady"
-      ],
-      "Conditions": [],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "Wait",
-      "Position": {
-        "X": -700.0,
-        "Y": 0.0,
-        "Z": -89.0
-      },
-      "Arguments": [
-        "5000"
-      ],
-      "Conditions": [],
-      "Note": "Shop 11",
+      "Note": "8",
       "Flags": "None"
     },
     {
@@ -851,13 +746,13 @@
       "Position": {
         "X": -700.0,
         "Y": 0.0,
-        "Z": -98.0
+        "Z": -71.0
       },
       "Arguments": [
         ""
       ],
       "Conditions": [],
-      "Note": "",
+      "Note": "9",
       "Flags": "None"
     },
     {
@@ -894,7 +789,7 @@
           "originLoc": {
             "X": -700.0,
             "Y": 0.0,
-            "Z": -98.0
+            "Z": -71.0
           },
           "target": "Player",
           "targetId": 0,
@@ -914,15 +809,15 @@
       "Tag": "None",
       "Name": "Boss",
       "Position": {
-        "X": 520.0,
-        "Y": 4.3600002E-11,
+        "X": 920.0,
+        "Y": 0.0,
         "Z": -420.0
       },
       "Arguments": [
         ""
       ],
       "Conditions": [],
-      "Note": "Boss 12",
+      "Note": "",
       "Flags": "None"
     },
     {
@@ -942,7 +837,7 @@
           "origin": "Location",
           "originId": 0,
           "originLoc": {
-            "X": 520.0,
+            "X": 920.0,
             "Y": 0.0,
             "Z": -420.0
           },
@@ -1007,13 +902,8 @@
     }
   ],
   "Meta": {
-    "CreatedAt": 344,
-    "Changelog": [
-      {
-        "Version": 352,
-        "Change": "Changed Fight from Zu to right path"
-      }
-    ],
+    "CreatedAt": 348,
+    "Changelog": [],
     "Notes": []
   }
 }

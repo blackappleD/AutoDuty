@@ -5,9 +5,13 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace AutoDuty.Managers
 {
+    using ECommons.UIHelpers.AtkReaderImplementations;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using ECommons;
+    using ECommons.UIHelpers.AddonMasterImplementations;
+    using Helpers;
     using Screens = CrucibleUi.Screens;
 
     internal sealed unsafe class CrucibleMenus
@@ -16,6 +20,7 @@ namespace AutoDuty.Managers
         private const int   RestPicks  = 2;
         private const float RestBelow  = 0.6f;
         private const int   ItemCap    = 10;
+        private const int   GearCap    = 10;
         private const float FightLow   = 0.4f;
         private const float BoardLow   = 0.6f;
 
@@ -38,13 +43,13 @@ namespace AutoDuty.Managers
         private List<int>? restPicks;
         private int        restStep;
 
-        private readonly HashSet<int> shopTried = [];
-        private DateTime   shopNext;
-        private DateTime   feedFrom = DateTime.MinValue;
-        private List<int>? feedOrder;
-        private int        feedTry;
-        private bool       fedThisVisit;
-        private bool       closedThisVisit;
+        private readonly HashSet<uint>                         shopTried = [];
+        private          DateTime                              shopNext;
+        private          DateTime                              feedFrom = DateTime.MinValue;
+        private          List<ReaderXBMPetParty.MonsterEntry>? feedOrder;
+        private          int                                   feedTry;
+        private          bool                                  fedThisVisit;
+        private          bool                                  closedThisVisit;
 
         private DateTime itemNext;
         private DateTime itemLastUse = DateTime.MinValue;
@@ -95,7 +100,7 @@ namespace AutoDuty.Managers
 
             this.restPicks = null;
 
-            if (Config.Treasure && CrucibleUi.TryReady(CrucibleUi.TreasureWindow, out AtkUnitBase* treasure))
+            if (CrucibleUi.TryReady(CrucibleUi.TreasureWindow, out AtkUnitBase* treasure))
             {
                 this.PickTreasure(treasure, now);
                 return;
@@ -118,9 +123,15 @@ namespace AutoDuty.Managers
 
             if (CrucibleUi.TryReady(CrucibleUi.ResultWindow, out AtkUnitBase* result))
             {
+                if (ConfigurationMain.Instance.GetCurrentConfig.DutyConfig.AutoExitDuty || Plugin.currentLoop < ConfigurationMain.Instance.GetCurrentConfig.Meta.LoopTimes)
+                {
                 this.Status = "Finishing the board";
                 Screens.Result.Continue(result);
                 this.next = now + Retry;
+                } else
+                {
+                    Plugin.Stage = Stage.Stopped;
+                }
             }
         }
 
@@ -140,11 +151,11 @@ namespace AutoDuty.Managers
             if (CrucibleUi.IsOpen(CrucibleUi.YesNo) || now < this.fightNext)
                 return true;
 
-            List<CrucibleUi.TeamRow>? team = CrucibleUi.Team();
+            List<ReaderXBMPetParty.MonsterEntry>? team = CrucibleUi.Team();
             if (team == null || team.Count == 0)
                 return true;
 
-            List<int> alive = CrucibleTeam.FightOrder(team).Take(FightPicks).ToList();
+            List<ReaderXBMPetParty.MonsterEntry> alive = CrucibleTeam.FightOrder(team).Take(FightPicks).ToList();
             if (alive.Count == 0)
             {
                 this.Status = "Every familiar is knocked out";
@@ -156,7 +167,7 @@ namespace AutoDuty.Managers
 
             if (this.fightStep < alive.Count)
             {
-                int row = alive[this.fightStep];
+                int row = alive[this.fightStep].index;
                 Screens.PetParty.Pick(party, row);
                 this.fightStep++;
                 this.fightNext = now + PickInterval;
@@ -174,23 +185,45 @@ namespace AutoDuty.Managers
         {
             this.next = now + Retry;
 
-            List<CrucibleUi.Choice> choices = CrucibleUi.Choices(treasure, Screens.Treasure.FirstItemParam);
-            if (choices.Count == 0)
-                return;
+            ReaderXBMContentsTreasure xbmTreasure = new(treasure);
 
-            var offered = choices.Select(x => (Choice: x, Item: CrucibleItemData.ItemIn(x.Text))).ToList();
-            var best    = offered.OrderBy(x => CrucibleItemData.TreasureRank(x.Item)).ThenBy(x => x.Choice.Param).First();
-
-            Svc.Log.Info($"[Crucible] Treasure: taking {Describe(best)} from {string.Join(" / ", offered.Select(Describe))}");
-
-            if (Screens.Treasure.Take(treasure, best.Choice.NodeId))
+            if (!Config.Treasure)
             {
+                Screens.Treasure.Close(treasure);
                 this.confirmFrom = now;
-                this.Status      = $"Taking {(best.Item != 0 ? CrucibleItemData.NameOf(best.Item) : best.Choice.Text)}";
+                return;
             }
 
-            static string Describe((CrucibleUi.Choice Choice, uint Item) x) =>
-                x.Item != 0 ? $"{CrucibleItemData.NameOf(x.Item)} ({x.Item})" : $"unknown \"{x.Choice.Text}\"";
+            HashSet<uint> items = xbmTreasure.ItemEntriesValid.Select(ie => ie.Id).ToHashSet();
+            HashSet<uint> gear  = xbmTreasure.OwnedEntriesOwned.Select(ie => ie.Id).ToHashSet();
+
+            List<ReaderXBMContentsTreasure.TreasureChoice> treasureChoices = xbmTreasure.TreasureChoices;
+
+            if (treasureChoices.Count == 0)
+                return;
+
+            List<ReaderXBMContentsTreasure.TreasureChoice> choices = treasureChoices.Where(tc => !tc.Bought                                                                                             && 
+                                                                                                            (!CrucibleItemData.ShopGear.Contains(tc.Item)    || (gear.Count < GearCap && !gear.Contains(tc.Item))) &&
+                                                                                                            (!CrucibleItemData.ShopHealing.Contains(tc.Item) || (items.Count < ItemCap && !items.Contains(tc.Item)))).ToList();
+            if (choices.Count == 0)
+            {
+                Screens.Treasure.Close(treasure);
+                this.confirmFrom = now;
+            }
+
+            ReaderXBMContentsTreasure.TreasureChoice best = choices.OrderBy(x => CrucibleItemData.TreasureRank(x.Item)).ThenBy(x => x.treasureIndex).First();
+
+            Svc.Log.Info($"[Crucible] Treasure: taking {Describe(best)} from {string.Join(" / ", choices.Select(Describe))}");
+
+            Screens.Treasure.Take(treasure, (uint)best.treasureIndex);
+
+            this.confirmFrom = now;
+            this.Status      = $"Taking {(best.Item != 0 ? CrucibleItemData.NameOf(best.Item) : best.treasureIndex)}";
+
+            return;
+
+            static string Describe(ReaderXBMContentsTreasure.TreasureChoice choice) =>
+                $"{CrucibleItemData.NameOf(choice.Item)} ({choice.treasureIndex})";
         }
 
         private void Rest(AtkUnitBase* party, DateTime now)
@@ -201,15 +234,14 @@ namespace AutoDuty.Managers
                     return;
 
                 // Picking nobody gives a 90% heal
-                this.restPicks = rows.Select((row, index) => (row, index))
-                                     .Where(x => x.row is { Hp: > 0, CurrentHp: > 0 } && (float)x.row.CurrentHp / x.row.Hp < RestBelow)
-                                     .OrderBy(x => (float)x.row.CurrentHp / x.row.Hp)
+                this.restPicks = rows.Where(x => x is { MaxHP: > 0, HP: > 0 } && (float)x.HP / x.HP < RestBelow)
+                                     .OrderBy(x => (float)x.HP / x.MaxHP)
                                      .Take(RestPicks)
                                      .Select(x => x.index)
                                      .ToList();
                 this.restStep = 0;
 
-                string names = string.Join(", ", this.restPicks.Select(i => $"{rows[i].Name} {rows[i].CurrentHp}/{rows[i].Hp}"));
+                string names = string.Join(", ", this.restPicks.Select(i => $"{rows[i].Name} {rows[i].HP}/{rows[i].MaxHP}"));
                 Svc.Log.Info($"[Crucible] Campsite: resting with {(names.Length > 0 ? names : "no familiars (90% self heal)")}");
             }
 
@@ -243,6 +275,21 @@ namespace AutoDuty.Managers
             if (!Config.Shop)
             {
                 this.ResetShopVisit();
+                AtkUnitBase* shopWindow = CrucibleUi.Ready(CrucibleUi.ShopWindow);
+                if (shopWindow != null)
+                {
+                    if (now - this.confirmFrom <= ConfirmWindow && CrucibleUi.TryReady(CrucibleUi.YesNo, out AtkUnitBase* yesQuit))
+                    {
+                        new AddonMaster.SelectYesno(yesQuit).Yes();
+                        this.confirmFrom = DateTime.MinValue;
+                        this.shopNext    = now + ShopStep;
+                        return;
+                    }
+
+                    if (Screens.ItemShop.Close(shopWindow))
+                        this.confirmFrom = now;
+                }
+
                 return;
             }
 
@@ -279,8 +326,8 @@ namespace AutoDuty.Managers
             if (CrucibleUi.IsOpen(CrucibleUi.YesNo) || CrucibleUi.IsOpen(CrucibleUi.TeamWindow))
                 return;
 
-            int coins = CrucibleUi.ShopCoins(shop);
-            List<CrucibleUi.ShopEntry> affordable = CrucibleUi.ShopStock(shop).Where(x => !x.Bought && x.Price <= coins && !this.shopTried.Contains(x.Index)).ToList();
+            int                                       coins      = CrucibleUi.ShopCoins(shop);
+            List<ReaderXBMContentsItemShop.StockEntry> affordable = CrucibleUi.ShopStock(shop).Where(x => !x.Bought && x.Price <= coins && !this.shopTried.Contains(x.Item)).ToList();
 
             if (this.ChooseBuy(affordable, CrucibleUi.ShopHeldItems(shop), CrucibleUi.ShopOwnedGear(shop)) is not { } buy)
             {
@@ -297,15 +344,15 @@ namespace AutoDuty.Managers
                 return;
             }
 
-            this.Status = $"Buying {CrucibleItemData.NameOf(buy.Row)} for {buy.Price}";
-            Svc.Log.Info($"[Crucible] Shop: buying {CrucibleItemData.NameOf(buy.Row)} for {buy.Price} of {coins} coins");
+            this.Status = $"Buying {CrucibleItemData.NameOf(buy.Item)} for {buy.Price}";
+            Svc.Log.Info($"[Crucible] Shop: buying {CrucibleItemData.NameOf(buy.Item)} for {buy.Price} of {coins} coins");
 
-            this.shopTried.Add(buy.Index);
-            Screens.ItemShop.Buy(shop, buy.Index);
+            this.shopTried.Add(buy.Item);
+            Screens.ItemShop.Buy(shop, buy.purchaseIndex);
             this.confirmFrom = now;
             this.shopNext    = now + ShopStep;
 
-            if (CrucibleItemData.ShopFeed.Contains(buy.Row))
+            if (CrucibleItemData.ShopFeed.Contains(buy.Item))
             {
                 this.fedThisVisit = true;
                 this.feedFrom     = now;
@@ -314,22 +361,22 @@ namespace AutoDuty.Managers
             }
         }
 
-        private CrucibleUi.ShopEntry? ChooseBuy(List<CrucibleUi.ShopEntry> stock, int held, HashSet<uint> ownedGear)
+        private ReaderXBMContentsItemShop.StockEntry? ChooseBuy(List<ReaderXBMContentsItemShop.StockEntry> stock, HashSet<uint> held, HashSet<uint> ownedGear)
         {
-            if (held < ItemCap && FirstInStock(stock, CrucibleItemData.ShopHealing) is { } healing)
+            if (held.Count < ItemCap && FirstInStock(stock, CrucibleItemData.ShopHealing, held) is { } healing)
                 return healing;
 
-            if (FirstInStock(stock.Where(x => !ownedGear.Contains(x.Row)), CrucibleItemData.ShopGear) is { } gear)
+            if (ownedGear.Count < GearCap && FirstInStock(stock.Where(x => !ownedGear.Contains(x.Item)), CrucibleItemData.ShopGear, held) is { } gear)
                 return gear;
 
-            return this.fedThisVisit ? null : FirstInStock(stock, CrucibleItemData.ShopFeed);
+            return this.fedThisVisit ? null : FirstInStock(stock, CrucibleItemData.ShopFeed, held);
         }
 
-        private static CrucibleUi.ShopEntry? FirstInStock(IEnumerable<CrucibleUi.ShopEntry> stock, uint[] priority)
+        private static ReaderXBMContentsItemShop.StockEntry? FirstInStock(IEnumerable<ReaderXBMContentsItemShop.StockEntry> stock, uint[] priority, HashSet<uint> owned)
         {
-            Dictionary<uint, CrucibleUi.ShopEntry> byRow = stock.GroupBy(x => x.Row).ToDictionary(g => g.Key, g => g.First());
+            Dictionary<uint, ReaderXBMContentsItemShop.StockEntry> byRow = stock.GroupBy(x => x.Item).ToDictionary(g => g.Key, g => g.First());
             foreach (uint row in priority)
-                if (byRow.TryGetValue(row, out CrucibleUi.ShopEntry entry))
+                if (!owned.Contains(row) && byRow.TryGetValue(row, out ReaderXBMContentsItemShop.StockEntry? entry))
                     return entry;
             return null;
         }
@@ -340,10 +387,14 @@ namespace AutoDuty.Managers
             if (party == null || CrucibleUi.IsOpen(CrucibleUi.YesNo))
                 return;
 
+            ReaderXBMPetParty petParty = new(party);
+
             if (this.feedOrder == null)
             {
-                if (CrucibleUi.Team() is not { Count: > 0 } team)
+                if (CrucibleUi.Team(petParty) is not { Count: > 0 } team)
                     return;
+
+                team = team.Where(x => !x.Disabled).ToList();
                 this.feedOrder = CrucibleTeam.FightOrder(team);
             }
 
@@ -355,7 +406,7 @@ namespace AutoDuty.Managers
                 return;
             }
 
-            Screens.PetParty.Pick(party, this.feedOrder[this.feedTry]);
+            Screens.PetParty.Pick(party, this.feedOrder[this.feedTry].index);
             this.feedTry++;
             this.confirmFrom = now;
             this.shopNext    = now + FeedRetry;

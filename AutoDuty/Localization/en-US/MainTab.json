@@ -68,6 +68,7 @@
       "CustomFull": "Team is full ({0} max)\nUntick one to pick another",
       "ClearRanks": "Clear saved ranks",
       "ClearRanksHelp": "Forget saved ranks\nHold Ctrl and click",
+      "ClearCustoms": "Clear custom familiars",
       "NoFamiliars": "No familiars known yet. Open the team or bestiary at Lauda so AutoDuty can read them.",
       "Menus": "Board Menus",
       "TableLegend": "Shaded: the team this mode takes · Hover a name for stats",
@@ -82,6 +83,16 @@
         "Recommended": "Takes your highest rank familiars\nTies go to the best stats",
         "Leveling": "Takes your lowest rank familiars, least EXP first\nThe same order picks who fights each battle",
         "Custom": "Takes the familiars you tick below\nUp to 10"
+      },
+      "LevelingModes": {
+        "Full": "Full team",
+        "Minus_3": "-3 Cap",
+        "Only_3": "Only 3"
+      },
+      "LevelingModesHelp": {
+        "Full": "Uses the entire team size",
+        "Minus_3": "Uses 3 less than the maximum amount",
+        "Only_3": "Only uses 3 familiars at a time"
       },
       "Toggles": {
         "FightPicks": "Fight picks",
