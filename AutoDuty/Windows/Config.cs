@@ -485,6 +485,28 @@ public static class ConfigTab
                             }
                         }
                     }
+
+                    if (ImGui.CollapsingHeader("XBMTreasure"))
+                    {
+                        unsafe
+                        {
+                            if (GenericHelpers.TryGetAddonByName("XBMContentsTreasure", out AtkUnitBase* addon))
+                            {
+                                ReaderXBMContentsTreasure x = new(addon);
+                                ImGui.Text("Treasure:");
+                                ImGui.Indent();
+
+                                HashSet<uint> items = x.ItemEntriesValid.Select(ie => ie.Id).ToHashSet();
+                                HashSet<uint> gear  = x.OwnedEntriesOwned.Select(ie => ie.Id).ToHashSet();
+
+                                foreach (ReaderXBMContentsTreasure.TreasureChoice entry in x.TreasureChoices)
+                                    ImGui.Text($"Treasure: {entry.Bought} | {entry.Item} | {entry.treasureIndex} | {entry.Unk0} | gear: {CrucibleItemData.ShopGear.Contains(entry.Item)} | item: {CrucibleItemData.ShopHealing.Contains(entry.Item)} | {!entry.Bought &&
+                                        (!CrucibleItemData.ShopGear.Contains(entry.Item)    || (gear.Count  < 10 && !gear.Contains(entry.Item))) &&
+                                        (!CrucibleItemData.ShopHealing.Contains(entry.Item) || (items.Count < 10 && !items.Contains(entry.Item)))}");
+                                ImGui.Unindent();
+                            }
+                        }
+                    }
                     ImGui.Unindent();
                 }
 

@@ -191,9 +191,14 @@ namespace AutoDuty.Managers
             HashSet<uint> items = xbmTreasure.ItemEntriesValid.Select(ie => ie.Id).ToHashSet();
             HashSet<uint> gear  = xbmTreasure.OwnedEntriesOwned.Select(ie => ie.Id).ToHashSet();
 
-            List<ReaderXBMContentsTreasure.TreasureChoice> choices = xbmTreasure.TreasureChoices.Where(tc => !tc.Bought                                                                                             && 
-                                                                                                             (!CrucibleItemData.ShopGear.Contains(tc.Item)    || (gear.Count < GearCap && !gear.Contains(tc.Item))) &&
-                                                                                                             (!CrucibleItemData.ShopHealing.Contains(tc.Item) || (items.Count < ItemCap && !items.Contains(tc.Item)))).ToList();
+            List<ReaderXBMContentsTreasure.TreasureChoice> treasureChoices = xbmTreasure.TreasureChoices;
+
+            if (treasureChoices.Count == 0)
+                return;
+
+            List<ReaderXBMContentsTreasure.TreasureChoice> choices = treasureChoices.Where(tc => !tc.Bought                                                                                             && 
+                                                                                                            (!CrucibleItemData.ShopGear.Contains(tc.Item)    || (gear.Count < GearCap && !gear.Contains(tc.Item))) &&
+                                                                                                            (!CrucibleItemData.ShopHealing.Contains(tc.Item) || (items.Count < ItemCap && !items.Contains(tc.Item)))).ToList();
             if (choices.Count == 0)
             {
                 Screens.Treasure.Close(treasure);
