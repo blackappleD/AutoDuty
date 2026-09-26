@@ -1005,8 +1005,14 @@ public static class ConfigTab
                 ConfigurationProfileV2.Save();
             }
 
-
             ImGui.Unindent();
+
+            uint waitBeforeLeaving = Configuration.DutyConfig.WaitBeforeLeaving;
+            if (ImGui.InputUInt(Loc.Get("ConfigTab.Duty.WaitBeforeLeaving"), ref waitBeforeLeaving, 1, 100))
+            {
+                Configuration.DutyConfig.WaitBeforeLeaving = waitBeforeLeaving;
+                ConfigurationProfileV2.Save();
+            }
 
             bool pathDrawEnabled = Configuration.DutyConfig.PathDrawEnabled;
             if(ImGui.Checkbox(Loc.Get("ConfigTab.Duty.DrawPath"), ref pathDrawEnabled))

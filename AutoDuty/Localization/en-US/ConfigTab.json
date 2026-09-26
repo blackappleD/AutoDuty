@@ -81,6 +81,8 @@
       "RebuildNavmeshTimes": "times",
       "UseReturnWhenStuck": "Use return when stuck",
       "ReturnTimes": "times",
+      "WaitBeforeLeaving": "Wait x milliseconds before leaving a duty",
+      "WaitBeforeLeavingHelp": "Can in most cases be kept to 0",
       "DrawPath": "Draw next steps in Path",
       "DrawPathSteps": "Drawing X steps",
       "DisableRenderWhileActive": "Disable rendering",
