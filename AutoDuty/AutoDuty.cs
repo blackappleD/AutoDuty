@@ -687,7 +687,9 @@ public sealed class AutoDuty : IDalamudPlugin
                 PrintInfo(() => $"IsReadyToDraw: {gObj->IsReadyToDraw()}");
                 break;
             default:
-                this.commands.OrderBy(cmd => cmd.keywords.Min(key => ImGuiHelper.ComputeLevenshteinDistance(key, check))).First().action(argsArray);
+                (string[] keywords, string __, Action<string[]> action) cmd = this.commands.OrderBy(cmd => cmd.keywords.Min(key => ImGuiHelper.ComputeLevenshteinDistance(key, check))).First();
+                Svc.Log.Debug("Executing " + string.Join(", ", cmd.keywords));
+                cmd.action(argsArray);
                 break;
         }
     }
