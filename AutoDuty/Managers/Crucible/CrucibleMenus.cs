@@ -243,8 +243,8 @@ namespace AutoDuty.Managers
                 this.confirmFrom = now;
                 return;
             }
-
-            HashSet<uint> items = xbmTreasure.ItemEntriesValid.Select(ie => ie.Id).ToHashSet();
+            
+            uint[] items = xbmTreasure.ItemEntriesValid.Select(ie => ie.Id).ToArray();
             HashSet<uint> gear  = xbmTreasure.OwnedEntriesOwned.Select(ie => ie.Id).ToHashSet();
 
             List<ReaderXBMContentsTreasure.TreasureChoice> treasureChoices = xbmTreasure.TreasureChoices;
@@ -267,7 +267,7 @@ namespace AutoDuty.Managers
                     continue;
                 }
 
-                if(items.Count < ItemCap)
+                if(items.Length < ItemCap)
                     choices.Add(choice);
             }
 
@@ -390,7 +390,8 @@ namespace AutoDuty.Managers
             if (CrucibleUi.IsOpen(CrucibleUi.YesNo) || CrucibleUi.IsOpen(CrucibleUi.TeamWindow))
                 return;
 
-            int                                       coins      = CrucibleUi.ShopCoins(shop);
+            int coins = CrucibleUi.ShopCoins(shop);
+
             List<ReaderXBMContentsItemShop.StockEntry> affordable = CrucibleUi.ShopStock(shop).Where(x => !x.Bought && x.Price <= coins && !this.shopTried.Contains(x.Item)).ToList();
 
             if (this.ChooseBuy(affordable, CrucibleUi.ShopHeldItems(shop), CrucibleUi.ShopOwnedGear(shop)) is not { } buy)
@@ -425,9 +426,9 @@ namespace AutoDuty.Managers
             }
         }
 
-        private ReaderXBMContentsItemShop.StockEntry? ChooseBuy(List<ReaderXBMContentsItemShop.StockEntry> stock, HashSet<uint> held, HashSet<uint> ownedGear)
+        private ReaderXBMContentsItemShop.StockEntry? ChooseBuy(List<ReaderXBMContentsItemShop.StockEntry> stock, uint[] held, HashSet<uint> ownedGear)
         {
-            if (held.Count < ItemCap && FirstInStock(stock, CrucibleItemData.ShopHealing, held) is { } healing)
+            if (held.Length < ItemCap && FirstInStock(stock, CrucibleItemData.ShopHealing, held) is { } healing)
                 return healing;
 
             if (ownedGear.Count < GearCap && FirstInStock(stock.Where(x => !ownedGear.Contains(x.Item) && !CrucibleItemData.BlockedGear(x.Item, ownedGear)), CrucibleItemData.ShopGearOrder, held) is { } gear)
@@ -436,7 +437,7 @@ namespace AutoDuty.Managers
             return this.fedThisVisit ? null : FirstInStock(stock, CrucibleItemData.ShopFeed, held);
         }
 
-        private static ReaderXBMContentsItemShop.StockEntry? FirstInStock(IEnumerable<ReaderXBMContentsItemShop.StockEntry> stock, uint[] priority, HashSet<uint> owned)
+        private static ReaderXBMContentsItemShop.StockEntry? FirstInStock(IEnumerable<ReaderXBMContentsItemShop.StockEntry> stock, uint[] priority, uint[] owned)
         {
             Dictionary<uint, ReaderXBMContentsItemShop.StockEntry> byRow = stock.GroupBy(x => x.Item).ToDictionary(g => g.Key, g => g.First());
             foreach (uint row in priority)

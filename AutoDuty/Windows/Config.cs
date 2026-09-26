@@ -490,13 +490,25 @@ public static class ConfigTab
                                 ImGui.Text("Treasure:");
                                 ImGui.Indent();
 
-                                HashSet<uint> items = x.ItemEntriesValid.Select(ie => ie.Id).ToHashSet();
+                                uint[] items = x.ItemEntriesValid.Select(ie => ie.Id).ToArray();
                                 HashSet<uint> gear  = x.OwnedEntriesOwned.Select(ie => ie.Id).ToHashSet();
 
                                 foreach (ReaderXBMContentsTreasure.TreasureChoice entry in x.TreasureChoices)
                                     ImGui.Text($"Treasure: {entry.Bought} | {entry.Item} | {entry.treasureIndex} | {entry.Unk0} | gear: {CrucibleItemData.ShopGear.Contains(entry.Item)} | item: {CrucibleItemData.ShopHealing.Contains(entry.Item)} | {!entry.Bought &&
                                         (!CrucibleItemData.ShopGear.Contains(entry.Item)    || (gear.Count  < 10 && !gear.Contains(entry.Item)))                                                                                                                      &&
-                                        (!CrucibleItemData.ShopHealing.Contains(entry.Item) || (items.Count < 10 && !items.Contains(entry.Item)))}");
+                                        (!CrucibleItemData.ShopHealing.Contains(entry.Item) || (items.Length < 10 && !items.Contains(entry.Item)))}");
+                                ImGui.Unindent();
+
+                                ImGui.Text("Item:");
+                                ImGui.Indent();
+                                foreach (ReaderXBMContentsItemShop.ItemEntry entry in x.ItemEntriesValid)
+                                    ImGui.Text($"Item: {entry.Unk0} | {entry.Sellable} | {entry.IconId} | {entry.Id} | {entry.Name}");
+                                ImGui.Unindent();
+
+                                ImGui.Text("Owned:");
+                                ImGui.Indent();
+                                foreach (ReaderXBMContentsItemShop.GearEntry entry in x.OwnedEntriesOwned)
+                                    ImGui.Text($"Owned: {entry.Owned} | {entry.Unk2} | {entry.Id} | {entry.Name}");
                                 ImGui.Unindent();
                             }
                         }

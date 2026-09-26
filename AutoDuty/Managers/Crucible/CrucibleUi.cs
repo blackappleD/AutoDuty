@@ -174,8 +174,8 @@ namespace AutoDuty.Managers
         public static List<ReaderXBMContentsItemShop.StockEntry> ShopStock(AtkUnitBase* shop) => 
             new ReaderXBMContentsItemShop(shop).StockEntries;
 
-        public static HashSet<uint> ShopHeldItems(AtkUnitBase* shop) => 
-            new ReaderXBMContentsItemShop(shop).ItemEntriesValid.Select(ie => ie.Id).ToHashSet();
+        public static uint[] ShopHeldItems(AtkUnitBase* shop) => 
+            new ReaderXBMContentsItemShop(shop).ItemEntriesValid.Select(ie => ie.Id).ToArray();
 
         public static HashSet<uint> ShopOwnedGear(AtkUnitBase* shop) => 
             new ReaderXBMContentsItemShop(shop).OwnedEntriesOwned.Select(ge => ge.Id).ToHashSet();
