@@ -297,7 +297,7 @@ public sealed class AutoDuty : IDalamudPlugin
     private         DateTime       lastRotationSetTime    = DateTime.MinValue;
     public readonly bool           isDev;
 
-    private readonly (string[], string, Action<string[]>)[] commands = null!;
+    private readonly (string[] keywords, string description, Action<string[]> action)[] commands = null!;
 
     public DutyDataTemporary? DutyData { get; set; } = new();
 
@@ -604,16 +604,12 @@ public sealed class AutoDuty : IDalamudPlugin
 
         Svc.Log.Debug("command with: " + args);
 
-        foreach ((string[] keywords, _, Action<string[]> action) in this.commands)
-            if (keywords.Any(key => check.StartsWith(key)))
-            {
-                Svc.Log.Debug("Activating command: " + string.Join(" / ", keywords));
-                action(argsArray);
-                return;
-            }
 
         switch (argsArray[0])
         {
+            case "":
+                this.OpenMainUI();
+                break;
             case "moveto":
                 string[] argss = args.Replace("moveto ", "").Split("|");
                 string[] vs    = argss[1].Split(", ");
@@ -691,7 +687,7 @@ public sealed class AutoDuty : IDalamudPlugin
                 PrintInfo(() => $"IsReadyToDraw: {gObj->IsReadyToDraw()}");
                 break;
             default:
-                this.OpenMainUI();
+                this.commands.OrderBy(cmd => cmd.keywords.Min(key => ImGuiHelper.ComputeLevenshteinDistance(key, check))).First().action(argsArray);
                 break;
         }
     }
