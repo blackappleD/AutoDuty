@@ -466,10 +466,10 @@ public class ConfigurationProfileV2
     {
         private float imguiListX = 400;
 
-        public LoopActionConfig? FindConfig<T>() where T : LoopActionConfig =>  
-            this.FirstOrDefault(lac => lac is T);
+        public LoopActionConfig<T>? FindConfig<T>() where T : LoopActionConfig<T>, new() =>  
+            (LoopActionConfig<T>?) this.FirstOrDefault(lac => lac is T);
 
-        public bool RunConfig<T>(bool queue = true) where T : LoopActionConfig
+        public bool RunConfig<T>(bool queue = true) where T : LoopActionConfig<T>, new()
         {
             LoopActionConfig? config = this.FindConfig<T>();
             if (config == null)
