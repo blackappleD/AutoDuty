@@ -467,6 +467,7 @@ namespace AutoDuty.Managers
 
         public void ExitDuty(PathAction action)
         {
+            taskManager.EnqueueDelay((int)Configuration.DutyConfig.WaitBeforeLeaving);
             taskManager.Enqueue(ExitDutyHelper.Invoke, "ExitDuty-Invoke");
             taskManager.Enqueue(() => ExitDutyHelper.State != ActionState.Running, "ExitDuty-WaitExitDutyRunning");
         }

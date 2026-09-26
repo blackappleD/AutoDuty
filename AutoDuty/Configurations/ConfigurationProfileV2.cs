@@ -311,6 +311,7 @@ public class ConfigurationProfileV2
                 set;
             } = true;
         }
+        public uint WaitBeforeLeaving { get; set; }
 
         public bool PathDrawEnabled   { get; set; } = false;
         public int  PathDrawStepCount { get; set; } = 5;
