@@ -2,16 +2,45 @@
   "Actions": [
     {
       "Tag": "None",
-      "Name": "WaitFor",
+      "Name": "Wait",
       "Position": {
         "X": 0.0,
         "Y": 0.0,
         "Z": 0.0
       },
       "Arguments": [
-        "IsReady"
+        "500"
       ],
       "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
       "Note": "",
       "Flags": "None"
     },
@@ -58,23 +87,17 @@
       ],
       "Conditions": [
         {
-          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
-          "origin": "Location",
-          "originId": 0,
-          "originLoc": {
-            "X": -700.0,
-            "Y": 0.0,
-            "Z": -8.0
-          },
-          "target": "Player",
-          "targetId": 0,
-          "targetLoc": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          },
-          "operatorValue": "<",
-          "distance": 1.0
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
         }
       ],
       "Note": "",
@@ -84,9 +107,9 @@
       "Tag": "None",
       "Name": "Boss",
       "Position": {
-        "X": 120.0,
-        "Y": 9.5363004E-07,
-        "Z": -420.0
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
       },
       "Arguments": [
         ""
@@ -129,7 +152,7 @@
           "originLoc": {
             "X": -700.0,
             "Y": 0.0,
-            "Z": -8.0
+            "Z": -50.0
           },
           "target": "Player",
           "targetId": 0,
@@ -139,7 +162,146 @@
             "Z": 0.0
           },
           "operatorValue": ">",
-          "distance": 1.0
+          "distance": 100.0
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "+18"
+      ],
+      "Conditions": [],
+      "Note": "Skip the elite side TODO: condition this on some setting",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": -708.0,
+        "Y": 0.0,
+        "Z": -9.0
+      },
+      "Arguments": [
+        "1000"
+      ],
+      "Conditions": [],
+      "Note": "1b",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Boss",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        ""
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
+          "origin": "Location",
+          "originId": 0,
+          "originLoc": {
+            "X": -700.0,
+            "Y": 0.0,
+            "Z": -50.0
+          },
+          "target": "Player",
+          "targetId": 0,
+          "targetLoc": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          },
+          "operatorValue": ">",
+          "distance": 100.0
         }
       ],
       "Note": "",
@@ -149,42 +311,12 @@
       "Tag": "None",
       "Name": "Wait",
       "Position": {
-        "X": -692.0,
-        "Y": 0.0,
-        "Z": -9.0
-      },
-      "Arguments": [
-        "5000"
-      ],
-      "Conditions": [],
-      "Note": "1b",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "WaitFor",
-      "Position": {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0
-      },
-      "Arguments": [
-        "IsReady"
-      ],
-      "Conditions": [],
-      "Note": "",
-      "Flags": "None"
-    },
-    {
-      "Tag": "None",
-      "Name": "Wait",
-      "Position": {
-        "X": -699.0,
+        "X": -709.0,
         "Y": 0.0,
         "Z": -17.0
       },
       "Arguments": [
-        "5000"
+        "1000"
       ],
       "Conditions": [],
       "Note": "2",
@@ -192,14 +324,14 @@
     },
     {
       "Tag": "None",
-      "Name": "WaitFor",
+      "Name": "Wait",
       "Position": {
         "X": 0.0,
         "Y": 0.0,
         "Z": 0.0
       },
       "Arguments": [
-        "IsReady"
+        "500"
       ],
       "Conditions": [],
       "Note": "",
@@ -207,14 +339,43 @@
     },
     {
       "Tag": "None",
-      "Name": "MoveTo",
+      "Name": "ModifyIndex",
       "Position": {
-        "X": -700.0,
-        "Y": -3.3962633E-17,
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": -709.0,
+        "Y": 0.0,
         "Z": -26.0
       },
       "Arguments": [
-        ""
+        "1000"
       ],
       "Conditions": [],
       "Note": "3",
@@ -248,13 +409,42 @@
       ],
       "Conditions": [
         {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "+4"
+      ],
+      "Conditions": [
+        {
           "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
           "origin": "Location",
           "originId": 0,
           "originLoc": {
             "X": -700.0,
             "Y": 0.0,
-            "Z": -26.0
+            "Z": -50.0
           },
           "target": "Player",
           "targetId": 0,
@@ -264,7 +454,7 @@
             "Z": 0.0
           },
           "operatorValue": "<",
-          "distance": 1.0
+          "distance": 100.0
         }
       ],
       "Note": "",
@@ -274,8 +464,8 @@
       "Tag": "None",
       "Name": "Boss",
       "Position": {
-        "X": 520.0,
-        "Y": -4.4703484E-08,
+        "X": 0.0,
+        "Y": 0.0,
         "Z": 0.0
       },
       "Arguments": [
@@ -319,7 +509,7 @@
           "originLoc": {
             "X": -700.0,
             "Y": 0.0,
-            "Z": -26.0
+            "Z": -50.0
           },
           "target": "Player",
           "targetId": 0,
@@ -329,7 +519,512 @@
             "Z": 0.0
           },
           "operatorValue": ">",
-          "distance": 1.0
+          "distance": 100.0
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "+25"
+      ],
+      "Conditions": [],
+      "Note": "Skip the right branch steps",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": -692.0,
+        "Y": 0.0,
+        "Z": -9.0
+      },
+      "Arguments": [
+        "1000"
+      ],
+      "Conditions": [],
+      "Note": "1b-alt",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "+12"
+      ],
+      "Conditions": [],
+      "Note": "Skip the right branch steps",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": -691.0,
+        "Y": 0.0,
+        "Z": -17.0
+      },
+      "Arguments": [
+        "1000"
+      ],
+      "Conditions": [],
+      "Note": "2-alt",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "+4"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
+          "origin": "Location",
+          "originId": 0,
+          "originLoc": {
+            "X": -700.0,
+            "Y": 0.0,
+            "Z": -50.0
+          },
+          "target": "Player",
+          "targetId": 0,
+          "targetLoc": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          },
+          "operatorValue": "<",
+          "distance": 100.0
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Boss",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        ""
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
+          "origin": "Location",
+          "originId": 0,
+          "originLoc": {
+            "X": -700.0,
+            "Y": 0.0,
+            "Z": -50.0
+          },
+          "target": "Player",
+          "targetId": 0,
+          "targetLoc": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          },
+          "operatorValue": ">",
+          "distance": 100.0
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": -691.0,
+        "Y": 0.0,
+        "Z": -26.0
+      },
+      "Arguments": [
+        "1000"
+      ],
+      "Conditions": [],
+      "Note": "3-alt",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "+10"
+      ],
+      "Conditions": [],
+      "Note": "Skip mid branch steps",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": -699.0,
+        "Y": 0.0,
+        "Z": -17.0
+      },
+      "Arguments": [
+        "1000"
+      ],
+      "Conditions": [],
+      "Note": "2-mid",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": -700.0,
+        "Y": 0.0,
+        "Z": -26.0
+      },
+      "Arguments": [
+        "1000"
+      ],
+      "Conditions": [],
+      "Note": "3-mid",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Boss",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        ""
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "Wait",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "500"
+      ],
+      "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
+          "origin": "Location",
+          "originId": 0,
+          "originLoc": {
+            "X": -700.0,
+            "Y": 0.0,
+            "Z": -50.0
+          },
+          "target": "Player",
+          "targetId": 0,
+          "targetLoc": {
+            "X": 0.0,
+            "Y": 0.0,
+            "Z": 0.0
+          },
+          "operatorValue": ">",
+          "distance": 100.0
         }
       ],
       "Note": "",
@@ -378,23 +1073,17 @@
       ],
       "Conditions": [
         {
-          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
-          "origin": "Location",
-          "originId": 0,
-          "originLoc": {
-            "X": -700.0,
-            "Y": 0.0,
-            "Z": -35.0
-          },
-          "target": "Player",
-          "targetId": 0,
-          "targetLoc": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          },
-          "operatorValue": "<",
-          "distance": 1.0
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
         }
       ],
       "Note": "",
@@ -404,8 +1093,8 @@
       "Tag": "None",
       "Name": "Boss",
       "Position": {
-        "X": 120.0,
-        "Y": -4.1618966E-09,
+        "X": 0.0,
+        "Y": 0.0,
         "Z": 0.0
       },
       "Arguments": [
@@ -449,7 +1138,7 @@
           "originLoc": {
             "X": -700.0,
             "Y": 0.0,
-            "Z": -35.0
+            "Z": -50.0
           },
           "target": "Player",
           "targetId": 0,
@@ -459,7 +1148,7 @@
             "Z": 0.0
           },
           "operatorValue": ">",
-          "distance": 1.0
+          "distance": 100.0
         }
       ],
       "Note": "",
@@ -482,16 +1171,45 @@
     },
     {
       "Tag": "None",
-      "Name": "WaitFor",
+      "Name": "Wait",
       "Position": {
         "X": 0.0,
         "Y": 0.0,
         "Z": 0.0
       },
       "Arguments": [
-        "IsReady"
+        "500"
       ],
       "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
       "Note": "",
       "Flags": "None"
     },
@@ -512,16 +1230,45 @@
     },
     {
       "Tag": "None",
-      "Name": "WaitFor",
+      "Name": "Wait",
       "Position": {
         "X": 0.0,
         "Y": 0.0,
         "Z": 0.0
       },
       "Arguments": [
-        "IsReady"
+        "500"
       ],
       "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
       "Note": "",
       "Flags": "None"
     },
@@ -542,16 +1289,45 @@
     },
     {
       "Tag": "None",
-      "Name": "WaitFor",
+      "Name": "Wait",
       "Position": {
         "X": 0.0,
         "Y": 0.0,
         "Z": 0.0
       },
       "Arguments": [
-        "IsReady"
+        "500"
       ],
       "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
       "Note": "",
       "Flags": "None"
     },
@@ -598,23 +1374,17 @@
       ],
       "Conditions": [
         {
-          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
-          "origin": "Location",
-          "originId": 0,
-          "originLoc": {
-            "X": -682.0,
-            "Y": 0.0,
-            "Z": -53.0
-          },
-          "target": "Player",
-          "targetId": 0,
-          "targetLoc": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          },
-          "operatorValue": "<",
-          "distance": 1.0
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
         }
       ],
       "Note": "",
@@ -624,8 +1394,8 @@
       "Tag": "None",
       "Name": "Boss",
       "Position": {
-        "X": 120.0,
-        "Y": -4.1618966E-09,
+        "X": 0.0,
+        "Y": 0.0,
         "Z": 0.0
       },
       "Arguments": [
@@ -667,9 +1437,9 @@
           "origin": "Location",
           "originId": 0,
           "originLoc": {
-            "X": -682.0,
+            "X": -700.0,
             "Y": 0.0,
-            "Z": -53.0
+            "Z": -50.0
           },
           "target": "Player",
           "targetId": 0,
@@ -679,7 +1449,7 @@
             "Z": 0.0
           },
           "operatorValue": ">",
-          "distance": 1.0
+          "distance": 100.0
         }
       ],
       "Note": "",
@@ -728,23 +1498,17 @@
       ],
       "Conditions": [
         {
-          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
-          "origin": "Location",
-          "originId": 0,
-          "originLoc": {
-            "X": -699.0,
-            "Y": 0.0,
-            "Z": -54.0
-          },
-          "target": "Player",
-          "targetId": 0,
-          "targetLoc": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          },
-          "operatorValue": "<",
-          "distance": 1.0
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
         }
       ],
       "Note": "",
@@ -754,9 +1518,9 @@
       "Tag": "None",
       "Name": "Boss",
       "Position": {
-        "X": 120.0,
-        "Y": 9.5363004E-07,
-        "Z": -420.0
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
       },
       "Arguments": [
         ""
@@ -797,9 +1561,9 @@
           "origin": "Location",
           "originId": 0,
           "originLoc": {
-            "X": -699.0,
+            "X": -700.0,
             "Y": 0.0,
-            "Z": -54.0
+            "Z": -50.0
           },
           "target": "Player",
           "targetId": 0,
@@ -809,7 +1573,7 @@
             "Z": 0.0
           },
           "operatorValue": ">",
-          "distance": 1.0
+          "distance": 100.0
         }
       ],
       "Note": "",
@@ -832,16 +1596,45 @@
     },
     {
       "Tag": "None",
-      "Name": "WaitFor",
+      "Name": "Wait",
       "Position": {
         "X": 0.0,
         "Y": 0.0,
         "Z": 0.0
       },
       "Arguments": [
-        "IsReady"
+        "500"
       ],
       "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
       "Note": "",
       "Flags": "None"
     },
@@ -862,16 +1655,45 @@
     },
     {
       "Tag": "None",
-      "Name": "WaitFor",
+      "Name": "Wait",
       "Position": {
         "X": 0.0,
         "Y": 0.0,
         "Z": 0.0
       },
       "Arguments": [
-        "IsReady"
+        "500"
       ],
       "Conditions": [],
+      "Note": "",
+      "Flags": "None"
+    },
+    {
+      "Tag": "None",
+      "Name": "ModifyIndex",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      },
+      "Arguments": [
+        "-1"
+      ],
+      "Conditions": [
+        {
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
+        }
+      ],
       "Note": "",
       "Flags": "None"
     },
@@ -918,23 +1740,17 @@
       ],
       "Conditions": [
         {
-          "$type": "AutoDuty.Data.PathActionConditionDistance, AutoDuty",
-          "origin": "Location",
-          "originId": 0,
-          "originLoc": {
-            "X": -700.0,
-            "Y": 0.0,
-            "Z": -80.0
-          },
-          "target": "Player",
-          "targetId": 0,
-          "targetLoc": {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0
-          },
-          "operatorValue": "<",
-          "distance": 1.0
+          "$type": "AutoDuty.Data.PathActionConditionOr, AutoDuty",
+          "conditions": [
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction2"
+            },
+            {
+              "$type": "AutoDuty.Data.PathActionConditionConditionFlag, AutoDuty",
+              "flag": "SufferingStatusAffliction63"
+            }
+          ]
         }
       ],
       "Note": "",
@@ -944,9 +1760,9 @@
       "Tag": "None",
       "Name": "Boss",
       "Position": {
-        "X": 520.0,
-        "Y": 4.3600002E-11,
-        "Z": -420.0
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
       },
       "Arguments": [
         ""
@@ -984,7 +1800,7 @@
             "Z": 0.0
           },
           "operatorValue": "<",
-          "distance": 50.0
+          "distance": 100.0
         }
       ],
       "Note": "",
@@ -1038,7 +1854,16 @@
   ],
   "Meta": {
     "CreatedAt": 350,
-    "Changelog": [],
+    "Changelog": [
+      {
+        "Version": 363,
+        "Change": ""
+      },
+      {
+        "Version": 363,
+        "Change": "Changing to status based tile detection to allow handling of chance tiles. Testing stability of updated modules and rerouting to the current most stable path."
+      }
+    ],
     "Notes": []
   }
 }
