@@ -33,7 +33,8 @@
     "HideUnavailable": "Hide Unavailable Duties",
     "Unsynced": "Unsynced",
     "SwitchCombatJob": "Please switch to a combat job to use AutoDuty.",
-    "BlueMageRestriction": "Blue Mage cannot run Trust, Duty Support, Squadron or Variant dungeons. Please switch jobs or select a different category.",
+    "LimitedJobRestriction": "Limited Jobs cannot run Trust, Duty Support, Squadron or Variant dungeons. Please switch jobs or select a different category.",
+    "CrucibleRestriction": "Crucible can only be run by Beastmaster",
     "LevelingModeStatus": "Leveling Mode: L{0} (i{1})",
     "SelectSupportTrust": "Please select one of Support, Trust, Squadron or Regular\nto Populate the Duty List",
     "CurrentGearset": "Current Gearset",
@@ -124,7 +125,7 @@
       },
       "ItemCategory": {
         "Gear": "Gear",
-        "HealItem":  "Heal Item",
+        "HealItem": "Heal Item",
         "CombatItem": "Combat Item",
         "BoardItem": "Board Item",
         "Item": "Item",
