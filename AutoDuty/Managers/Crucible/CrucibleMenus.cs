@@ -224,7 +224,9 @@ namespace AutoDuty.Managers
                 }
             }
 
-            for (int i = picked.Count; i < FightPicks; i++)
+
+
+            for (int i = picked.Count; i < Math.Min(FightPicks, alive.Count); i++)
             {
                 ReaderXBMPetParty.MonsterEntry entry = alive[i];
 
