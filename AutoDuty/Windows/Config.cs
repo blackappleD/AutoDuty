@@ -425,7 +425,6 @@ public static class ConfigTab
                 {
                     ImGui.Indent();
                     if (ImGui.CollapsingHeader("XBMBestiary"))
-                    {
                         unsafe
                         {
                             if (GenericHelpers.TryGetAddonByName("XBMMonsterNotebook", out AtkUnitBase* addon))
@@ -438,10 +437,8 @@ public static class ConfigTab
                                     ImGui.Text($"Mob: {entry.Number} | {entry.Caught}");
                             }
                         }
-                    }
 
                     if (ImGui.CollapsingHeader("XBMShop"))
-                    {
                         unsafe
                         {
                             if (GenericHelpers.TryGetAddonByName("XBMContentsItemShop", out AtkUnitBase* addon))
@@ -467,10 +464,8 @@ public static class ConfigTab
                                 ImGui.Unindent();
                             }
                         }
-                    }
 
                     if (ImGui.CollapsingHeader("XBMParty"))
-                    {
                         unsafe
                         {
                             if (GenericHelpers.TryGetAddonByName("XBMPetParty", out AtkUnitBase* addon))
@@ -479,15 +474,14 @@ public static class ConfigTab
                                 ImGui.Text("Pets:");
                                 ImGui.Indent();
                                 foreach (ReaderXBMPetParty.MonsterEntry entry in x.TeamEntries)
-                                    ImGui.Text($"Pet: {entry.Rank} | {entry.Name.GetText()} | {entry.Number} | {entry.Unk1} | {entry.Disabled}");
+                                    ImGui.Text($"Pet: {entry.Rank} | {entry.Name.GetText()} | {entry.Number} | {entry.IconId} | {entry.Disabled} | {entry.FedCurrent}/{entry.FedMax} | {string.Join(", ", entry.FedItems.Select(fe => fe.ItemId))}");
                                 ImGui.Unindent();
 
+                                ImGui.Text("Feed Item: " + x.FeedItem.ItemId);
                             }
                         }
-                    }
 
                     if (ImGui.CollapsingHeader("XBMTreasure"))
-                    {
                         unsafe
                         {
                             if (GenericHelpers.TryGetAddonByName("XBMContentsTreasure", out AtkUnitBase* addon))
@@ -496,17 +490,80 @@ public static class ConfigTab
                                 ImGui.Text("Treasure:");
                                 ImGui.Indent();
 
-                                HashSet<uint> items = x.ItemEntriesValid.Select(ie => ie.Id).ToHashSet();
+                                uint[] items = x.ItemEntriesValid.Select(ie => ie.Id).ToArray();
                                 HashSet<uint> gear  = x.OwnedEntriesOwned.Select(ie => ie.Id).ToHashSet();
 
                                 foreach (ReaderXBMContentsTreasure.TreasureChoice entry in x.TreasureChoices)
                                     ImGui.Text($"Treasure: {entry.Bought} | {entry.Item} | {entry.treasureIndex} | {entry.Unk0} | gear: {CrucibleItemData.ShopGear.Contains(entry.Item)} | item: {CrucibleItemData.ShopHealing.Contains(entry.Item)} | {!entry.Bought &&
-                                        (!CrucibleItemData.ShopGear.Contains(entry.Item)    || (gear.Count  < 10 && !gear.Contains(entry.Item))) &&
-                                        (!CrucibleItemData.ShopHealing.Contains(entry.Item) || (items.Count < 10 && !items.Contains(entry.Item)))}");
+                                        (!CrucibleItemData.ShopGear.Contains(entry.Item)    || (gear.Count  < 10 && !gear.Contains(entry.Item)))                                                                                                                      &&
+                                        (!CrucibleItemData.ShopHealing.Contains(entry.Item) || (items.Length < 10 && !items.Contains(entry.Item)))}");
+                                ImGui.Unindent();
+
+                                ImGui.Text("Item:");
+                                ImGui.Indent();
+                                foreach (ReaderXBMContentsItemShop.ItemEntry entry in x.ItemEntriesValid)
+                                    ImGui.Text($"Item: {entry.Unk0} | {entry.Sellable} | {entry.IconId} | {entry.Id} | {entry.Name}");
+                                ImGui.Unindent();
+
+                                ImGui.Text("Owned:");
+                                ImGui.Indent();
+                                foreach (ReaderXBMContentsItemShop.GearEntry entry in x.OwnedEntriesOwned)
+                                    ImGui.Text($"Owned: {entry.Owned} | {entry.Unk2} | {entry.Id} | {entry.Name}");
                                 ImGui.Unindent();
                             }
                         }
-                    }
+
+                    if (ImGui.CollapsingHeader("XBMBooty"))
+                        unsafe
+                        {
+                            if (GenericHelpers.TryGetAddonByName("XBMContentsBooty", out AtkUnitBase* addon))
+                            {
+                                ReaderXBMContentsBooty x = new(addon);
+                                ImGui.Text("Loot:");
+                                ImGui.Indent();
+                                foreach (ReaderXBMContentsBooty.LootChoice entry in x.LootChoices)
+                                    ImGui.Text($"Loot: {entry.Item} | {entry.Taken} | {entry.lootIndex}");
+                                ImGui.Unindent();
+
+                            }
+                        }
+
+                    if (ImGui.CollapsingHeader("XBMResult"))
+                        unsafe
+                        {
+                            if (GenericHelpers.TryGetAddonByName("XBMResult", out AtkUnitBase* addon))
+                            {
+                                ReaderXBMResult x = new(addon);
+                                ImGui.Text("Results:");
+
+                                ImGui.Text("Performance: " + x.Performance);
+                                ImGui.Text("Moves: "       + x.MovesMadeScore);
+                                ImGui.Text("Enemy: "       + x.EnemyScore);
+                                ImGui.Text("Elite Enemy: " + x.EliteScore);
+                                ImGui.Text("Remaining HP: " + x.RemainingHP);
+                                ImGui.SameLine();
+                                ImGui.Text("| Score: " + x.RemainingHPScore);
+                                ImGui.NewLine();
+                                ImGui.Text("Bonus Score: " + x.BonusBoostScore);
+                                ImGui.Indent();
+                                foreach (ReaderXBMResult.BonusBoostEntry entry in x.BonusBoostEntries)
+                                    ImGui.Text($"Bonus Boost: {entry.Name} | {entry.Score}");
+                                ImGui.Unindent();
+
+                                ImGui.Text("Loot");
+                                ImGui.Indent();
+                                foreach (ReaderXBMResult.LootEntry entry in x.LootEntries)
+                                    ImGui.Text($"Bonus Boost: {entry.Name} | {entry.Count}x | {entry.ItemId}");
+                                ImGui.Unindent();
+
+                                ImGui.Text("Beasts");
+                                ImGui.Indent();
+                                foreach (ReaderXBMResult.BeastEntry entry in x.BeastEntries)
+                                    ImGui.Text($"Beast: {entry.Number} | XP: {entry.PrevXP} -> {entry.NewXP} | Rank: {entry.PrevRank} -> {entry.NewRank}");
+                                ImGui.Unindent();
+                            }
+                        }
+
                     ImGui.Unindent();
                 }
 
@@ -948,8 +1005,14 @@ public static class ConfigTab
                 ConfigurationProfileV2.Save();
             }
 
-
             ImGui.Unindent();
+
+            uint waitBeforeLeaving = Configuration.DutyConfig.WaitBeforeLeaving;
+            if (ImGui.InputUInt(Loc.Get("ConfigTab.Duty.WaitBeforeLeaving"), ref waitBeforeLeaving, 1, 100))
+            {
+                Configuration.DutyConfig.WaitBeforeLeaving = waitBeforeLeaving;
+                ConfigurationProfileV2.Save();
+            }
 
             bool pathDrawEnabled = Configuration.DutyConfig.PathDrawEnabled;
             if(ImGui.Checkbox(Loc.Get("ConfigTab.Duty.DrawPath"), ref pathDrawEnabled))

@@ -81,6 +81,8 @@
       "RebuildNavmeshTimes": "次",
       "UseReturnWhenStuck": "卡住时使用返回",
       "ReturnTimes": "次",
+      "WaitBeforeLeaving": "离开副本前等待 x 毫秒",
+      "WaitBeforeLeavingHelp": "大多数情况下保持 0 即可",
       "DrawPath": "绘制路径中的下一步",
       "DrawPathSteps": "绘制 X 步",
       "DisableRenderWhileActive": "禁用画面渲染",

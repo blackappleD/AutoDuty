@@ -228,7 +228,7 @@ public class ConfigurationMain
                     foreach (JToken profileData in profileList)
                     {
                         string?        profileName = (string?) profileData["Name"];
-                        Configuration? oldConfig   = EzConfig.DefaultSerializationFactory.Deserialize<Configuration>(profileData["Config"].ToString());
+                        Obsolete.Configuration? oldConfig   = EzConfig.DefaultSerializationFactory.Deserialize<Obsolete.Configuration>(profileData["Config"].ToString());
                         DebugLog($"Found profile: {profileName}");
                         if (oldConfig != null)
                         {
@@ -254,7 +254,7 @@ public class ConfigurationMain
         {
             try
             {
-                Configuration? configuration = EzConfig.DefaultSerializationFactory.Deserialize<Configuration>(File.ReadAllText(Svc.PluginInterface.ConfigFile.FullName, Encoding.UTF8));
+                Obsolete.Configuration? configuration = EzConfig.DefaultSerializationFactory.Deserialize<Obsolete.Configuration>(File.ReadAllText(Svc.PluginInterface.ConfigFile.FullName, Encoding.UTF8));
                 if (configuration != null)
                 {
                     ConfigurationProfileV2 migratedConfig = this.MigrateConfigurationV1ToV2(configuration);
@@ -428,7 +428,7 @@ public class ConfigurationMain
     }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-    private ConfigurationProfileV2 MigrateConfigurationV1ToV2(Configuration oldConfig)
+    private ConfigurationProfileV2 MigrateConfigurationV1ToV2(Obsolete.Configuration oldConfig)
 #pragma warning restore CS0618 // Type or member is obsolete
     {
         ConfigurationProfileV2 newConfig = new();
@@ -787,7 +787,7 @@ public class ConfigurationMain
                     typeName = typeName.Replace("AutoDuty.Data.Classes+PathActionCondition", "AutoDuty.Data.PathActionCondition");
 
             #pragma warning disable CS0618 // Type or member is obsolete
-                Type? type = typeof(Configuration).Assembly.GetType(typeName);
+                Type? type = typeof(Obsolete.Configuration).Assembly.GetType(typeName);
             #pragma warning restore CS0618 // Type or member is obsolete
                 if (type != null)
                     return type;

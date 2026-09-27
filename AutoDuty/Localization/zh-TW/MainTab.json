@@ -71,6 +71,12 @@
       "ClearCustoms": "清除自訂使魔",
       "NoFamiliars": "目前還沒有已知的使魔。請在 Lauda 處開啟隊伍介面或魔物圖鑑，AutoDuty 才能讀取。",
       "Menus": "棋盤選單",
+      "ShopSettings": "商店設定",
+      "ShopGearOrder": "商店裝備購買順序",
+      "ShopGearOrderHelp": "最上方的最先購買 · 拖動把手或輸入新的序號來移動條目",
+      "GearItem": "裝備",
+      "ClearShopGearOrder": "清除順序",
+      "ClearShopGearOrderHelp": "恢復預設的商店裝備購買順序\n按住 Ctrl 點擊",
       "TableLegend": "底色highlight：該模式選用的隊伍 · 將滑鼠停留在名稱上可查看屬性",
       "TableLegendCustom": "已勾選：你要帶上的隊伍 · 將滑鼠停留在名稱上可查看屬性",
       "NotSeen": "尚未讀取等級\n將在下次組隊時從魔物圖鑑中讀取",
@@ -87,11 +93,13 @@
       "LevelingModes": {
         "Full": "滿編隊伍",
         "Minus_3": "上限 -3",
-        "Only_3": "僅 3 隻"
+        "Only_3": "僅 3 隻",
+        "Carry_Minus_2": "帶練（上限 -2）"
       },
       "LevelingModesHelp": {
         "Full": "使用隊伍的全部人數",
         "Minus_3": "比最大數量少帶 3 隻使魔",
+        "Carry_Minus_2": "帶上等級最高的 3 隻使魔，其餘用等級最低的補齊。\n比最大數量少帶 2 隻。",
         "Only_3": "每次只帶 3 隻使魔"
       },
       "Toggles": {
@@ -101,6 +109,7 @@
         "Shop": "商店",
         "Rest": "在營地休息",
         "Items": "治療道具",
+        "RespectGearRequirements": "沒有末日抗性胸甲時不購買末日頭盔",
         "MenusWithoutRun": "不啟動 AutoDuty 也處理選單（測試用）"
       },
       "TogglesHelp": {
@@ -110,7 +119,16 @@
         "Shop": "按治療道具、獸用裝備、一份飼料的順序花費硬幣\n完成後離開商店",
         "Rest": "當至多 2 隻使魔血量低於 60% 時進行休息\n若沒有選中任何使魔，則改為使用 90% 的自我治療",
         "Items": "血量偏低時使用治療道具\n戰鬥中：低於 40%  ·  棋盤上：低於 60%",
+        "RespectGearRequirements": "在擁有 Soulreaper's Armor 之前不會購買 Demonic Helm",
         "MenusWithoutRun": "用於在沒有路徑的情況下測試\n與 Lauda 對話會完成組隊、挑戰棋盤並開始\n在棋盤上時，即使你自己走位，上述選單處理仍會執行"
+      },
+      "ItemCategory": {
+        "Gear": "裝備",
+        "HealItem": "治療道具",
+        "CombatItem": "戰鬥道具",
+        "BoardItem": "棋盤道具",
+        "Item": "道具",
+        "Feed": "飼料"
       }
     },
     "LevelingModes": {

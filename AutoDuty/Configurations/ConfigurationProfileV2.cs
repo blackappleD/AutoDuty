@@ -87,13 +87,15 @@ public class ConfigurationProfileV2
             public CrucibleTeamMode     TeamMode     { get; set; } = CrucibleTeamMode.Recommended;
             public CrucibleLevelingMode LevelingMode { get; set; } = CrucibleLevelingMode.Minus_3;
             public List<uint>           CustomTeam   { get; set; } = [];
+            public List<uint>           ShopGearOrder { get; set; } = [];
 
-            public bool FightPicks { get; set; } = true;
-            public bool Loot       { get; set; } = true;
-            public bool Treasure   { get; set; } = true;
-            public bool Shop       { get; set; } = true;
-            public bool Rest       { get; set; } = true;
-            public bool Items      { get; set; } = true;
+            public bool FightPicks          { get; set; } = true;
+            public bool Loot                { get; set; } = true;
+            public bool Treasure            { get; set; } = true;
+            public bool Shop                { get; set; } = true;
+            public bool Rest                { get; set; } = true;
+            public bool Items               { get; set; } = true;
+            public bool RespectGearRequirements   { get; set; } = true;
         }
 
         public bool ShowMainWindowOnStartup { get; set; } = false;
@@ -309,6 +311,7 @@ public class ConfigurationProfileV2
                 set;
             } = true;
         }
+        public uint WaitBeforeLeaving { get; set; }
 
         public bool PathDrawEnabled   { get; set; } = false;
         public int  PathDrawStepCount { get; set; } = 5;
@@ -464,10 +467,10 @@ public class ConfigurationProfileV2
     {
         private float imguiListX = 400;
 
-        public LoopActionConfig? FindConfig<T>() where T : LoopActionConfig =>  
-            this.FirstOrDefault(lac => lac is T);
+        public LoopActionConfig<T>? FindConfig<T>() where T : LoopActionConfig<T>, new() =>  
+            (LoopActionConfig<T>?) this.FirstOrDefault(lac => lac is T);
 
-        public bool RunConfig<T>(bool queue = true) where T : LoopActionConfig
+        public bool RunConfig<T>(bool queue = true) where T : LoopActionConfig<T>, new()
         {
             LoopActionConfig? config = this.FindConfig<T>();
             if (config == null)

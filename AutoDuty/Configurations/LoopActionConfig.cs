@@ -84,6 +84,7 @@ public abstract class LoopActionConfig
         }
     }
 
+    public abstract bool Locked { get; }
     public abstract void Run(ref bool queue);
     public abstract void OnGUI(bool   openWhenEnabled = true);
     public abstract bool OnGUIButton();
@@ -105,7 +106,7 @@ public abstract class LoopActionConfig<C> : LoopActionConfig where C : LoopActio
     public abstract string         OverlayName     { get; }
     public virtual  ExternalPlugin RequiredPlugins => ExternalPlugin.None;
     public virtual  string         ActionText      => Loc.Get("LoopActions.Executing", Name);
-    public virtual  bool           Locked          => false;
+    public override bool           Locked          => false;
     public virtual  string?        HelpText        => null;
 
     public override void Run(ref bool queue)

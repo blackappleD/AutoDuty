@@ -297,7 +297,7 @@ public sealed class AutoDuty : IDalamudPlugin
     private         DateTime       lastRotationSetTime    = DateTime.MinValue;
     public readonly bool           isDev;
 
-    private readonly (string[], string, Action<string[]>)[] commands = null!;
+    private readonly (string[] keywords, string description, Action<string[]> action)[] commands = null!;
 
     public DutyDataTemporary? DutyData { get; set; } = new();
 
@@ -326,7 +326,7 @@ public sealed class AutoDuty : IDalamudPlugin
             this.assemblyDirectoryInfo = this.assemblyFileInfo.Directory;
 
             this.Version = 
-                ((PluginInterface.IsDev     ? new Version(0,0,0, 344) :
+                ((PluginInterface.IsDev     ? new Version(0,0,0, 356) :
                   PluginInterface.IsTesting ? PluginInterface.Manifest.TestingAssemblyVersion ?? PluginInterface.Manifest.AssemblyVersion : PluginInterface.Manifest.AssemblyVersion)!).Revision;
 
             if (!this.configDirectory.Exists)
@@ -604,16 +604,12 @@ public sealed class AutoDuty : IDalamudPlugin
 
         Svc.Log.Debug("command with: " + args);
 
-        foreach ((string[] keywords, _, Action<string[]> action) in this.commands)
-            if (keywords.Any(key => check.StartsWith(key)))
-            {
-                Svc.Log.Debug("Activating command: " + string.Join(" / ", keywords));
-                action(argsArray);
-                return;
-            }
 
         switch (argsArray[0])
         {
+            case "":
+                this.OpenMainUI();
+                break;
             case "moveto":
                 string[] argss = args.Replace("moveto ", "").Split("|");
                 string[] vs    = argss[1].Split(", ");
@@ -691,7 +687,9 @@ public sealed class AutoDuty : IDalamudPlugin
                 PrintInfo(() => $"IsReadyToDraw: {gObj->IsReadyToDraw()}");
                 break;
             default:
-                this.OpenMainUI();
+                (string[] keywords, string __, Action<string[]> action) cmd = this.commands.OrderBy(cmd => cmd.keywords.Min(key => ImGuiHelper.ComputeLevenshteinDistance(key, check))).First();
+                Svc.Log.Debug("Executing " + string.Join(", ", cmd.keywords));
+                cmd.action(argsArray);
                 break;
         }
     }
@@ -1087,8 +1085,8 @@ public sealed class AutoDuty : IDalamudPlugin
         if (!InDungeon)
         {
             this.currentLoop = 0;
-            if (Configuration.Loop.Pre.Enabled)
-            {
+            bool preEnabled = Configuration.Loop.Pre.Enabled;
+            if (preEnabled)
                 if (Configuration.Meta.AutoDutyModeEnum == AutoDutyMode.Playlist && Plugin.PlaylistCurrentEntry != null)
                     unsafe
                     {
@@ -1099,13 +1097,12 @@ public sealed class AutoDuty : IDalamudPlugin
                         }
                     }
 
-
-                foreach (LoopActionConfig loopAction in Configuration.Loop.Pre.Actions)
+            foreach (LoopActionConfig loopAction in Configuration.Loop.Pre.Actions)
+                if (preEnabled || loopAction.Locked)
                 {
                     bool queue = false;
                     loopAction.Run(ref queue);
                 }
-            }
 
             this.taskManager.Enqueue(() => Svc.Log.Debug($"Queueing First Run"));
             this.Queue(this.CurrentTerritoryContent!);
@@ -1136,8 +1133,8 @@ public sealed class AutoDuty : IDalamudPlugin
         if (multiboxClient)
             queue = true;
 
-        if (between)
-            foreach (LoopActionConfig loopAction in Configuration.Loop.Between.Actions)
+        foreach (LoopActionConfig loopAction in Configuration.Loop.Between.Actions)
+            if (between || loopAction.Locked)
                 loopAction.Run(ref queue);
 
         if (multiboxClient)
@@ -1228,16 +1225,19 @@ public sealed class AutoDuty : IDalamudPlugin
     {
         this.SetGeneralSettings(false);
 
-        if (Configuration.Loop.Termination.Enabled)
-        {
-            this.taskManager.Enqueue(() => PlayerHelper.IsReadyFull);
+        this.taskManager.Enqueue(() => PlayerHelper.IsReadyFull);
 
-            foreach (LoopActionConfig loopAction in Configuration.Loop.Termination.Actions)
+        bool terminationEnabled = Configuration.Loop.Termination.Enabled;
+
+
+        foreach (LoopActionConfig loopAction in Configuration.Loop.Termination.Actions)
+            if (terminationEnabled || loopAction.Locked)
             {
                 bool queue = false;
                 loopAction.Run(ref queue);
             }
 
+        if (terminationEnabled)
             switch (Configuration.Loop.Termination.TerminationMethodEnum)
             {
                 case TerminationMode.Kill_PC:
@@ -1246,7 +1246,7 @@ public sealed class AutoDuty : IDalamudPlugin
                     if (!Configuration.Loop.Termination.TerminationKeepActive)
                     {
                         Configuration.Loop.Termination.TerminationMethodEnum = TerminationMode.Do_Nothing;
-                           ConfigurationProfileV2.Save();
+                        ConfigurationProfileV2.Save();
                     }
 
                     this.taskManager.Enqueue(() =>
@@ -1276,7 +1276,7 @@ public sealed class AutoDuty : IDalamudPlugin
                     if (!Configuration.Loop.Termination.TerminationKeepActive)
                     {
                         Configuration.Loop.Termination.TerminationMethodEnum = TerminationMode.Do_Nothing;
-                           ConfigurationProfileV2.Save();
+                        ConfigurationProfileV2.Save();
                     }
 
                     this.taskManager.Enqueue(() => Chat.ExecuteCommand($"/xlkill"), "Killing the game");
@@ -1288,7 +1288,7 @@ public sealed class AutoDuty : IDalamudPlugin
                     if (!Configuration.Loop.Termination.TerminationKeepActive)
                     {
                         Configuration.Loop.Termination.TerminationMethodEnum = TerminationMode.Do_Nothing;
-                           ConfigurationProfileV2.Save();
+                        ConfigurationProfileV2.Save();
                     }
 
                     this.taskManager.Enqueue(() => PlayerHelper.IsReady);
@@ -1309,7 +1309,6 @@ public sealed class AutoDuty : IDalamudPlugin
                 default:
                     break;
             }
-        }
 
         Svc.Log.Debug($"Removing Looping, Setting CurrentLoop to 0, and Setting Stage to Stopped");
 
