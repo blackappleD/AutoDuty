@@ -8,13 +8,13 @@ using Newtonsoft.Json;
 
 namespace AutoDuty.Managers
 {
+    using ECommons;
     using ECommons.Throttlers;
     using ECommons.UIHelpers.AtkReaderImplementations;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using ECommons;
     using Screens = CrucibleUi.Screens;
 
     [JsonObject(MemberSerialization.OptOut)]
@@ -483,6 +483,7 @@ namespace AutoDuty.Managers
             {
                 if (this.scanQueue == null && CrucibleTeam.RememberTeam(rows))
                     ConfigurationMain.Save();
+
                 return this.Scan(party, rows.Count, now);
             }
 
@@ -603,6 +604,9 @@ namespace AutoDuty.Managers
                     this.RequestBestiary(party, now);
                 return false;
             }
+
+            if (!ResetFilter(notebook))
+                return false;
 
             CrucibleTeam.Scanning = true;
 
@@ -864,6 +868,8 @@ namespace AutoDuty.Managers
                 return false;
             }
 
+            if (!ResetFilter(bestiary))
+                return false;
 
             this.batch.Clear();
 
@@ -928,6 +934,23 @@ namespace AutoDuty.Managers
         {
             Screens.PetParty.OpenBestiary(party);
             this.requestedAt = now;
+        }
+
+        private static bool ResetFilter(AtkUnitBase* notebook)
+        {
+            ReaderXBMMonsterNotebook readerNotebook = new(notebook);
+            if (!readerNotebook.Filtered)
+                return true;
+            
+            Svc.Log.Debug("[Crucible] Bestiary Filter active");
+
+            AtkUnitBase* bestiaryFilter = CrucibleUi.Ready(CrucibleUi.BestiaryWindowFilter);
+            if (bestiaryFilter == null)
+                Screens.Notebook.OpenFilter(notebook);
+            else
+                Screens.NotebookFilter.ResetFilters(bestiaryFilter);
+
+            return false;
         }
 
         private void SetStep(Step next, DateTime now)
