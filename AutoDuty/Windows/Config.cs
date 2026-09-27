@@ -1623,7 +1623,7 @@ public static class ConfigTab
                 ImGui.Indent();
                 ImGuiEx.Text(string.Format(Loc.Get("ConfigTab.Multiboxing.Blocking"), MultiboxUtility.stepBlock));
 
-                if(MultiboxUtility.Config.Host)
+                if (MultiboxUtility.Config.Host)
                 {
                     unsafe
                     {
@@ -1648,7 +1648,7 @@ public static class ConfigTab
 
                         InfoProxyPartyMember* partyMembers = InfoProxyPartyMember.Instance();
 
-                        for (int i = 0; i < MultiboxUtility.Server.MAX_SERVERS; i++)
+                        foreach ((int i, ulong _, string _, ushort _) in MultiboxUtility.Server.ConnectedClients)
                         {
                             MultiboxUtility.Server.ClientInfo? info = MultiboxUtility.Server.clients[i];
 
@@ -1694,7 +1694,15 @@ public static class ConfigTab
                         using(ImRaii.Disabled(!InDungeon))
                         {
                             if(ImGui.Button($"{Loc.Get("ConfigTab.Multiboxing.ResynchronizeStep")}##MultiboxSynchronizeStep"))
+                            {
+                                if (MultiboxUtility.stepBlock)
+                                {
+                                    Plugin.indexer--;
+                                    MultiboxUtility.stepBlock = false;
+                                }
+
                                 MultiboxUtility.Server.SendStepStart();
+                            }
                         }
                         ImGui.Separator();
                     }
