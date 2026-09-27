@@ -453,15 +453,15 @@ namespace AutoDuty.Managers
             this.rebuilding     = true;
             this.requestedAt    = DateTime.MinValue;
             this.batch.Clear();
-            this.scanDone       = false;
-            this.scanQueue      = null;
-            this.scanning       = 0;
-            this.scanClearing   = false;
-            this.scanRequeued   = 0;
-            this.clearTries     = 0;
+            this.scanDone         = false;
+            this.scanQueue        = null;
+            this.scanning         = 0;
+            this.scanClearing     = false;
+            this.scanRequeued     = 0;
+            this.clearTries       = 0;
             CrucibleTeam.Scanning = false;
-            this.Error          = null;
-            this.Status         = "Setting up the team";
+            this.Error            = null;
+            this.Status           = "Setting up the team";
         }
 
         public bool Update()
@@ -484,7 +484,7 @@ namespace AutoDuty.Managers
                 if (this.scanQueue == null && CrucibleTeam.RememberTeam(rows))
                     ConfigurationMain.Save();
 
-                return this.Scan(party, rows.Count, now);
+                return this.Scan(party, now);
             }
 
             CrucibleTeam.UpdateCache();
@@ -590,21 +590,8 @@ namespace AutoDuty.Managers
             return false;
         }
 
-        private bool Scan(AtkUnitBase* party, int teamCount, DateTime now)
+        public bool Scan(AtkUnitBase* notebook, DateTime now)
         {
-            if (this.scanClearing)
-                return this.ClearForScan(party, teamCount, now);
-
-            if (!CrucibleUi.TryReady(CrucibleUi.BestiaryWindow, out AtkUnitBase* notebook))
-            {
-                if (this.scanQueue == null && CrucibleTeam.Owned().Any() && CrucibleTeam.MissingRanks().Count == 0)
-                    return this.FinishScan(now);
-
-                if (now - this.requestedAt > Resend)
-                    this.RequestBestiary(party, now);
-                return false;
-            }
-
             if (!ResetFilter(notebook))
                 return false;
 
@@ -612,9 +599,7 @@ namespace AutoDuty.Managers
 
             if (this.scanQueue == null)
             {
-                IEnumerable<uint> showing = CrucibleUi.BestiaryShowing(notebook);
-
-                this.scanQueue   = CrucibleTeam.MissingRanks().OrderByDescending(showing.Contains).ThenBy(x => x).ToList();
+                this.scanQueue   = ScanQueue(notebook);
                 this.scanTotal   = this.scanQueue.Count;
                 this.scanFrom    = now;
                 this.scanChanged = false;
@@ -624,35 +609,22 @@ namespace AutoDuty.Managers
 
             if (this.scanning != 0)
             {
+                Svc.Log.Debug("Scanning");
                 if (CrucibleUi.BestiarySelected(notebook) is { } selected && selected.Number == this.scanning)
                 {
-                    if (selected != this.scanRead)
-                    {
-                        this.scanRead = selected;
-                        return false;
-                    }
-
                     this.scanChanged |= CrucibleTeam.RememberFamiliarUnsaved(selected);
                     this.scanQueue.Remove(this.scanning);
                     this.scanning = 0;
                 }
                 else if (now - this.scanStarted > ScanPatience)
                 {
-                    if (teamCount > 0 && this.scanRequeued != this.scanning)
-                    {
-                        Svc.Log.Info($"[Crucible] The board won't take another familiar at {teamCount}; clearing it and re-reading No. {this.scanning}");
-                        this.scanRequeued = this.scanning;
-                        this.scanning     = 0;
-                        this.StartScanClear(party, teamCount, now);
-                        return false;
-                    }
-
                     Svc.Log.Warning($"[Crucible] No. {this.scanning} never showed in the bestiary's detail pane; skipping it");
                     this.scanQueue.Remove(this.scanning);
                     this.scanning = 0;
                 }
                 else if (!this.scanRetried && now - this.scanStarted > ScanRetry)
                 {
+                    Svc.Log.Debug("[Crucible] Scan retry");
                     this.scanRetried = true;
                     Screens.Notebook.PickEntry(notebook, SlotOf(notebook, this.scanning));
                 }
@@ -661,13 +633,9 @@ namespace AutoDuty.Managers
             }
 
             if (this.scanQueue.Count == 0)
-                return this.FinishScan(now);
-
-            if (teamCount >= Screens.PetParty.GetTeamSize(party))
             {
-                Svc.Log.Info($"[Crucible] Board is holding {teamCount}; clearing it before reading more ranks");
-                this.StartScanClear(party, teamCount, now);
-                return false;
+                this.FinishScan(now);
+                return true;
             }
 
             uint next = this.scanQueue[0];
@@ -675,6 +643,7 @@ namespace AutoDuty.Managers
                 return false;
 
             this.Status = $"Reading familiar ranks ({this.scanTotal - this.scanQueue.Count + 1}/{this.scanTotal})";
+            Svc.Log.Debug(this.Status);
             if (!Screens.Notebook.PickEntry(notebook, SlotOf(notebook, next)))
             {
                 Svc.Log.Warning($"[Crucible] Couldn't click No. {next} in the bestiary; skipping it");
@@ -684,12 +653,20 @@ namespace AutoDuty.Managers
 
             this.scanning    = next;
             this.scanStarted = now;
-            this.scanRead    = null;
             this.scanRetried = false;
             return false;
         }
 
-        private uint SlotOf(AtkUnitBase* notebook, uint number)
+        private static List<uint> ScanQueue(AtkUnitBase* notebook)
+        {
+            IEnumerable<uint> showing = CrucibleUi.BestiaryShowing(notebook);
+            return CrucibleTeam.MissingRanks().OrderByDescending(showing.Contains).ThenBy(x => x).ToList();
+        }
+
+        public static bool ScanRequired() => 
+            CrucibleTeam.MissingRanks().Count != 0;
+
+        private static uint SlotOf(AtkUnitBase* notebook, uint number)
         {
             ReaderXBMMonsterNotebook x = new(notebook);
 
@@ -792,9 +769,9 @@ namespace AutoDuty.Managers
             return false;
         }
 
-        private bool FinishScan(DateTime now)
+        private void FinishScan(DateTime now)
         {
-            if (this.scanQueue is { } && this.scanTotal > 0)
+            if (this.scanQueue is not null && this.scanTotal > 0)
                 Svc.Log.Info($"[Crucible] Read {this.scanTotal} familiars from the bestiary in {(now - this.scanFrom).TotalSeconds:0.0}s");
             if (this.scanChanged)
                 ConfigurationMain.Save();
@@ -811,7 +788,6 @@ namespace AutoDuty.Managers
             this.signature      = "";
             this.Status         = "Setting up the team";
             this.SetStep(Step.Plan, now);
-            return false;
         }
 
         private bool Plan(AtkUnitBase* party, List<uint> team, DateTime now)

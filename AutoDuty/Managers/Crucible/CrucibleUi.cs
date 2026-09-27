@@ -377,6 +377,8 @@ namespace AutoDuty.Managers
 
             internal static class Notebook
             {
+                public static void Close(AtkUnitBase* notebook) => AddonHelper.FireCallBack(notebook, true, 0);
+
                 public static void OpenFilter(AtkUnitBase* notebook) => AddonHelper.FireCallBack(notebook, true, 2);
 
                 private const uint FirstEntryParam = 4;

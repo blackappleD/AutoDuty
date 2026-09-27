@@ -64,10 +64,10 @@ namespace AutoDuty.Managers
                 _taskManager.EnqueueDelay(2000);
             }
 
-            _taskManager.Enqueue(() => this.boardStep = 0, "RegisterCrucible-OpenBoard");
-            _taskManager.Enqueue(() => this.OpenBoard(board), "RegisterCrucible-OpenBoard", new TaskManagerConfiguration(30000));
+            _taskManager.Enqueue(() => this.boardStep = 0,                                         "RegisterCrucible-OpenBoard");
+            _taskManager.Enqueue(() => this.teamSetup.Start(Configuration.Meta.Crucible.TeamMode), "RegisterCrucible-Team-Setup");
 
-            _taskManager.Enqueue(() => this.teamSetup.Start(AutoDuty.Configuration.Meta.Crucible.TeamMode), "RegisterCrucible-Team-Setup");
+            _taskManager.Enqueue(() => this.OpenBoard(board), "RegisterCrucible-OpenBoard", new TaskManagerConfiguration(300_000));
             _taskManager.Enqueue(() =>
                                  {
                                      bool done = this.teamSetup.Update();
@@ -113,24 +113,29 @@ namespace AutoDuty.Managers
             return false;
         }
 
-        private static string? challengeText;
-
         private static string ChallengeText =>
-            challengeText ??= Svc.Data.GetExcelSheet<RawRow>(name: "custom/009/CtsXbmEntrance_00976").TryGetRow(1, out RawRow row)
+            field ??= Svc.Data.GetExcelSheet<RawRow>(name: "custom/009/CtsXbmEntrance_00976").TryGetRow(1, out RawRow row)
+                                  ? row.ReadStringColumn(1).ExtractText().TrimEnd('.', '。', ' ')
+                                  : string.Empty;
+        private static string BestiaryText =>
+            field ??= Svc.Data.GetExcelSheet<RawRow>(name: "custom/009/CtsXbmEntrance_00976").TryGetRow(3, out RawRow row)
                                   ? row.ReadStringColumn(1).ExtractText().TrimEnd('.', '。', ' ')
                                   : string.Empty;
 
         private static string QuestAlternativeText =>
-            challengeText ??= Svc.Data.GetExcelSheet<CustomTalk>().TryGetRow(721872, out CustomTalk row)
+            field ??= Svc.Data.GetExcelSheet<CustomTalk>().TryGetRow(721872, out CustomTalk row)
                                   ? row.MainOption.ExtractText().TrimEnd('.', '。', ' ')
                                   : string.Empty;
 
-        private static unsafe void ChooseChallenge(AtkUnitBase* menu)
+        private static unsafe void ChooseSelectStringText(AtkUnitBase* menu, bool scanRequired)
         {
-            int index = ChallengeText.Length > 0 ? CrucibleUi.SelectStringIndex(menu, ChallengeText) : -1;
+            string text  = scanRequired ? BestiaryText : ChallengeText;
+            Svc.Log.Debug("[Crucible] Select String " + text);
+
+            int index = text.Length > 0 ? CrucibleUi.SelectStringIndex(menu, text) : -1;
             if (index < 0)
             {
-                Svc.Log.Warning($"[Crucible] Lauda's menu has no \"{ChallengeText}\" option");
+                Svc.Log.Warning($"[Crucible] Lauda's menu has no \"{text}\" option");
                 return;
             }
 
@@ -148,7 +153,7 @@ namespace AutoDuty.Managers
                 return true;
             }
 
-            if (!EzThrottler.Throttle("CrucibleOpenBoard", 300))
+            if (!EzThrottler.Throttle("CrucibleOpenBoard", 250))
                 return false;
 
             if (CrucibleUi.TryReady(CrucibleUi.BoardList, out AtkUnitBase* list))
@@ -201,10 +206,17 @@ namespace AutoDuty.Managers
                 return false;
             }
 
+            if (CrucibleUi.TryReady(CrucibleUi.BestiaryWindow, out AtkUnitBase* notebook))
+            {
+                DebugLog("Bestiary Notebook for scan");
+                if(this.teamSetup.Scan(notebook, DateTime.UtcNow))
+                    Screens.Notebook.Close(notebook);
+            }
+
             if (CrucibleUi.TryReady("SelectString", out AtkUnitBase* menu))
             {
                 DebugLog("Main Select");
-                ChooseChallenge(menu);
+                ChooseSelectStringText(menu, CrucibleTeamSetup.ScanRequired());
                 EzThrottler.Throttle("CrucibleOpenBoard", 250, true);
                 return false;
             }
