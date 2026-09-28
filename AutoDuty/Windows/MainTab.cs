@@ -1261,7 +1261,7 @@ namespace AutoDuty.Windows
         {
             ImGuiEx.RealtimeDragDrop<uint> dragDrop = _crucibleShopDragDrop ??= new ImGuiEx.RealtimeDragDrop<uint>(
                 "CrucibleShopDragDrop",
-                (row) => row.ToString(),
+                row => row.ToString(),
                 smallButton: false
             );
 
@@ -1360,8 +1360,9 @@ namespace AutoDuty.Windows
                 order.Insert(moveToIndex, movedItem);
             }
 
-            if (!order.SequenceEqual(before)) 
+            if (!order.SequenceEqual(before))
                 ConfigurationProfileV2.Save();
+            
         }
 
         private static void DrawCrucibleItemTooltip(uint row)
