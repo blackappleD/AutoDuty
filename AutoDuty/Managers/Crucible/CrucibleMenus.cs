@@ -454,13 +454,17 @@ namespace AutoDuty.Managers
             bool itemRoom = held.Length    < ItemCap;
             bool gearRoom = ownedGear.Count < GearCap;
 
-            IEnumerable<ReaderXBMContentsItemShop.StockEntry> wanted = stock.Where(x => CrucibleItemData.GetCategoryOf(x.Item) switch
-            {
-                CrucibleItemData.CrucibleItemCategory.HealItem => itemRoom,
-                CrucibleItemData.CrucibleItemCategory.Gear     => gearRoom && !ownedGear.Contains(x.Item) && !CrucibleItemData.BlockedGear(x.Item, ownedGear),
-                CrucibleItemData.CrucibleItemCategory.Feed     => !this.fedThisVisit,
-                _                                              => false
-            });
+            IEnumerable<ReaderXBMContentsItemShop.StockEntry> wanted = stock.Where(x =>
+                                                                                   {
+                                                                                       CrucibleItemData.CrucibleItemCategory category = CrucibleItemData.GetCategoryOf(x.Item);
+                                                                                       return category switch
+                                                                                       { 
+                                                                                           CrucibleItemData.CrucibleItemCategory.Gear => gearRoom && !ownedGear.Contains(x.Item) && !CrucibleItemData.BlockedGear(x.Item, ownedGear),
+                                                                                           CrucibleItemData.CrucibleItemCategory.Feed => !this.fedThisVisit,
+                                                                                           _ when CrucibleItemData.CrucibleItemCategory.Item.HasFlag(category) => itemRoom,
+                                                                                           _ => false
+                                                                                       };
+                                                                                   });
 
             return FirstInStock(wanted, CrucibleItemData.ShopOrder, held);
         }
@@ -545,7 +549,7 @@ namespace AutoDuty.Managers
             bool  fighting = Svc.Condition[ConditionFlag.InCombat];
             float hp       = (float)me.CurrentHp / me.MaxHp;
             if (!(hp >= (fighting ? FightLow : BoardLow)))
-                if (PickFromItems(fighting ? CrucibleItemData.FightItems : CrucibleItemData.BoardItems))
+                if (PickFromItems(fighting ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems))
                     return;
 
             foreach (uint[] statusItem in CrucibleItemData.StatusItems)

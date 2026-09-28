@@ -4,7 +4,8 @@ using AutoDuty.Configurations;
 using System.Linq;
 using ECommons.DalamudServices;
 using Lumina.Excel;
-using Lumina.Excel.Sheets;
+using Lumina.Excel.Sheets.Experimental;
+#pragma warning disable PendingExcelSchema
 
 namespace AutoDuty.Managers;
 
@@ -175,7 +176,7 @@ internal static class CrucibleItemData
         168  // White Scorpion Simular
     ];
 
-    public static readonly uint[] FightItems =
+    public static readonly uint[] FightHealingItems =
     [
         140, // Beast Potion Kit
         79,  // G4 Beast Potion
@@ -191,7 +192,7 @@ internal static class CrucibleItemData
         135  // Vampiric Essence
     ];
 
-    public static readonly uint[] BoardItems =
+    public static readonly uint[] BoardHealingItems =
     [
         79, // G4 Beast Potion
         78, // G3 Beast Potion
@@ -209,8 +210,8 @@ internal static class CrucibleItemData
         [98, 4846]   // G1 Reraiser
     ];
 
-    public static uint[] ItemOrder => ShopHealing.Concat(FightItems).Distinct().ToArray();
-    public static uint[] TreasureOrder => ShopHealingOrder.Concat(FightItems).Concat(ShopGearOrder).Concat(ShopFeedOrder).Distinct().ToArray();
+    public static uint[] ItemOrder => ShopHealing.Concat(FightHealingItems).Distinct().ToArray();
+    public static uint[] TreasureOrder => ShopHealingOrder.Concat(FightHealingItems).Concat(ShopGearOrder).Concat(ShopFeedOrder).Distinct().ToArray();
 
     public static uint[] ShopItems => ShopHealing.Concat(ShopGear).Concat(ShopFeed).ToArray();
 
@@ -272,7 +273,7 @@ internal static class CrucibleItemData
         if (!Items.TryGetRow(row, out XBMItem item))
             return null;
 
-        string type = Svc.Data.GetExcelSheet<XBMItemType>().TryGetRow(item.Unknown13, out XBMItemType itemType) ? itemType.Unknown0.ExtractText() : "";
+        string type = item.Type.ValueNullable?.Name.ExtractText() ?? string.Empty;
         return new ItemInfo(NameOf(row), type, item.Unknown4.ExtractText(), item.Unknown3.ExtractText(), item.Unknown11);
     }
 
@@ -290,29 +291,39 @@ internal static class CrucibleItemData
         return index < 0 ? int.MaxValue : index;
     }
 
+    public enum CrucibleItemType
+    {
+        None,
+        BeastGear = 1,
+        CrucibleItem = 2,
+        Feed = 3
+    }
+
     [Flags]
     public enum CrucibleItemCategory
     {
-        None       = 0,
-        Gear       = 1 << 0,
-        HealItem   = 1 << 1,
-        CombatItem = 1 << 2,
-        BoardItem  = 1 << 3,
-        Item       = HealItem | CombatItem | BoardItem,
-        Feed       = 1 << 4
+        None      = 0,
+        Gear      = 1 << 0,
+        HealItem  = 1 << 1,
+        OtherItem = 1 << 2,
+        Item      = HealItem | OtherItem,
+        Feed      = 1 << 3
     }
 
-    public static CrucibleItemCategory GetCategoryOf(uint item)
+    public static CrucibleItemCategory GetCategoryOf(uint row)
     {
-        if (ShopGear.Contains(item))
-            return CrucibleItemCategory.Gear;
+        if (!Items.TryGetRow(row, out XBMItem item) || !item.Type.IsValid)
+            return CrucibleItemCategory.None;
 
-        if (ShopHealing.Contains(item))
-            return CrucibleItemCategory.HealItem;
+        CrucibleItemType type = (CrucibleItemType) item.Type.RowId;
 
-        if (ShopFeed.Contains(item))
-            return CrucibleItemCategory.Feed;
-
-        return CrucibleItemCategory.None;
+        return type switch
+        {
+            CrucibleItemType.BeastGear => CrucibleItemCategory.Gear,
+            CrucibleItemType.CrucibleItem when ShopHealing.Contains(row) => CrucibleItemCategory.HealItem,
+            CrucibleItemType.CrucibleItem => CrucibleItemCategory.OtherItem,
+            CrucibleItemType.Feed => CrucibleItemCategory.Feed,
+            _ => CrucibleItemCategory.None
+        };
     }
 }   
