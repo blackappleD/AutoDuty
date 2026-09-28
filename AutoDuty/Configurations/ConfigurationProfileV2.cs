@@ -87,8 +87,9 @@ public class ConfigurationProfileV2
             public CrucibleTeamMode     TeamMode     { get; set; } = CrucibleTeamMode.Recommended;
             public CrucibleLevelingMode LevelingMode { get; set; } = CrucibleLevelingMode.Minus_3;
             public List<uint>           CustomTeam   { get; set; } = [];
-            public List<uint>           ShopOrder    { get; set; } = [];
-            public List<uint>           ShopGearOrder { get; set; } = []; // legacy, only seeds ShopOrder
+            public List<CrucibleShopList> ShopLists     { get; set; } = [];
+            public int                    ShopListIndex { get; set; } = 0;
+            public List<uint>             ShopGearOrder { get; set; } = []; // legacy, only seeds ShopLists
 
             public bool FightPicks          { get; set; } = true;
             public bool Loot                { get; set; } = true;
@@ -97,6 +98,13 @@ public class ConfigurationProfileV2
             public bool Rest                { get; set; } = true;
             public bool Items               { get; set; } = true;
             public bool RespectGearRequirements   { get; set; } = true;
+        }
+
+        [JsonObject(MemberSerialization.OptOut)]
+        public class CrucibleShopList
+        {
+            public string     Name  { get; set; } = "Default";
+            public List<uint> Order { get; set; } = [];
         }
 
         public bool ShowMainWindowOnStartup { get; set; } = false;

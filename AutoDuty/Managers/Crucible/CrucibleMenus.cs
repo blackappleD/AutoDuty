@@ -456,13 +456,11 @@ namespace AutoDuty.Managers
             {
                 CrucibleItemData.CrucibleItemCategory.HealItem => itemRoom,
                 CrucibleItemData.CrucibleItemCategory.Gear     => gearRoom && !ownedGear.Contains(x.Item) && !CrucibleItemData.BlockedGear(x.Item, ownedGear),
+                CrucibleItemData.CrucibleItemCategory.Feed     => !this.fedThisVisit,
                 _                                              => false
             });
 
-            if (FirstInStock(wanted, CrucibleItemData.ShopOrder, held) is { } buy)
-                return buy;
-
-            return this.fedThisVisit ? null : FirstInStock(stock, CrucibleItemData.ShopFeed, held);
+            return FirstInStock(wanted, CrucibleItemData.ShopOrder, held);
         }
 
         private static ReaderXBMContentsItemShop.StockEntry? FirstInStock(IEnumerable<ReaderXBMContentsItemShop.StockEntry> stock, uint[] priority, uint[] owned)

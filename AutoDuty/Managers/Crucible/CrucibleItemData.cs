@@ -203,25 +203,37 @@ internal static class CrucibleItemData
     ];
 
     public static uint[] ItemOrder => ShopHealing.Concat(FightItems).Distinct().ToArray();
-    public static uint[] TreasureOrder => ShopHealingOrder.Concat(FightItems).Concat(ShopGearOrder).Concat(ShopFeed).Distinct().ToArray();
+    public static uint[] TreasureOrder => ShopHealingOrder.Concat(FightItems).Concat(ShopGearOrder).Concat(ShopFeedOrder).Distinct().ToArray();
 
-    public static uint[] ShopItems => ShopHealing.Concat(ShopGear).ToArray();
+    public static uint[] ShopItems => ShopHealing.Concat(ShopGear).Concat(ShopFeed).ToArray();
 
-    public static uint[] ShopOrder
+    public static ConfigurationProfileV2.MetaConfig.CrucibleShopList ActiveShopList
     {
         get
         {
             ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = AutoDuty.Configuration.Meta.Crucible;
-            return crucible.ShopOrder.Where(ShopItems.Contains)
-                           .Concat(ShopHealing)
-                           .Concat(crucible.ShopGearOrder.Where(ShopGear.Contains))
-                           .Concat(ShopGear)
-                           .Distinct().ToArray();
+            if (crucible.ShopLists.Count == 0)
+            {
+                crucible.ShopLists.Add(new ConfigurationProfileV2.MetaConfig.CrucibleShopList
+                                       {
+                                           Order = ShopHealing.Concat(crucible.ShopGearOrder.Where(ShopGear.Contains)).ToList()
+                                       });
+                crucible.ShopGearOrder = [];
+            }
+
+            crucible.ShopListIndex = Math.Clamp(crucible.ShopListIndex, 0, crucible.ShopLists.Count - 1);
+            return crucible.ShopLists[crucible.ShopListIndex];
         }
     }
 
+    public static uint[] CompleteShopOrder(IEnumerable<uint> order) =>
+        order.Where(ShopItems.Contains).Concat(ShopItems).Distinct().ToArray();
+
+    public static uint[] ShopOrder => CompleteShopOrder(ActiveShopList.Order);
+
     public static uint[] ShopGearOrder    => ShopOrder.Where(ShopGear.Contains).ToArray();
     public static uint[] ShopHealingOrder => ShopOrder.Where(ShopHealing.Contains).ToArray();
+    public static uint[] ShopFeedOrder    => ShopOrder.Where(ShopFeed.Contains).ToArray();
 
     private static ExcelSheet<XBMItem>? items;
 
