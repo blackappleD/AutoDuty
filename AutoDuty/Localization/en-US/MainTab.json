@@ -79,6 +79,7 @@
       "HealingItem": "Healing",
       "GearItem": "Gear",
       "FeedItem": "Feed",
+      "ItemItem": "Item",
       "ShopListHelp": "The shop list AutoDuty buys from",
       "RenameShopListHelp": "Rename this shop list",
       "NewShopList": "New",

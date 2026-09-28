@@ -188,7 +188,7 @@ namespace AutoDuty.Windows
 
                     if (Plugin.CurrentTerritoryContent?.DutyModes.HasFlag(DutyMode.Crucible) == true)
                     {
-                        DrawCrucibleMenuToggles();
+                        DrawCrucible(true);
                         ImGui.Separator();
                         ImGui.Spacing();
                     }
@@ -448,7 +448,7 @@ namespace AutoDuty.Windows
                                 }
 
                                 if (Configuration.Meta.DutyModeEnum == DutyMode.Crucible && Player.Available)
-                                    DrawCrucible();
+                                    DrawCrucible(false);
 
                                 if (Configuration.Meta.DutyModeEnum == DutyMode.Trust && Player.Available)
                                 {
@@ -892,69 +892,76 @@ namespace AutoDuty.Windows
             }
         }
 
-        private static void DrawCrucible()
+        private static void DrawCrucible(bool inDungeon)
         {
             ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = Configuration.Meta.Crucible;
 
             ImGui.Separator();
-            ImGuiEx.LineCentered(() => ImGuiEx.TextUnderlined(Loc.Get("MainTab.Crucible.Team")));
 
-            foreach (CrucibleTeamMode mode in Enum.GetValues<CrucibleTeamMode>())
+            if (!inDungeon)
             {
-                if (mode != CrucibleTeamMode.Recommended)
-                    ImGui.SameLine();
-                if (ImGui.RadioButton(Loc.Get($"MainTab.Crucible.Modes.{mode}"), crucible.TeamMode == mode) && crucible.TeamMode != mode)
-                {
-                    crucible.TeamMode = mode;
-                    ConfigurationProfileV2.Save();
-                }
-                if (ImGui.IsItemHovered())
-                    ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.ModesHelp.{mode}"));
-            }
 
-            if(crucible.TeamMode == CrucibleTeamMode.Leveling)
-                foreach (CrucibleLevelingMode mode in Enum.GetValues<CrucibleLevelingMode>())
+                ImGuiEx.LineCentered(() => ImGuiEx.TextUnderlined(Loc.Get("MainTab.Crucible.Team")));
+
+                foreach (CrucibleTeamMode mode in Enum.GetValues<CrucibleTeamMode>())
                 {
-                    if (mode != CrucibleLevelingMode.Full)
+                    if (mode != CrucibleTeamMode.Recommended)
                         ImGui.SameLine();
-
-                    if (ImGui.RadioButton(Loc.Get($"MainTab.Crucible.LevelingModes.{mode}"), crucible.LevelingMode == mode) && crucible.LevelingMode != mode)
+                    if (ImGui.RadioButton(Loc.Get($"MainTab.Crucible.Modes.{mode}"), crucible.TeamMode == mode) && crucible.TeamMode != mode)
                     {
-                        crucible.LevelingMode = mode;
+                        crucible.TeamMode = mode;
                         ConfigurationProfileV2.Save();
                     }
+
                     if (ImGui.IsItemHovered())
-                        ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.LevelingModesHelp.{mode}"));
+                        ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.ModesHelp.{mode}"));
                 }
 
-            List<uint>                                  team   = CrucibleTeam.For(crucible.TeamMode);
-            IReadOnlyDictionary<uint, CrucibleFamiliar> cached = CrucibleTeam.Familiars;
-            List<uint>                                  owned  = CrucibleTeam.Owned().ToList();
+                if (crucible.TeamMode == CrucibleTeamMode.Leveling)
+                    foreach (CrucibleLevelingMode mode in Enum.GetValues<CrucibleLevelingMode>())
+                    {
+                        if (mode != CrucibleLevelingMode.Full)
+                            ImGui.SameLine();
 
-            if (ImGui.CollapsingHeader($"{Loc.Get("MainTab.Crucible.Familiars", team.Count, CrucibleTeam.TeamSize())}###CrucibleFamiliars"))
-            {
-                using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl || cached.Count == 0))
-                    if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearRanks")))
-                        CrucibleTeam.ClearSaved();
-
-                if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
-                    ImGui.SetTooltip(Loc.Get("MainTab.Crucible.ClearRanksHelp"));
-
-                if (crucible is { TeamMode: CrucibleTeamMode.Custom, CustomTeam.Count: > 0 })
-                {
-                    ImGui.SameLine();
-                    using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl))
-                        if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearCustoms")))
+                        if (ImGui.RadioButton(Loc.Get($"MainTab.Crucible.LevelingModes.{mode}"), crucible.LevelingMode == mode) && crucible.LevelingMode != mode)
                         {
-                            crucible.CustomTeam.Clear();
+                            crucible.LevelingMode = mode;
                             ConfigurationProfileV2.Save();
                         }
-                }
 
-                if (owned.Count == 0)
-                    ImGuiEx.TextWrapped(Loc.Get("MainTab.Crucible.NoFamiliars"));
-                else
-                    DrawCrucibleFamiliarTable(crucible, team, cached, owned);
+                        if (ImGui.IsItemHovered())
+                            ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.LevelingModesHelp.{mode}"));
+                    }
+
+                List<uint>                                  team   = CrucibleTeam.For(crucible.TeamMode);
+                IReadOnlyDictionary<uint, CrucibleFamiliar> cached = CrucibleTeam.Familiars;
+                List<uint>                                  owned  = CrucibleTeam.Owned().ToList();
+
+                if (ImGui.CollapsingHeader($"{Loc.Get("MainTab.Crucible.Familiars", team.Count, CrucibleTeam.TeamSize())}###CrucibleFamiliars"))
+                {
+                    using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl || cached.Count == 0))
+                        if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearRanks")))
+                            CrucibleTeam.ClearSaved();
+
+                    if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                        ImGui.SetTooltip(Loc.Get("MainTab.Crucible.ClearRanksHelp"));
+
+                    if (crucible is { TeamMode: CrucibleTeamMode.Custom, CustomTeam.Count: > 0 })
+                    {
+                        ImGui.SameLine();
+                        using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl))
+                            if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearCustoms")))
+                            {
+                                crucible.CustomTeam.Clear();
+                                ConfigurationProfileV2.Save();
+                            }
+                    }
+
+                    if (owned.Count == 0)
+                        ImGuiEx.TextWrapped(Loc.Get("MainTab.Crucible.NoFamiliars"));
+                    else
+                        DrawCrucibleFamiliarTable(crucible, team, cached, owned);
+                }
             }
 
             if (ImGui.CollapsingHeader($"{Loc.Get("MainTab.Crucible.Menus")}###CrucibleMenus"))
@@ -1080,7 +1087,7 @@ namespace AutoDuty.Windows
         private static void DrawCrucibleShopSettings(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible)
         {
             Toggle("RespectGearRequirements", crucible.RespectGearRequirements, v => crucible.RespectGearRequirements = v);
-
+            ImGui.Separator();
             ConfigurationProfileV2.MetaConfig.CrucibleShopList active = CrucibleItemData.ActiveShopList;
             if (!active.Order.SequenceEqual(CrucibleItemData.ShopOrder))
                 active.Order = CrucibleItemData.ShopOrder.ToList();
@@ -1245,6 +1252,11 @@ namespace AutoDuty.Windows
             }
         }
 
+        private static readonly Vector4 CrucibleShopGear        = ImGuiHelper.RoleDPSColor;
+        private static readonly Vector4 CrucibleShopItemHealing = ImGuiHelper.RoleHealerColor;
+        private static readonly Vector4 CrucibleShopFeed        = ImGuiHelper.RoleAllRounderColor;
+
+
         private static void CrucibleShopOrderTable(List<uint> order)
         {
             ImGuiEx.RealtimeDragDrop<uint> dragDrop = _crucibleShopDragDrop ??= new ImGuiEx.RealtimeDragDrop<uint>(
@@ -1264,10 +1276,12 @@ namespace AutoDuty.Windows
             {
                 if (orderTable)
                 {
+                    ImGui.TableSetupScrollFreeze(5, 1);
                     ImGui.TableSetupColumn("##Reorder");
                     ImGui.TableSetupColumn("#");
-                    ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.ShopItem"), ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.ShopItem"));
                     ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.ShopItemType"));
+                    ImGui.TableSetupColumn("##Spacer", ImGuiTableColumnFlags.WidthStretch);
 
                     ImGui.TableHeadersRow();
 
@@ -1310,13 +1324,27 @@ namespace AutoDuty.Windows
 
                         ImGui.TableNextColumn();
                         ImGui.AlignTextToFramePadding();
-                        ImGui.TextColored(CrucibleFaded, Loc.Get(CrucibleItemData.GetCategoryOf(row) switch
-                        {
-                            CrucibleItemData.CrucibleItemCategory.HealItem => "MainTab.Crucible.HealingItem",
-                            CrucibleItemData.CrucibleItemCategory.Feed     => "MainTab.Crucible.FeedItem",
-                            _                                              => "MainTab.Crucible.GearItem"
-                        }));
 
+                        CrucibleItemData.CrucibleItemCategory category = CrucibleItemData.GetCategoryOf(row);
+
+                        switch (category)
+                        {
+                            case CrucibleItemData.CrucibleItemCategory.Gear:
+                                ImGui.TextColored(CrucibleShopGear, Loc.Get("MainTab.Crucible.GearItem"));
+                                break;
+                            case CrucibleItemData.CrucibleItemCategory.HealItem:
+                                ImGui.TextColored(CrucibleShopItemHealing, Loc.Get("MainTab.Crucible.HealingItem"));
+                                break;
+                            case CrucibleItemData.CrucibleItemCategory.Feed:
+                                ImGui.TextColored(CrucibleShopFeed, Loc.Get("MainTab.Crucible.FeedItem"));
+                                break;
+                            case CrucibleItemData.CrucibleItemCategory.None:
+                            case CrucibleItemData.CrucibleItemCategory.OtherItem:
+                            case CrucibleItemData.CrucibleItemCategory.Item:
+                            default:
+                                ImGui.TextColored(CrucibleFaded, Loc.Get("MainTab.Crucible.ItemItem"));
+                                break;
+                        }
                         ImGui.PopID();
                     }
                 }
