@@ -210,10 +210,9 @@ internal static class CrucibleItemData
         [98, 4846]   // G1 Reraiser
     ];
 
-    public static uint[] ItemOrder => ShopHealing.Concat(FightHealingItems).Distinct().ToArray();
-    public static uint[] TreasureOrder => ShopHealingOrder.Concat(FightHealingItems).Concat(ShopGearOrder).Concat(ShopFeedOrder).Distinct().ToArray();
+    public static uint[] TreasureOrder => ShopHealingOrder.Concat(StatusItems.Select(x => x[0])).Concat(FightHealingItems).Concat(ShopGearOrder).Concat(ShopFeedOrder).Distinct().ToArray();
 
-    public static uint[] ShopItems => ShopHealing.Concat(ShopGear).Concat(ShopFeed).ToArray();
+    public static uint[] ShopItems => ShopHealing.Concat(StatusItems.Select(x => x[0])).Concat(ShopGear).Concat(ShopFeed).Concat(Items.Where(item => item.Type.RowId != 0).Select(item => item.RowId)).ToArray();
 
     public static ConfigurationProfileV2.MetaConfig.CrucibleShopList ActiveShopList
     {
@@ -224,7 +223,7 @@ internal static class CrucibleItemData
             {
                 crucible.ShopLists.Add(new ConfigurationProfileV2.MetaConfig.CrucibleShopList
                                        {
-                                           Order = ShopHealing.Concat(crucible.ShopGearOrder.Where(ShopGear.Contains)).ToList()
+                                           Order = CompleteShopOrder(crucible.ShopGearOrder).ToList()
                                        });
                 crucible.ShopGearOrder = [];
             }
