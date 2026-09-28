@@ -697,7 +697,7 @@ namespace AutoDuty.Windows
                                                 {
                                                     if (Configuration.Meta.HideUnavailableDuties && !canRun)
                                                         continue;
-                                                    if (ImGui.Selectable($"L{content.ClassJobLevelRequired} ({content.TerritoryType}) {content.Name}", DutySelected?.ID == content.TerritoryType))
+                                                    if (ImGui.Selectable($"L{content.ClassJobLevelRequired} (i{content.ItemLevelRequired}) ({content.TerritoryType}) {content.Name}", DutySelected?.ID == content.TerritoryType))
                                                     {
                                                         DutySelected                   = ContentPathsManager.DictionaryPaths[content.TerritoryType];
                                                         Plugin.CurrentTerritoryContent = content;
