@@ -449,11 +449,18 @@ namespace AutoDuty.Managers
 
         private ReaderXBMContentsItemShop.StockEntry? ChooseBuy(List<ReaderXBMContentsItemShop.StockEntry> stock, uint[] held, HashSet<uint> ownedGear)
         {
-            if (held.Length < ItemCap && FirstInStock(stock, CrucibleItemData.ShopHealing, held) is { } healing)
-                return healing;
+            bool itemRoom = held.Length    < ItemCap;
+            bool gearRoom = ownedGear.Count < GearCap;
 
-            if (ownedGear.Count < GearCap && FirstInStock(stock.Where(x => !ownedGear.Contains(x.Item) && !CrucibleItemData.BlockedGear(x.Item, ownedGear)), CrucibleItemData.ShopGearOrder, held) is { } gear)
-                return gear;
+            IEnumerable<ReaderXBMContentsItemShop.StockEntry> wanted = stock.Where(x => CrucibleItemData.GetCategoryOf(x.Item) switch
+            {
+                CrucibleItemData.CrucibleItemCategory.HealItem => itemRoom,
+                CrucibleItemData.CrucibleItemCategory.Gear     => gearRoom && !ownedGear.Contains(x.Item) && !CrucibleItemData.BlockedGear(x.Item, ownedGear),
+                _                                              => false
+            });
+
+            if (FirstInStock(wanted, CrucibleItemData.ShopOrder, held) is { } buy)
+                return buy;
 
             return this.fedThisVisit ? null : FirstInStock(stock, CrucibleItemData.ShopFeed, held);
         }

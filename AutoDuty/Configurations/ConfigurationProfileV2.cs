@@ -87,7 +87,8 @@ public class ConfigurationProfileV2
             public CrucibleTeamMode     TeamMode     { get; set; } = CrucibleTeamMode.Recommended;
             public CrucibleLevelingMode LevelingMode { get; set; } = CrucibleLevelingMode.Minus_3;
             public List<uint>           CustomTeam   { get; set; } = [];
-            public List<uint>           ShopGearOrder { get; set; } = [];
+            public List<uint>           ShopOrder    { get; set; } = [];
+            public List<uint>           ShopGearOrder { get; set; } = []; // legacy, only seeds ShopOrder
 
             public bool FightPicks          { get; set; } = true;
             public bool Loot                { get; set; } = true;
