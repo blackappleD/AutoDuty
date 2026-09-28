@@ -474,7 +474,8 @@ namespace AutoDuty.Managers
 
             DateTime now = DateTime.UtcNow;
 
-            AtkUnitBase*                          party = CrucibleUi.Ready(CrucibleUi.TeamWindow);
+            AtkUnitBase* party = CrucibleUi.Ready(CrucibleUi.TeamWindow);
+
             List<ReaderXBMPetParty.MonsterEntry>? rows  = CrucibleUi.Team();
             if (party == null || rows == null || party->AtkValuesCount <= 0 || !party->AtkValues[0].Bool)
                 return false;
@@ -484,7 +485,8 @@ namespace AutoDuty.Managers
                 if (this.scanQueue == null && CrucibleTeam.RememberTeam(rows))
                     ConfigurationMain.Save();
 
-                return this.Scan(party, now);
+                this.Scan(party, now);
+                return false;
             }
 
             CrucibleTeam.UpdateCache();
