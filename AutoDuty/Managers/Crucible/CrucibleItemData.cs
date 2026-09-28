@@ -210,9 +210,37 @@ internal static class CrucibleItemData
     ];
 
     public static uint[] ItemOrder => ShopHealing.Concat(FightItems).Distinct().ToArray();
-    public static uint[] TreasureOrder => ShopHealing.Concat(FightItems).Concat(ShopGearOrder).Concat(ShopFeed).Distinct().ToArray();
+    public static uint[] TreasureOrder => ShopHealingOrder.Concat(FightItems).Concat(ShopGearOrder).Concat(ShopFeedOrder).Distinct().ToArray();
 
-    public static uint[] ShopGearOrder => AutoDuty.Configuration.Meta.Crucible.ShopGearOrder.Where(ShopGear.Contains).Concat(ShopGear).Distinct().ToArray();
+    public static uint[] ShopItems => ShopHealing.Concat(ShopGear).Concat(ShopFeed).ToArray();
+
+    public static ConfigurationProfileV2.MetaConfig.CrucibleShopList ActiveShopList
+    {
+        get
+        {
+            ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = AutoDuty.Configuration.Meta.Crucible;
+            if (crucible.ShopLists.Count == 0)
+            {
+                crucible.ShopLists.Add(new ConfigurationProfileV2.MetaConfig.CrucibleShopList
+                                       {
+                                           Order = ShopHealing.Concat(crucible.ShopGearOrder.Where(ShopGear.Contains)).ToList()
+                                       });
+                crucible.ShopGearOrder = [];
+            }
+
+            crucible.ShopListIndex = Math.Clamp(crucible.ShopListIndex, 0, crucible.ShopLists.Count - 1);
+            return crucible.ShopLists[crucible.ShopListIndex];
+        }
+    }
+
+    public static uint[] CompleteShopOrder(IEnumerable<uint> order) =>
+        order.Where(ShopItems.Contains).Concat(ShopItems).Distinct().ToArray();
+
+    public static uint[] ShopOrder => CompleteShopOrder(ActiveShopList.Order);
+
+    public static uint[] ShopGearOrder    => ShopOrder.Where(ShopGear.Contains).ToArray();
+    public static uint[] ShopHealingOrder => ShopOrder.Where(ShopHealing.Contains).ToArray();
+    public static uint[] ShopFeedOrder    => ShopOrder.Where(ShopFeed.Contains).ToArray();
 
     private static ExcelSheet<XBMItem>? items;
 
@@ -220,7 +248,8 @@ internal static class CrucibleItemData
 
     public static readonly Dictionary<uint, uint[]> GearRequires = new()
     {
-        [71] = [29] // Demonic Helm - Soulreaper Armor
+        [71] = [29], // Demonic Helm - Soulreaper Armor
+        [61] = [34]  // Thunder Axe - Umbral Wristlet
     };
 
     public static bool BlockedGear(uint row, HashSet<uint> ownedGear)
@@ -235,6 +264,17 @@ internal static class CrucibleItemData
 
     public static string NameOf(uint row) =>
         Items.TryGetRow(row, out XBMItem item) && item.Unknown2.ExtractText() is { Length: > 0 } name ? name : $"item {row}";
+
+    public readonly record struct ItemInfo(string Name, string Type, string Summary, string Description, uint Icon);
+
+    public static ItemInfo? InfoOf(uint row)
+    {
+        if (!Items.TryGetRow(row, out XBMItem item))
+            return null;
+
+        string type = Svc.Data.GetExcelSheet<XBMItemType>().TryGetRow(item.Unknown13, out XBMItemType itemType) ? itemType.Unknown0.ExtractText() : "";
+        return new ItemInfo(NameOf(row), type, item.Unknown4.ExtractText(), item.Unknown3.ExtractText(), item.Unknown11);
+    }
 
     public static uint ItemIn(string text) =>
         Items.Where(x => x.RowId > 0)
