@@ -1003,8 +1003,8 @@ public sealed class AutoDuty : IDalamudPlugin
                     break;
                 case false when this.Stage != Stage.Revived || DeathHelper.DeathState != PlayerLifeState.Revived:
                     Svc.Log.Debug($"We Revived, Setting Stage to Revived");
-                    DeathHelper.DeathState = PlayerLifeState.Revived;
                     this.Stage             = Stage.Revived;
+                    DeathHelper.DeathState = PlayerLifeState.Revived;
                     break;
             }
 
