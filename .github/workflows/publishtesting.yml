@@ -34,11 +34,11 @@ jobs:
         run: dotnet build --configuration Release AutoDuty/AutoDuty.csproj -p:AssemblyVersion=${{ github.ref_name }}
 
       - name: Rename zip to AutoDuty-bld.zip
-        run: mv AutoDuty/bin/Release/AutoDuty-bld/latest.zip AutoDuty/bin/Release/AutoDuty-bld/AutoDuty-bld.zip
+        run: mv AutoDuty/bin/Release/AutoDuty/latest.zip AutoDuty/bin/Release/AutoDuty/AutoDuty-bld.zip
 
       - name: 'Upload to GitHub prerelease'
         run: |
-            gh release upload "${{ github.ref_name }}" AutoDuty/bin/Release/AutoDuty-bld/AutoDuty-bld.zip --clobber --repo "${{ github.repository }}"
+            gh release upload "${{ github.ref_name }}" AutoDuty/bin/Release/AutoDuty/AutoDuty-bld.zip --clobber --repo "${{ github.repository }}"
         env:
           GITHUB_TOKEN: ${{ github.token }}
         shell: bash
