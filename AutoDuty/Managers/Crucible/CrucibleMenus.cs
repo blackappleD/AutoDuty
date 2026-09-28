@@ -383,6 +383,7 @@ namespace AutoDuty.Managers
                 {
                     Screens.Prompt.Yes(feedYes);
                     this.confirmFrom = DateTime.MinValue;
+                    this.feedFrom    = DateTime.MinValue;
                     this.shopNext    = now + ShopStep;
                     return;
                 }
