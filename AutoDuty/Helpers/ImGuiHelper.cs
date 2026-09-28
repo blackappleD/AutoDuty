@@ -137,6 +137,22 @@ namespace AutoDuty.Helpers
             ImGui.SameLine();
         }
 
+        internal static void HelpMarker(string text, FontAwesomeIcon icon = FontAwesomeIcon.InfoCircle, Vector4? color = null)
+        {
+            using ImRaii.ColorDisposable? col = ImRaii.PushColor(ImGuiCol.TextDisabled, color);
+            ImGui.SameLine();
+
+            using (ImRaii.PushFont(UiBuilder.IconFont))
+                ImGui.TextDisabled(icon.ToIconString());
+
+            if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                using (ImRaii.Tooltip())
+                {
+                    using (ImRaii.TextWrapPos(ImGui.GetFontSize() * 35.0f))
+                        ImGui.Text(text);
+                }
+        }
+
         internal static EndUnconditionally RequiresPlugin(ExternalPlugin plugins, string id, string? message = null, bool inline = false, bool write = true)
         {
             if (plugins == ExternalPlugin.None)
