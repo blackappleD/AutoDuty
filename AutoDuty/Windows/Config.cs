@@ -424,6 +424,31 @@ public static class ConfigTab
                 if (ImGui.CollapsingHeader("XBM"))
                 {
                     ImGui.Indent();
+
+                    if (ImGui.CollapsingHeader("XBMMainHUD"))
+                        unsafe
+                        {
+                            if (GenericHelpers.TryGetAddonByName("XBMContentsMainHUD", out AtkUnitBase* addon))
+                            {
+                                ReaderXBMContentsMainHUD x = new(addon);
+                                ImGui.Text($"Coins: {x.Coins}");
+                                ImGui.Text("Stock:");
+                                ImGui.Indent();
+                                
+                                ImGui.Text("Gear:");
+                                ImGui.Indent();
+                                foreach (ReaderXBMContentsItemShop.ItemEntry entry in x.ItemEntries)
+                                    ImGui.Text($"Gear: {entry.Unk0} | {entry.Available} | {entry.IconId} | {entry.Id} | {entry.Name}");
+                                ImGui.Unindent();
+
+                                ImGui.Text("Owned:");
+                                ImGui.Indent();
+                                foreach (ReaderXBMContentsItemShop.GearEntry entry in x.OwnedEntriesOwned)
+                                    ImGui.Text($"Owned: {entry.Owned} | {entry.IconId} | {entry.Id} | {entry.Name}");
+                                ImGui.Unindent();
+                            }
+                        }
+
                     if (ImGui.CollapsingHeader("XBMBestiary"))
                         unsafe
                         {
@@ -454,13 +479,13 @@ public static class ConfigTab
                                 ImGui.Text("Gear:");
                                 ImGui.Indent();
                                 foreach (ReaderXBMContentsItemShop.ItemEntry entry in x.ItemEntries)
-                                    ImGui.Text($"Gear: {entry.Unk0} | {entry.Sellable} | {entry.IconId} | {entry.Id} | {entry.Name}");
+                                    ImGui.Text($"Gear: {entry.Unk0} | {entry.Available} | {entry.IconId} | {entry.Id} | {entry.Name}");
                                 ImGui.Unindent();
 
                                 ImGui.Text("Owned:");
                                 ImGui.Indent();
                                 foreach (ReaderXBMContentsItemShop.GearEntry entry in x.OwnedEntriesOwned)
-                                    ImGui.Text($"Owned: {entry.Owned} | {entry.Unk2} | {entry.Id} | {entry.Name}");
+                                    ImGui.Text($"Owned: {entry.Owned} | {entry.IconId} | {entry.Id} | {entry.Name}");
                                 ImGui.Unindent();
                             }
                         }
@@ -502,13 +527,13 @@ public static class ConfigTab
                                 ImGui.Text("Item:");
                                 ImGui.Indent();
                                 foreach (ReaderXBMContentsItemShop.ItemEntry entry in x.ItemEntriesValid)
-                                    ImGui.Text($"Item: {entry.Unk0} | {entry.Sellable} | {entry.IconId} | {entry.Id} | {entry.Name}");
+                                    ImGui.Text($"Item: {entry.Unk0} | {entry.Available} | {entry.IconId} | {entry.Id} | {entry.Name}");
                                 ImGui.Unindent();
 
                                 ImGui.Text("Owned:");
                                 ImGui.Indent();
                                 foreach (ReaderXBMContentsItemShop.GearEntry entry in x.OwnedEntriesOwned)
-                                    ImGui.Text($"Owned: {entry.Owned} | {entry.Unk2} | {entry.Id} | {entry.Name}");
+                                    ImGui.Text($"Owned: {entry.Owned} | {entry.IconId} | {entry.Id} | {entry.Name}");
                                 ImGui.Unindent();
                             }
                         }

@@ -11,6 +11,7 @@ namespace AutoDuty.Managers
     using System.Linq;
     using ECommons.Throttlers;
     using ECommons.UIHelpers.AddonMasterImplementations;
+    using Helpers;
     using Screens = CrucibleUi.Screens;
 
     internal sealed unsafe class CrucibleMenus
@@ -531,21 +532,42 @@ namespace AutoDuty.Managers
             if (hud == null)
                 return;
 
+            ReaderXBMContentsMainHUD reader = new(hud);
+
+            List<ReaderXBMContentsItemShop.ItemEntry> items  = reader.ItemEntries;
+
             bool  fighting = Svc.Condition[ConditionFlag.InCombat];
             float hp       = (float)me.CurrentHp / me.MaxHp;
-            if (hp >= (fighting ? FightLow : BoardLow))
-                return;
+            if (!(hp >= (fighting ? FightLow : BoardLow)))
+                if (PickFromItems(fighting ? CrucibleItemData.FightItems : CrucibleItemData.BoardItems))
+                    return;
 
-            List<CrucibleUi.ItemSlot> items = CrucibleUi.HudItems(hud);
-            CrucibleUi.ItemSlot pick = (fighting ? CrucibleItemData.FightItems : CrucibleItemData.BoardItems).Select(row => items.FirstOrDefault(x => x.Row == row))
-                                                                          .FirstOrDefault(x => x.Row != 0);
-            if (pick.Row == 0)
-                return;
+            foreach (uint[] statusItem in CrucibleItemData.StatusItems)
+                if (!PlayerHelper.HasStatus(statusItem[1]))
+                    if (Pick(items.FirstOrDefault(x => x.Id == statusItem[0])))
+                        return;
+            return;
 
-            Screens.MainHud.OpenItemMenu(hud, pick.Slot);
-            this.itemMenuFrom = now;
-            this.Status       = $"Using {pick.Name} at {hp:P0}";
-            Svc.Log.Info($"[Crucible] Items: using {pick.Name} (slot {pick.Slot}) at {hp:P0} {(fighting ? "in a fight" : "on the board")}");
+            bool PickFromItems(IEnumerable<uint> ids)
+            {
+                ReaderXBMContentsItemShop.ItemEntry? pick = ids.Select(row => items.FirstOrDefault(x => x.Id == row)).FirstOrDefault(x => x?.Id != 0);
+                return Pick(pick);
+            }
+
+            bool Pick(ReaderXBMContentsItemShop.ItemEntry? pick)
+            {
+                if (pick == null || pick.Id == 0 || !pick.Available)
+                    return false;
+
+                int slot = reader.GetItemIndex(pick);
+
+                Screens.MainHud.OpenItemMenu(hud, slot);
+                this.itemMenuFrom = now;
+                this.Status       = $"Using {pick.Name} at {hp:P0}";
+                Svc.Log.Info($"[Crucible] Items: using {pick.Name} (slot {slot}) at {hp:P0} {(fighting ? "in a fight" : "on the board")}");
+
+                return true;
+            }
         }
     }
 }

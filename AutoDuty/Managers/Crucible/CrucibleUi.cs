@@ -11,6 +11,7 @@ namespace AutoDuty.Managers
     using System.Linq;
     using System.Text.RegularExpressions;
     using ECommons;
+    using ECommons.StringHelpers;
     using ECommons.UIHelpers;
     using ECommons.UIHelpers.AtkReaderImplementations;
     using Helpers;
@@ -33,10 +34,6 @@ namespace AutoDuty.Managers
         public const int BestiaryPageSize = 25;
 
         private const uint TeamList = 11;
-
-        private static readonly Regex Number        = new("[0-9]+");
-        private static readonly Regex GroupedNumber = new("[0-9][0-9,]*");
-        private static readonly Regex LeadingGlyphs = new("^[^\\p{L}]+");
         
         public static AtkUnitBase* Ready(string name)
         {
@@ -150,25 +147,6 @@ namespace AutoDuty.Managers
 
         public readonly record struct ItemSlot(int Slot, uint Row, string Name);
 
-        public static List<ItemSlot> HudItems(AtkUnitBase* hud)
-        {
-            List<ItemSlot> items = [];
-            for (int slot = 0; slot < 10; slot++)
-            {
-                int at = 9 + slot * 5;
-                if (at + 4 >= hud->AtkValuesCount)
-                    break;
-
-                uint row = AsUInt(hud->AtkValues[at + 3]);
-                if (hud->AtkValues[at + 1].Byte == 0 || row == 0)
-                    continue;
-
-                items.Add(new ItemSlot(slot, row, hud->AtkValues[at + 4].GetValueAsString()));
-            }
-
-            return items;
-        }
-
         public static int ShopCoins(AtkUnitBase* shop) =>
             (int)new ReaderXBMContentsItemShop(shop).Coins;
 
@@ -254,18 +232,18 @@ namespace AutoDuty.Managers
 
             return new CrucibleFamiliar
                    {
-                       Number             = (uint)Digits(Text(uld, 12)),
+                       Number             = (uint)DigitParsers.Digits(Text(uld, 12)),
                        Name               = name,
-                       Rank               = Digits(Text(uld, 40)),
+                       Rank               = DigitParsers.Digits(Text(uld, 40)),
                        Hp                 = MaxOf(hp),
-                       Strength           = Digits(ComponentText(uld, 47, 3)),
-                       PhysicalResistance = Digits(ComponentText(uld, 48, 3)),
-                       Constitution       = Digits(ComponentText(uld, 49, 3)),
-                       Intelligence       = Digits(ComponentText(uld, 50, 3)),
-                       MagicResistance    = Digits(ComponentText(uld, 51, 3)),
+                       Strength           = DigitParsers.Digits(ComponentText(uld, 47, 3)),
+                       PhysicalResistance = DigitParsers.Digits(ComponentText(uld, 48, 3)),
+                       Constitution       = DigitParsers.Digits(ComponentText(uld, 49, 3)),
+                       Intelligence       = DigitParsers.Digits(ComponentText(uld, 50, 3)),
+                       MagicResistance    = DigitParsers.Digits(ComponentText(uld, 51, 3)),
                        Exp                = Text(uld, 42),
                        Classification     = Text(uld, 21),
-                       Element            = LeadingGlyphs.Replace(Text(uld, 23), "")
+                       Element            = DigitParsers.LeadingGlyphs().Replace(Text(uld, 23), "")
                    };
         }
 
@@ -276,7 +254,7 @@ namespace AutoDuty.Managers
 
             static bool TryNumber(string text, out float value)
             {
-                Match match = GroupedNumber.Match(text);
+                Match match = DigitParsers.GroupedNumber().Match(text);
                 value = 0;
                 return match.Success && float.TryParse(match.Value.Replace(",", ""), NumberStyles.Float, CultureInfo.InvariantCulture, out value);
             }
@@ -326,28 +304,16 @@ namespace AutoDuty.Managers
         private static uint AsUInt(AtkValue value) =>
             value.Type.ToString() == "UInt" ? value.UInt : (uint)Math.Max(0, value.Int);
 
-        private static int FirstNumber(string text)
-        {
-            Match match = GroupedNumber.Match(text);
-            return match.Success && int.TryParse(match.Value.Replace(",", ""), out int value) ? value : 0;
-        }
-
-        private static int Digits(string text)
-        {
-            Match match = Number.Match(text);
-            return match.Success && int.TryParse(match.Value, out int value) ? value : 0;
-        }
-
         private static int CurrentOf(string fraction)
         {
             int slash = fraction.IndexOf('/');
-            return Digits(slash >= 0 ? fraction[..slash] : fraction);
+            return DigitParsers.Digits(slash >= 0 ? fraction[..slash] : fraction);
         }
 
         private static int MaxOf(string fraction)
         {
             int slash = fraction.LastIndexOf('/');
-            return Digits(slash >= 0 ? fraction[(slash + 1)..] : fraction);
+            return DigitParsers.Digits(slash >= 0 ? fraction[(slash + 1)..] : fraction);
         }
 
         internal static class Screens

@@ -202,6 +202,13 @@ internal static class CrucibleItemData
         80  // G1 Crucible Ash
     ];
 
+    public static readonly uint[][] StatusItems =
+    [
+        [138, 4870], // Temporal Sands
+        [99, 4846],  // G2 Reraiser
+        [98, 4846]   // G1 Reraiser
+    ];
+
     public static uint[] ItemOrder => ShopHealing.Concat(FightItems).Distinct().ToArray();
     public static uint[] TreasureOrder => ShopHealing.Concat(FightItems).Concat(ShopGearOrder).Concat(ShopFeed).Distinct().ToArray();
 
