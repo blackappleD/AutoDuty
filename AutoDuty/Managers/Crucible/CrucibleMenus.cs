@@ -548,7 +548,8 @@ namespace AutoDuty.Managers
 
             bool  fighting = Svc.Condition[ConditionFlag.InCombat];
             float hp       = (float)me.CurrentHp / me.MaxHp;
-            if (!(hp >= (fighting ? FightLow : BoardLow)))
+
+            if (hp <= (fighting ? FightLow : BoardLow))
                 if (PickFromItems(fighting ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems))
                     return;
 
@@ -560,13 +561,22 @@ namespace AutoDuty.Managers
 
             bool PickFromItems(IEnumerable<uint> ids)
             {
-                ReaderXBMContentsItemShop.ItemEntry? pick = ids.Select(row => items.FirstOrDefault(x => x.Id == row)).FirstOrDefault(x => x?.Id != 0);
-                return Pick(pick);
+                foreach (uint id in ids)
+                {
+                    foreach (ReaderXBMContentsItemShop.ItemEntry entry in items)
+                        if (entry.Id == id && entry.Available)
+                            return Pick(entry);
+                }
+                return false;
             }
 
             bool Pick(ReaderXBMContentsItemShop.ItemEntry? pick)
             {
-                if (pick == null || pick.Id == 0 || !pick.Available)
+                if (pick == null)
+                    return false;
+                if (pick.Id == 0)
+                    return false;
+                if (!pick.Available)
                     return false;
 
                 int slot = reader.GetItemIndex(pick);
