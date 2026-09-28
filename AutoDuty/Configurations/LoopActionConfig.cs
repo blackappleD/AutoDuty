@@ -157,7 +157,7 @@ public abstract class LoopActionConfig<C> : LoopActionConfig where C : LoopActio
         ImGui.Text(Name);
         __.Dispose();
         if(this.HelpText != null)
-            ImGuiComponents.HelpMarker(this.HelpText);
+            ImGuiHelper.HelpMarker(this.HelpText);
 
         using ImRaii.DisabledDisposable ___ = ImRaii.Disabled(!__.Success);
 
@@ -182,8 +182,12 @@ public abstract class LoopActionConfig<C> : LoopActionConfig where C : LoopActio
             this.Run(ref queue);
         }
 
-        if(this.HelpText != null)
-            ImGuiComponents.HelpMarker(this.HelpText);
+        if(this.HelpText != null && ImGui.IsItemHovered())
+            using (ImRaii.Tooltip())
+            {
+                using (ImRaii.TextWrapPos(ImGui.GetFontSize() * 35.0f))
+                    ImGui.Text(this.HelpText);
+            }
 
         return true;
     }
