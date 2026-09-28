@@ -29,7 +29,7 @@ namespace AutoDuty.Managers
         private static readonly TimeSpan CommenceRetry = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan ShopStep      = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan FeedRetry     = TimeSpan.FromMilliseconds(1500);
-        private static readonly TimeSpan FeedTimeout   = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan FeedTimeout   = TimeSpan.FromSeconds(30);
         private static readonly TimeSpan ItemGap       = TimeSpan.FromSeconds(10);
         private static readonly TimeSpan ItemMenuWait  = TimeSpan.FromMilliseconds(1500);
 
@@ -368,13 +368,20 @@ namespace AutoDuty.Managers
                 return;
             }
 
+            AtkUnitBase* shop = CrucibleUi.Ready(CrucibleUi.ShopWindow);
+            if (shop == null)
+            {
+                this.ResetShopVisit();
+                return;
+            }
+
+
             if (this.FeedPending(now))
             {
                 if (now - this.confirmFrom <= ConfirmWindow && CrucibleUi.TryReady(CrucibleUi.YesNo, out AtkUnitBase* feedYes))
                 {
                     Screens.Prompt.Yes(feedYes);
                     this.confirmFrom = DateTime.MinValue;
-                    this.feedFrom    = DateTime.MinValue;
                     this.shopNext    = now + ShopStep;
                     return;
                 }
@@ -382,13 +389,16 @@ namespace AutoDuty.Managers
                 this.Feed(now);
                 return;
             }
-
-            AtkUnitBase* shop = CrucibleUi.Ready(CrucibleUi.ShopWindow);
-            if (shop == null)
+            else
             {
-                this.ResetShopVisit();
-                return;
+                AtkUnitBase* party = CrucibleUi.Ready(CrucibleUi.TeamWindow);
+                if (party != null)
+                {
+                    Screens.PetParty.Return(party);
+                    return;
+                }
             }
+
 
             if (now - this.confirmFrom <= ConfirmWindow && CrucibleUi.TryReady(CrucibleUi.YesNo, out AtkUnitBase* yes))
             {

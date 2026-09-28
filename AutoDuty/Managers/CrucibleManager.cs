@@ -105,7 +105,7 @@ namespace AutoDuty.Managers
 
             if (DateTime.UtcNow - this.challengedAt <= TimeSpan.FromSeconds(5) && CrucibleUi.TryReady(CrucibleUi.YesNo, out AtkUnitBase* smallTeam))
             {
-                Svc.Log.Info("[Crucible] Team is smaller than ten; confirming the challenge anyway");
+                Svc.Log.Info("[Crucible] Team is smaller than a full team; confirming the challenge anyway");
                 Screens.Prompt.Yes(smallTeam);
                 this.challengedAt = DateTime.MinValue;
             }
