@@ -17,17 +17,18 @@ namespace AutoDuty.Managers
 
     internal static unsafe class CrucibleUi
     {
-        public const string TeamWindow     = "XBMPetParty";
-        public const string BestiaryWindow = "XBMMonsterNotebook";
-        public const string BoardList      = "XBMStageList";
-        public const string BoardLayout    = "XBMStageDetailList";
-        public const string LootWindow     = "XBMContentsBooty";
-        public const string TreasureWindow = "XBMContentsTreasure";
-        public const string ResultWindow   = "XBMResult";
-        public const string ShopWindow     = "XBMContentsItemShop";
-        public const string YesNo          = "SelectYesno";
-        public const string ContextMenu    = "ContextMenu";
-        public const string MainHud        = "XBMContentsMainHUD";
+        public const string TeamWindow           = "XBMPetParty";
+        public const string BestiaryWindow       = "XBMMonsterNotebook";
+        public const string BestiaryWindowFilter = "XBMMonsterNotebookFilterSetting";
+        public const string BoardList            = "XBMStageList";
+        public const string BoardLayout          = "XBMStageDetailList";
+        public const string LootWindow           = "XBMContentsBooty";
+        public const string TreasureWindow       = "XBMContentsTreasure";
+        public const string ResultWindow         = "XBMResult";
+        public const string ShopWindow           = "XBMContentsItemShop";
+        public const string YesNo                = "SelectYesno";
+        public const string ContextMenu          = "ContextMenu";
+        public const string MainHud              = "XBMContentsMainHUD";
 
         public const int BestiaryPageSize = 25;
 
@@ -204,24 +205,24 @@ namespace AutoDuty.Managers
             if (notebook->AtkValuesCount <= 273 || !reader.Selected)
                 return null;
 
-            uint number = reader.SelectedNumber;
-            int  rank   = reader.SelectedRank;
+            uint number = reader.CurrentNumber;
+            int  rank   = reader.CurrentRank;
             if (number == 0 || rank == 0)
                 return null;
 
             return new CrucibleFamiliar
                    {
                        Number             = number,
-                       Name               = reader.SelectedName.GetText(),
+                       Name               = reader.CurrentName.GetText(),
                        Rank               = rank,
-                       Hp                 = reader.SelectedMaxHP,
-                       Exp                = reader.SelectedXP.ToString(),
-                       Strength           = reader.SelectedStrength,
-                       PhysicalResistance = reader.SelectedPhysResistance,
-                       Constitution       = reader.SelectedConstitution,
-                       Intelligence       = reader.SelectedIntelligence,
-                       MagicResistance    = reader.SelectedMagicResistance,
-                       Classification     = reader.Classification.GetText()
+                       Hp                 = reader.CurrentMaxHP,
+                       Exp                = reader.CurrentXP.ToString(),
+                       Strength           = reader.CurrentStrength,
+                       PhysicalResistance = reader.CurrentPhysResistance,
+                       Constitution       = reader.CurrentConstitution,
+                       Intelligence       = reader.CurrentIntelligence,
+                       MagicResistance    = reader.CurrentMagicResistance,
+                       Classification     = reader.CurrentClassification.GetText()
                    };
         }
 
@@ -376,8 +377,11 @@ namespace AutoDuty.Managers
 
             internal static class Notebook
             {
-                private const uint FirstEntryParam = 4;
+                public static void Close(AtkUnitBase* notebook) => AddonHelper.FireCallBack(notebook, true, 0);
 
+                public static void OpenFilter(AtkUnitBase* notebook) => AddonHelper.FireCallBack(notebook, true, 2);
+
+                private const uint FirstEntryParam = 4;
                 public static void ShowPage(AtkUnitBase* notebook, uint page) => AddonHelper.FireCallBack(notebook, true, 3, page);
 
                 public static bool PickEntry(AtkUnitBase* notebook, uint slotOnPage)
@@ -385,6 +389,11 @@ namespace AutoDuty.Managers
                     AddonHelper.FireCallBack(notebook, true, 5, (int)slotOnPage);
                     return ClickEvent(notebook, AtkEventType.MouseDown, FirstEntryParam + slotOnPage);
                 }
+            }
+
+            internal static class NotebookFilter
+            {
+                public static void ResetFilters(AtkUnitBase* filter) => AddonHelper.FireCallBack(filter, true, 0u, string.Empty, 0u, 0u, 0u);
             }
 
             internal static class Menu

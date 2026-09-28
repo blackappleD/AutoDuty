@@ -627,9 +627,13 @@ namespace AutoDuty.Windows
                     {
                         ImGuiEx.TextWrapped(new Vector4(255, 1, 0, 1), Loc.Get("MainTab.SwitchCombatJob"));
                     }
-                    else if (Player.Job == Job.BLU && Configuration.Meta.DutyModeEnum is not (DutyMode.Regular or DutyMode.Trial or DutyMode.Raid))
+                    else if (Player.Job is not Job.BST && Configuration.Meta.DutyModeEnum is DutyMode.Crucible)
                     {
-                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.BlueMageRestriction"));
+                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.CrucibleRestriction"));
+                    }
+                    else if (Player.Job is Job.BLU or Job.BST && Configuration.Meta.DutyModeEnum is not (DutyMode.Regular or DutyMode.Trial or DutyMode.Raid or DutyMode.Crucible))
+                    {
+                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.LimitedJobRestriction"));
                     }
                     else if (VNavmesh_IPCSubscriber.IsEnabled && BossMod_IPCSubscriber.IsEnabled)
                     {

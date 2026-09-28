@@ -36,7 +36,6 @@ namespace AutoDuty.Managers
         private DateTime confirmFrom  = DateTime.MinValue;
         private int      yesNoCounter = 0;
 
-        private int      fightStep = -1;
         private DateTime fightNext;
 
         private List<int>? restPicks;
@@ -61,7 +60,6 @@ namespace AutoDuty.Managers
         public void Reset()
         {
             this.confirmFrom  = DateTime.MinValue;
-            this.fightStep    = -1;
             this.restPicks    = null;
             this.feedFrom     = DateTime.MinValue;
             this.itemMenuFrom = DateTime.MinValue;
@@ -193,10 +191,7 @@ namespace AutoDuty.Managers
             AtkUnitBase* layout = CrucibleUi.Ready(CrucibleUi.BoardLayout);
             AtkUnitBase* party  = CrucibleUi.Ready(CrucibleUi.TeamWindow);
             if (layout == null || party == null)
-            {
-                this.fightStep = -1;
                 return false;
-            }
 
             if (CrucibleUi.IsOpen(CrucibleUi.YesNo) || now < this.fightNext)
                 return true;
@@ -212,16 +207,32 @@ namespace AutoDuty.Managers
                 return true;
             }
 
-            if (this.fightStep < 0)
-                this.fightStep = 0;
+            List<ReaderXBMPetParty.MonsterEntry> picked = team.OrderBy(me => me.SelectionIndex).Where(me => me.SelectionIndex < 3).Take(FightPicks).ToList();
 
-            if (this.fightStep < alive.Count)
+            if (picked.Count > 0)
             {
-                int row = alive[this.fightStep].index;
-                Screens.PetParty.Pick(party, row);
-                this.fightStep++;
+                for (int i = picked.Count - 1; i >= 0; i--)
+                {
+                    ReaderXBMPetParty.MonsterEntry pickedEntry = picked[i];
+                    if (pickedEntry.Number != alive[i].Number)
+                    {
+                        Screens.PetParty.Pick(party, pickedEntry.index);
+                        Svc.Log.Debug($"Crucible: Unpicking familiar ({pickedEntry.Name})");
+                        this.fightNext = now + PickInterval;
+                        return true;
+                    }
+                }
+            }
+
+
+
+            for (int i = picked.Count; i < Math.Min(FightPicks, alive.Count); i++)
+            {
+                ReaderXBMPetParty.MonsterEntry entry = alive[i];
+
+                Screens.PetParty.Pick(party, entry.index);
                 this.fightNext = now + PickInterval;
-                Svc.Log.Debug($"Crucible: Picking familiar {this.fightStep} of {alive.Count} ({team[row].Name})");
+                Svc.Log.Debug($"Crucible: Picking familiar ({entry.Name})");
                 return true;
             }
 

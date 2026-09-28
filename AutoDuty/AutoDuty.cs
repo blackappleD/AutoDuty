@@ -48,7 +48,6 @@ using Lumina.Excel.Sheets;
 using Multibox;
 using Pictomancy;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -326,7 +325,7 @@ public sealed class AutoDuty : IDalamudPlugin
             this.assemblyDirectoryInfo = this.assemblyFileInfo.Directory;
 
             this.Version = 
-                ((PluginInterface.IsDev     ? new Version(0,0,0, 356) :
+                ((PluginInterface.IsDev     ? new Version(0,0,0, 366) :
                   PluginInterface.IsTesting ? PluginInterface.Manifest.TestingAssemblyVersion ?? PluginInterface.Manifest.AssemblyVersion : PluginInterface.Manifest.AssemblyVersion)!).Revision;
 
             if (!this.configDirectory.Exists)
@@ -1387,21 +1386,21 @@ public sealed class AutoDuty : IDalamudPlugin
 
         if (this.pathAction.Tag.HasFlag(ActionTag.Unsynced) && !unsync)
         {
-            Svc.Log.Debug($"Skipping path entry {this.Actions[this.indexer]} because we are synced");
+            Svc.Log.Debug($"Skipping path entry {this.Actions[this.indexer].Name} because we are synced");
             this.indexer++;
             return;
         }
 
         if (this.pathAction.Tag.HasFlag(ActionTag.W2W) && !Configuration.DutyConfig.IsW2W(unsync: unsync))
         {
-            Svc.Log.Debug($"Skipping path entry {this.Actions[this.indexer]} because we are not W2W-ing");
+            Svc.Log.Debug($"Skipping path entry {this.Actions[this.indexer].Name} because we are not W2W-ing");
             this.indexer++;
             return;
         }
 
         if (this.pathAction.Tag.HasFlag(ActionTag.Synced) && unsync)
         {
-            Svc.Log.Debug($"Skipping path entry {this.Actions[this.indexer]} because we are unsynced");
+            Svc.Log.Debug($"Skipping path entry {this.Actions[this.indexer].Name} because we are unsynced");
             this.indexer++;
             return;
         }
