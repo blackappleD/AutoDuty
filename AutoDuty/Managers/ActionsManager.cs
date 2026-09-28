@@ -739,11 +739,17 @@ namespace AutoDuty.Managers
 
         private static unsafe bool BossMoveCheck(Vector3 bossV3)
         {
-            if (Plugin.DutyData?.bossObject != null && Plugin.DutyData.bossObject.Struct()->InCombat)
+            if (Plugin.DutyData?.bossObject != null)
             {
-                VNavmesh_IPCSubscriber.Path_Stop();
-                return true;
+                if (Plugin.DutyData.bossObject.Struct()->InCombat)
+                {
+                    VNavmesh_IPCSubscriber.Path_Stop();
+                    return true;
+                }
+                MovementHelper.Move(Plugin.DutyData.bossObject.Position);
+                return false;
             }
+
             MovementHelper.Move(bossV3);
             return false;
         }
