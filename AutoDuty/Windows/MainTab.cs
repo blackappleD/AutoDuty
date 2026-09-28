@@ -1265,6 +1265,10 @@ namespace AutoDuty.Windows
                 smallButton: false
             );
 
+            using ImRaii.ChildDisposable child = ImRaii.Child("##Sidebar", new Vector2(0, ImGui.GetContentRegionAvail().Y-100f.Scale()), true);
+            if (!child.Success)
+                return;
+
             uint[] before = order.ToArray();
 
             int moveFromIndex = -1;
