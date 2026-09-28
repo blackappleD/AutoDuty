@@ -747,6 +747,7 @@ namespace AutoDuty.Managers
                     return true;
                 }
                 MovementHelper.Move(Plugin.DutyData.bossObject.Position);
+                return false;
             }
 
             MovementHelper.Move(bossV3);
