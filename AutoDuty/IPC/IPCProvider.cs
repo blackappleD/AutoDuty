@@ -14,7 +14,7 @@ namespace AutoDuty.IPC
     public class IPCProvider
     {
         internal IPCProvider() => 
-            EzIPC.Init(this);
+            EzIPC.Init(this, "AutoDuty");
 
         [EzIPC] public void   ListConfig()             => ConfigHelper.ListConfig();
         [EzIPC] public string GetConfig(string config) => ConfigHelper.GetConfig(config);
