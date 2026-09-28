@@ -1380,6 +1380,9 @@ public sealed class AutoDuty : IDalamudPlugin
             return;
         }
 
+        if (!PlayerHelper.IsReady)
+            return;
+
         Svc.Log.Debug($"Starting Action {this.pathAction.ToCustomString()}");
 
         bool unsync = QueueHelper.ShouldBeUnSynced();
@@ -1444,17 +1447,17 @@ public sealed class AutoDuty : IDalamudPlugin
             return;
         }
 
-        if (!VNavmesh_IPCSubscriber.SimpleMove_PathfindInProgress && !VNavmesh_IPCSubscriber.Path_IsRunning)
-        {
-            Chat.ExecuteCommand("/automove off");
-            VNavmesh_IPCSubscriber.Path_SetTolerance(0.25f);
-            if (this.pathAction is { Name: "MoveTo", Arguments.Count: > 0 } && bool.TryParse(this.pathAction.Arguments[0], out bool useMesh) && !useMesh)
-                VNavmesh_IPCSubscriber.Path_MoveTo([this.pathAction.Position], false);
-            else
-                VNavmesh_IPCSubscriber.SimpleMove_PathfindAndMoveTo(this.pathAction.Position, false);
+        if (VNavmesh_IPCSubscriber.SimpleMove_PathfindInProgress || VNavmesh_IPCSubscriber.Path_IsRunning)
+            VNavmesh_IPCSubscriber.Path_Stop();
 
-            this.Stage = Stage.Moving;
-        }
+        Chat.ExecuteCommand("/automove off");
+        VNavmesh_IPCSubscriber.Path_SetTolerance(0.25f);
+        if (this.pathAction is { Name: "MoveTo", Arguments.Count: > 0 } && bool.TryParse(this.pathAction.Arguments[0], out bool useMesh) && !useMesh)
+            VNavmesh_IPCSubscriber.Path_MoveTo([this.pathAction.Position], false);
+        else
+            VNavmesh_IPCSubscriber.SimpleMove_PathfindAndMoveTo(this.pathAction.Position, false);
+
+        this.Stage = Stage.Moving;
     }
 
     private void StageMoving()
