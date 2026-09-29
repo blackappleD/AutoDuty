@@ -61,6 +61,16 @@
       "Name": "Glamour Chest",
       "Help": "Will entrust items to the glamour chest"
     },
+    "JobQuest": {
+      "Name": "Job Quests",
+      "Help": "Completes the available class/job quests of your current job using Questionable",
+      "Doing": "Job Quest: {0}",
+      "IncludeRoleQuests": "Include role quests",
+      "Timeout": "Timeout per quest",
+      "Minutes": "minutes",
+      "TimeoutHelp": "Questionable is stopped and the quest skipped if it takes longer than this. 0 disables the timeout.",
+      "ClearSkipped": "Retry skipped quests ({0})"
+    },
     "Desynth": {
       "Name": "Desynthing",
       "OnlySkillUps": "Only Skill Ups",

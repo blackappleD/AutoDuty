@@ -439,6 +439,63 @@ namespace AutoDuty.IPC
             GlamourLog.IsContentComplete(content.RowId);
     }
 
+    /// <summary>
+    /// Questionable IPC methods that are not (yet) part of the ECommons.IPC wrapper.
+    /// </summary>
+    internal sealed class QuestionableExtraIPC : ECommons.IPC.Subscribers.IPCBase
+    {
+        public override string InternalName { get; } = "Questionable";
+
+        [EzIPC("IsReadyToAcceptQuest")] public Func<string, bool> IsReadyToAcceptQuest { get; private set; }
+        [EzIPC("IsQuestAccepted")]      public Func<string, bool> IsQuestAccepted      { get; private set; }
+        [EzIPC("IsQuestComplete")]      public Func<string, bool> IsQuestComplete      { get; private set; }
+    }
+
+    public static class Questionable_IPCSubscriber
+    {
+        private static QuestionableExtraIPC Extra => field ??= new QuestionableExtraIPC();
+
+        internal static bool IsEnabled => IPCSubscriber_Common.IsReady("Questionable");
+
+        /// <summary>Questionable identifies quests by their id relative to the quest sheet offset (65536).</summary>
+        public static string ToQuestionableId(uint questRowId) =>
+            (questRowId - 65536u).ToString(CultureInfo.InvariantCulture);
+
+        public static bool IsRunning => Try(() => Questionable.IsRunning(), false);
+
+        public static string CurrentQuestId => Try(() => Questionable.GetCurrentQuestId(), null);
+
+        public static bool StartSingleQuest(uint questRowId) =>
+            Try(() => Questionable.StartSingleQuest(ToQuestionableId(questRowId)), false);
+
+        public static bool Stop(string reason = "AutoDuty") =>
+            Try(() => Questionable.Stop(reason), false);
+
+        public static bool IsQuestLocked(uint questRowId) =>
+            Try(() => Questionable.IsQuestLocked(ToQuestionableId(questRowId)), true);
+
+        public static bool IsReadyToAcceptQuest(uint questRowId) =>
+            Try(() => Extra.IsReadyToAcceptQuest(ToQuestionableId(questRowId)), false);
+
+        public static bool IsQuestAccepted(uint questRowId) =>
+            Try(() => Extra.IsQuestAccepted(ToQuestionableId(questRowId)), false);
+
+        private static TR Try<TR>(Func<TR> func, TR fallback)
+        {
+            if (!IsEnabled)
+                return fallback;
+            try
+            {
+                return func();
+            }
+            catch (Exception ex)
+            {
+                Svc.Log.Debug($"Questionable IPC error: {ex.Message}");
+                return fallback;
+            }
+        }
+    }
+
 
     internal static class IPCSubscriber_Common
     {

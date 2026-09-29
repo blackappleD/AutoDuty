@@ -61,6 +61,16 @@
       "Name": "幻化衣櫃",
       "Help": "將物品存入幻化衣櫃"
     },
+    "JobQuest": {
+      "Name": "職業任務",
+      "Help": "使用 Questionable 完成目前職業可接的職業任務",
+      "Doing": "職業任務：{0}",
+      "IncludeRoleQuests": "包含職能任務",
+      "Timeout": "單個任務逾時",
+      "Minutes": "分鐘",
+      "TimeoutHelp": "單個任務超過此時間會停止 Questionable 並跳過該任務。0 為不限時。",
+      "ClearSkipped": "重試已跳過的任務（{0}）"
+    },
     "Desynth": {
       "Name": "分解裝備",
       "OnlySkillUps": "僅提升分解熟練度時分解",

@@ -152,6 +152,7 @@ namespace AutoDuty.Data
                     ExternalPlugin.AntiAFK => (@"https://raw.githubusercontent.com/NightmareXIV/MyDalamudPlugins/main/pluginmaster.json", "AntiAfkKick-Dalamud"),
                     ExternalPlugin.Pandora => (@"https://love.puni.sh/ment.json", "PandorasBox"),
                     ExternalPlugin.GlamourLog => (@"https://puni.sh/api/repository/croizat", "GlamourLog"),
+                    ExternalPlugin.Questionable => (@"https://love.puni.sh/ment.json", "Questionable"),
                     _ => throw new ArgumentOutOfRangeException(nameof(plugin), plugin, null)
                 };
 
@@ -170,6 +171,7 @@ namespace AutoDuty.Data
                     ExternalPlugin.AntiAFK => "Anti-AfkKick",
                     ExternalPlugin.Pandora => "Pandora's Box",
                     ExternalPlugin.GlamourLog => "Glamour Log",
+                    ExternalPlugin.Questionable => "Questionable",
                     _ => throw new ArgumentOutOfRangeException(nameof(plugin), plugin, null)
                 };
         }

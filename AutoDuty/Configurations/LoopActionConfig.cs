@@ -554,6 +554,51 @@ public class GlamourLoopActionConfig : ActiveLoopActionConfig<GlamourChestHelper
         throw new NotImplementedException();
 }
 
+public class JobQuestLoopActionConfig : ActiveLoopActionConfig<QuestionableJobQuestHelper, JobQuestLoopActionConfig>
+{
+    public override ExternalPlugin RequiredPlugins => ExternalPlugin.Questionable;
+    public override string?        HelpText        => Loc.Get("LoopActions.JobQuest.Help");
+    public override string         OverlayName     => Loc.Get("Overlay.Button.JobQuest");
+
+    [JsonProperty] public bool IncludeRoleQuests { get; set; }
+    [JsonProperty] public int  TimeoutMinutes    { get; set; } = 30;
+
+    public override bool ShouldRun() =>
+        Questionable_IPCSubscriber.IsEnabled;
+
+    public override void OnGuiSettings()
+    {
+        bool includeRoleQuests = this.IncludeRoleQuests;
+        if (ImGui.Checkbox(Loc.Get("LoopActions.JobQuest.IncludeRoleQuests"), ref includeRoleQuests))
+        {
+            this.IncludeRoleQuests = includeRoleQuests;
+            ConfigurationProfileV2.Save();
+        }
+
+        ImGui.PushItemWidth(150 * ImGuiHelpers.GlobalScale);
+        ImGui.AlignTextToFramePadding();
+        ImGui.Text(Loc.Get("LoopActions.JobQuest.Timeout"));
+        ImGui.SameLine();
+        int timeoutMinutes = this.TimeoutMinutes;
+        if (ImGui.InputInt("##JobQuestTimeout", ref timeoutMinutes))
+        {
+            this.TimeoutMinutes = Math.Max(timeoutMinutes, 0);
+            ConfigurationProfileV2.Save();
+        }
+        ImGui.SameLine();
+        ImGui.Text(Loc.Get("LoopActions.JobQuest.Minutes"));
+        ImGuiComponents.HelpMarker(Loc.Get("LoopActions.JobQuest.TimeoutHelp"));
+        ImGui.PopItemWidth();
+
+        int failed = QuestionableJobQuestHelper.FailedQuestCount;
+        using (ImRaii.Disabled(failed == 0))
+        {
+            if (ImGui.Button(Loc.Get("LoopActions.JobQuest.ClearSkipped", failed)))
+                QuestionableJobQuestHelper.ClearFailedQuests();
+        }
+    }
+}
+
 public class ExtractLoopActionConfig : ActiveLoopActionConfig<ExtractHelper, ExtractLoopActionConfig>
 {
     public override string OverlayName => Loc.Get("Overlay.Button.Extract");

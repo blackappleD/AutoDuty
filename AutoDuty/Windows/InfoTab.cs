@@ -105,6 +105,7 @@ namespace AutoDuty.Windows
             PluginInstallLine(ExternalPlugin.Gearsetter,   Loc.Get("InfoTab.PluginDesc.Gearsetter"));
             PluginInstallLine(ExternalPlugin.Stylist,      Loc.Get("InfoTab.PluginDesc.Stylist"));
             PluginInstallLine(ExternalPlugin.GlamourLog,      Loc.Get("InfoTab.PluginDesc.GlamourLog"));
+            PluginInstallLine(ExternalPlugin.Questionable,    Loc.Get("InfoTab.PluginDesc.Questionable"));
 
 
             ImGui.Columns(1);
