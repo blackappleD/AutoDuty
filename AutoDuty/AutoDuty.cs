@@ -1378,7 +1378,10 @@ public sealed class AutoDuty : IDalamudPlugin
             return;
         }
 
-        if (!PlayerHelper.IsReady)
+        if (!PlayerHelper.IsReady                          &&
+            !Svc.Condition[ConditionFlag.CarryingItem]     &&
+            !Svc.Condition[ConditionFlag.CarryingObject]   &&
+            this.pathAction.Name is not ("SelectString" or "SelectYesno" or "SelectJournalResult"))
             return;
 
         Svc.Log.Debug($"Starting Action {this.pathAction.ToCustomString()}");
