@@ -343,10 +343,23 @@ namespace AutoDuty.IPC
 
         internal static void Release()
         {
-            if (_curLease.HasValue)
+            if (!_curLease.HasValue)
+                return;
+
+            Guid lease = _curLease.Value;
+            _curLease = null;
+
+            // Wrath 被卸载/重载后 IPC 尚未就绪时，ReleaseControl 会抛 IpcNotReadyError，此时租约已随 Wrath 失效，直接丢弃即可
+            if (!IsEnabled)
+                return;
+
+            try
             {
-                WrathIPCWrapper.ReleaseControl(_curLease.Value);
-                _curLease = null;
+                WrathIPCWrapper.ReleaseControl(lease);
+            }
+            catch (Exception ex)
+            {
+                Svc.Log.Warning($"Wrath ReleaseControl failed: {ex.Message}");
             }
         }
     }

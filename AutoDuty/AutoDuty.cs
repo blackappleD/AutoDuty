@@ -2168,7 +2168,15 @@ public sealed class AutoDuty : IDalamudPlugin
     public void Dispose()
     {
         GitHubHelper.Dispose();
-        this.StopAndResetAll();
+        // 这里抛异常会中断后续清理，导致 hook 泄漏
+        try
+        {
+            this.StopAndResetAll();
+        }
+        catch (Exception ex)
+        {
+            Svc.Log.Error(ex, "StopAndResetAll failed during Dispose");
+        }
         MultiboxUtility.Config?.MultiBox =  false;
         Svc.Framework.Update             -= this.Framework_Update;
         Svc.Framework.Update             -= SchedulerHelper.ScheduleInvoker;
