@@ -263,7 +263,7 @@ internal static class CrucibleItemData
     }
 
     public static string NameOf(uint row) =>
-        Items.TryGetRow(row, out XBMItem item) && item.Unknown2.ExtractText() is { Length: > 0 } name ? name : $"item {row}";
+        Items.TryGetRow(row, out XBMItem item) && item.Name.ExtractText() is { Length: > 0 } name ? name : $"item {row}";
 
     public readonly record struct ItemInfo(string Name, string Type, string Summary, string Description, uint Icon);
 
@@ -273,12 +273,12 @@ internal static class CrucibleItemData
             return null;
 
         string type = item.Type.ValueNullable?.Name.ExtractText() ?? string.Empty;
-        return new ItemInfo(NameOf(row), type, item.Unknown4.ExtractText(), item.Unknown3.ExtractText(), item.Unknown11);
+        return new ItemInfo(NameOf(row), type, item.ShortDescription.ExtractText(), item.Description.ExtractText(), item.Icon);
     }
 
     public static uint ItemIn(string text) =>
         Items.Where(x => x.RowId > 0)
-             .Select(x => (x.RowId, Name: x.Unknown2.ExtractText()))
+             .Select(x => (x.RowId, Name: x.Name.ExtractText()))
              .Where(x => x.Name.Length > 0 && text.Contains(x.Name, StringComparison.OrdinalIgnoreCase))
              .OrderByDescending(x => x.Name.Length)
              .Select(x => x.RowId)
