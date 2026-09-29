@@ -515,7 +515,8 @@ public class ConfigurationProfileV2
 
             ImGui.PushItemWidth(150f.Scale());
 
-            string dragDropId = $"LoopActionDragDrop{id}";
+            // ImGui payload types are limited to 32 characters, so the list id is hashed to keep it short
+            string dragDropId = $"ADLoopAction{(uint)id.GetHashCode():X8}";
             int    moveFrom   = -1;
             int    moveTo     = -1;
 
