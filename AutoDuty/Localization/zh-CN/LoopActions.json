@@ -1,6 +1,8 @@
 {
   "LoopActions": {
     "Hint": "按住 CTRL 可删除条目",
+    "ExpandAll": "全部展开",
+    "CollapseAll": "全部折叠",
     "Executing": "正在执行：{0}",
     "AutoEquip": {
       "Name": "装备推荐装备",

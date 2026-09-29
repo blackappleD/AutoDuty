@@ -85,9 +85,12 @@ public abstract class LoopActionConfig
     }
 
     public abstract bool Locked { get; }
+    public abstract string DisplayName { get; }
     public abstract void Run(ref bool queue);
     public abstract void OnGUI(bool   openWhenEnabled = true);
     public abstract bool OnGUIButton();
+    public abstract void SetConfigOpen(bool open);
+    public abstract bool IsConfigOpen { get; }
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -102,6 +105,8 @@ public abstract class LoopActionConfig<C> : LoopActionConfig where C : LoopActio
     public static string             NameKey            { get; set; } = string.Empty;
 
     public static string             Name               => NameKey.Length == 0 ? string.Empty : Loc.Get(NameKey);
+
+    public override string         DisplayName     => Name;
 
     public abstract string         OverlayName     { get; }
     public virtual  ExternalPlugin RequiredPlugins => ExternalPlugin.None;
@@ -127,6 +132,14 @@ public abstract class LoopActionConfig<C> : LoopActionConfig where C : LoopActio
     private           bool configOpen;
 
     private bool init;
+
+    public override void SetConfigOpen(bool open)
+    {
+        this.init       = true;
+        this.configOpen = open && this.HasConfig;
+    }
+
+    public override bool IsConfigOpen => this.configOpen;
 
     public override void OnGUI(bool openWhenEnabled = true)
     {

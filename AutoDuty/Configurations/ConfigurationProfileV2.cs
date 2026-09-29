@@ -489,6 +489,25 @@ public class ConfigurationProfileV2
             return queue;
         }
 
+        /// <summary>
+        /// Toggles the settings of all entries at once: collapses everything if any entry is open, expands everything otherwise.
+        /// </summary>
+        public void DrawToggleAllButton(string id)
+        {
+            bool anyOpen = this.Any(lac => lac.IsConfigOpen);
+            string caret = (anyOpen ? FontAwesomeIcon.CaretDown : FontAwesomeIcon.CaretRight).ToIconString();
+
+            using (ImRaii.PushColor(ImGuiCol.Button, Vector4.Zero))
+            using (ImRaii.PushFont(UiBuilder.IconFont))
+            {
+                if (ImGui.Button($"{caret}{caret}###toggleAllLoopActions{id}"))
+                    this.ForEach(lac => lac.SetConfigOpen(!anyOpen));
+            }
+
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(Loc.Get(anyOpen ? "LoopActions.CollapseAll" : "LoopActions.ExpandAll"));
+        }
+
         public void OnGui(string id, LoopActionCategory category = LoopActionCategory.All, bool startOpened = true)
         {
             if (!ImGui.BeginListBox($"##LoopActions_{id}", new Vector2(ImGui.GetContentRegionAvail().X, this.imguiListX)))
@@ -496,53 +515,74 @@ public class ConfigurationProfileV2
 
             ImGui.PushItemWidth(150f.Scale());
 
+            string dragDropId = $"LoopActionDragDrop{id}";
+            int    moveFrom   = -1;
+            int    moveTo     = -1;
+
             for (int index = 0; index < this.Count; index++)
             {
                 using ImRaii.IdDisposable _ = ImRaii.PushId($"{id}_{index}");
 
                 LoopActionConfig actionConfig = this[index];
 
-                using (ImRaii.Disabled(index <= 0))
-                {
-                    if (ImGuiComponents.IconButton($"Order{index}Up", FontAwesomeIcon.ArrowUp))
-                    {
-                        this.Remove(actionConfig);
-                        this.Insert(index - 1, actionConfig);
-                        Save();
-                    }
-                }
+                ImGui.BeginGroup();
 
-                ImGui.SameLine(0, 2);
+                using (ImRaii.PushFont(UiBuilder.IconFont))
+                    ImGui.Button($"{FontAwesomeIcon.GripVertical.ToIconString()}###dragLoopAction{id}_{index}", new Vector2(28f.Scale(), 0));
+                if (ImGui.IsItemHovered())
+                    ImGui.SetMouseCursor(ImGuiMouseCursor.ResizeAll);
 
-                using (ImRaii.Disabled(this.Count <= index + 1))
+                if (ImGui.BeginDragDropSource())
                 {
-                    if (ImGuiComponents.IconButton($"Order{index}Down", FontAwesomeIcon.ArrowDown))
-                    {
-                        this.Remove(actionConfig);
-                        this.Insert(index + 1, actionConfig);
-                        Save();
-                    }
+                    ImGuiDragDrop.SetDragDropPayload(dragDropId, index.ToString());
+                    ImGui.Text(actionConfig.DisplayName);
+                    ImGui.EndDragDropSource();
                 }
 
                 ImGui.SameLine();
 
+                bool deleted = false;
                 if (ImGui.GetIO().KeyCtrl)
                     using (ImRaii.PushColor(ImGuiCol.Button, ImGuiHelper.AccentRed with { W = 0.15f.Scale() }))
                     using (ImRaii.PushColor(ImGuiCol.Text, ImGuiHelper.AccentRed))
                     using (ImRaii.PushFont(UiBuilder.IconFont))
                     {
                         if (ImGui.Button($"{FontAwesomeIcon.TrashAlt.ToIconString()}###deleteDataLoopAction{id}_{index}", new Vector2(28f.Scale(), 0)))
-                        {
-                            this.Remove(actionConfig);
-                            index--;
-                            Save();
-                            continue;
-                        }
+                            deleted = true;
 
                         ImGui.SameLine();
                     }
 
+                if (deleted)
+                {
+                    ImGui.EndGroup();
+                    this.Remove(actionConfig);
+                    index--;
+                    Save();
+                    continue;
+                }
+
                 actionConfig.OnGUI(startOpened && AutoDuty.Configuration.Meta.LoopActionsOpenByDefault);
+
+                ImGui.EndGroup();
+
+                if (ImGui.BeginDragDropTarget())
+                {
+                    if (ImGuiDragDrop.AcceptDragDropPayload(dragDropId, out string payload) && int.TryParse(payload, out int from))
+                    {
+                        moveFrom = from;
+                        moveTo   = index;
+                    }
+                    ImGui.EndDragDropTarget();
+                }
+            }
+
+            if (moveFrom >= 0 && moveFrom < this.Count && moveFrom != moveTo)
+            {
+                LoopActionConfig moved = this[moveFrom];
+                this.RemoveAt(moveFrom);
+                this.Insert(moveTo, moved);
+                Save();
             }
 
             ImGui.PopItemWidth();
@@ -555,6 +595,7 @@ public class ConfigurationProfileV2
                 if (ImGui.Button($"{FontAwesomeIcon.Plus.ToIconString()}###addLoopAction{id}", new Vector2(28f.Scale(), 0)))
                     ImGui.OpenPopup($"##LoopActions{id}ContextMenu");
             }
+
             ImGui.SameLine();
             ImGui.TextColored(ImGuiHelper.VersionColor, Loc.Get("LoopActions.Hint"));
 

@@ -311,6 +311,7 @@ public static class ConfigTab
                     ConfigurationProfileV2.Save();
                 }
 
+                Configuration.Overlay.LoopActions.DrawToggleAllButton("OverlayActions");
                 Configuration.Overlay.LoopActions.OnGui("OverlayActions", startOpened: false);
 
                 ImGui.Unindent();
@@ -1159,6 +1160,9 @@ public static class ConfigTab
 
         if (preLoopHeaderSelected)
         {
+            Configuration.Loop.Pre.Actions.DrawToggleAllButton("PreLoopActions");
+            ImGui.SameLine();
+
             bool preLoopEnabled = Configuration.Loop.Pre.Enabled;
             if (ImGui.Checkbox($"{Loc.Get("ConfigTab.PreLoop.Enable")}###PreLoopEnable", ref preLoopEnabled))
             {
@@ -1192,6 +1196,9 @@ public static class ConfigTab
         if (betweenLoopHeaderSelected)
         {
             ImGui.Columns(2, "##BetweenLoopHeaderColumns");
+
+            Configuration.Loop.Between.Actions.DrawToggleAllButton("BetweenLoopActions");
+            ImGui.SameLine();
 
             bool betweenEnabled = Configuration.Loop.Between.Enabled;
             if (ImGui.Checkbox($"{Loc.Get("ConfigTab.BetweenLoop.Enable")}###BetweenLoopEnable", ref betweenEnabled))
@@ -1449,6 +1456,7 @@ public static class ConfigTab
 
                 ImGui.Separator();
 
+                Configuration.Loop.Termination.Actions.DrawToggleAllButton("TerminationActions");
                 Configuration.Loop.Termination.Actions.OnGui("TerminationActions", LoopActionCategory.Termination);
 
                 ImGui.Separator();

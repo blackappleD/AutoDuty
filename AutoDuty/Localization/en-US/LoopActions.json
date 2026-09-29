@@ -1,6 +1,8 @@
 {
   "LoopActions": {
     "Hint": "Hold CTRL to delete an entry",
+    "ExpandAll": "Expand all",
+    "CollapseAll": "Collapse all",
     "Executing": "Executing: {0}",
     "AutoEquip": {
       "Name": "Equip Recommended Gear",

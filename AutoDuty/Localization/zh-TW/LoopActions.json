@@ -1,6 +1,8 @@
 {
   "LoopActions": {
     "Hint": "按住 CTRL 可刪除項目",
+    "ExpandAll": "全部展開",
+    "CollapseAll": "全部摺疊",
     "Executing": "正在執行：{0}",
     "AutoEquip": {
       "Name": "裝備推薦裝備",
