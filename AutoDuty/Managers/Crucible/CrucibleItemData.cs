@@ -4,7 +4,8 @@ using AutoDuty.Configurations;
 using System.Linq;
 using ECommons.DalamudServices;
 using Lumina.Excel;
-using Lumina.Excel.Sheets;
+using Lumina.Excel.Sheets.Experimental;
+#pragma warning disable PendingExcelSchema
 
 namespace AutoDuty.Managers;
 
@@ -175,7 +176,7 @@ internal static class CrucibleItemData
         168  // White Scorpion Simular
     ];
 
-    public static readonly uint[] FightItems =
+    public static readonly uint[] FightHealingItems =
     [
         140, // Beast Potion Kit
         79,  // G4 Beast Potion
@@ -191,7 +192,7 @@ internal static class CrucibleItemData
         135  // Vampiric Essence
     ];
 
-    public static readonly uint[] BoardItems =
+    public static readonly uint[] BoardHealingItems =
     [
         79, // G4 Beast Potion
         78, // G3 Beast Potion
@@ -202,10 +203,44 @@ internal static class CrucibleItemData
         80  // G1 Crucible Ash
     ];
 
-    public static uint[] ItemOrder => ShopHealing.Concat(FightItems).Distinct().ToArray();
-    public static uint[] TreasureOrder => ShopHealing.Concat(FightItems).Concat(ShopGearOrder).Concat(ShopFeed).Distinct().ToArray();
+    public static readonly uint[][] StatusItems =
+    [
+        [138, 4870], // Temporal Sands
+        [99, 4846],  // G2 Reraiser
+        [98, 4846]   // G1 Reraiser
+    ];
 
-    public static uint[] ShopGearOrder => AutoDuty.Configuration.Meta.Crucible.ShopGearOrder.Where(ShopGear.Contains).Concat(ShopGear).Distinct().ToArray();
+    public static uint[] TreasureOrder => ShopHealingOrder.Concat(StatusItems.Select(x => x[0])).Concat(FightHealingItems).Concat(ShopGearOrder).Concat(ShopFeedOrder).Distinct().ToArray();
+
+    public static uint[] ShopItems => ShopHealing.Concat(StatusItems.Select(x => x[0])).Concat(ShopGear).Concat(ShopFeed).Concat(Items.Where(item => item.Type.RowId != 0).Select(item => item.RowId)).ToArray();
+
+    public static ConfigurationProfileV2.MetaConfig.CrucibleShopList ActiveShopList
+    {
+        get
+        {
+            ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = AutoDuty.Configuration.Meta.Crucible;
+            if (crucible.ShopLists.Count == 0)
+            {
+                crucible.ShopLists.Add(new ConfigurationProfileV2.MetaConfig.CrucibleShopList
+                                       {
+                                           Order = CompleteShopOrder(crucible.ShopGearOrder).ToList()
+                                       });
+                crucible.ShopGearOrder = [];
+            }
+
+            crucible.ShopListIndex = Math.Clamp(crucible.ShopListIndex, 0, crucible.ShopLists.Count - 1);
+            return crucible.ShopLists[crucible.ShopListIndex];
+        }
+    }
+
+    public static uint[] CompleteShopOrder(IEnumerable<uint> order) =>
+        order.Where(ShopItems.Contains).Concat(ShopItems).Distinct().ToArray();
+
+    public static uint[] ShopOrder => CompleteShopOrder(ActiveShopList.Order);
+
+    public static uint[] ShopGearOrder    => ShopOrder.Where(ShopGear.Contains).ToArray();
+    public static uint[] ShopHealingOrder => ShopOrder.Where(ShopHealing.Contains).ToArray();
+    public static uint[] ShopFeedOrder    => ShopOrder.Where(ShopFeed.Contains).ToArray();
 
     private static ExcelSheet<XBMItem>? items;
 
@@ -213,7 +248,8 @@ internal static class CrucibleItemData
 
     public static readonly Dictionary<uint, uint[]> GearRequires = new()
     {
-        [71] = [29] // Demonic Helm - Soulreaper Armor
+        [71] = [29], // Demonic Helm - Soulreaper Armor
+        [61] = [34]  // Thunder Axe - Umbral Wristlet
     };
 
     public static bool BlockedGear(uint row, HashSet<uint> ownedGear)
@@ -229,6 +265,17 @@ internal static class CrucibleItemData
     public static string NameOf(uint row) =>
         Items.TryGetRow(row, out XBMItem item) && item.Unknown2.ExtractText() is { Length: > 0 } name ? name : $"item {row}";
 
+    public readonly record struct ItemInfo(string Name, string Type, string Summary, string Description, uint Icon);
+
+    public static ItemInfo? InfoOf(uint row)
+    {
+        if (!Items.TryGetRow(row, out XBMItem item))
+            return null;
+
+        string type = item.Type.ValueNullable?.Name.ExtractText() ?? string.Empty;
+        return new ItemInfo(NameOf(row), type, item.Unknown4.ExtractText(), item.Unknown3.ExtractText(), item.Unknown11);
+    }
+
     public static uint ItemIn(string text) =>
         Items.Where(x => x.RowId > 0)
              .Select(x => (x.RowId, Name: x.Unknown2.ExtractText()))
@@ -243,29 +290,39 @@ internal static class CrucibleItemData
         return index < 0 ? int.MaxValue : index;
     }
 
+    public enum CrucibleItemType
+    {
+        None,
+        BeastGear = 1,
+        CrucibleItem = 2,
+        Feed = 3
+    }
+
     [Flags]
     public enum CrucibleItemCategory
     {
-        None       = 0,
-        Gear       = 1 << 0,
-        HealItem   = 1 << 1,
-        CombatItem = 1 << 2,
-        BoardItem  = 1 << 3,
-        Item       = HealItem | CombatItem | BoardItem,
-        Feed       = 1 << 4
+        None      = 0,
+        Gear      = 1 << 0,
+        HealItem  = 1 << 1,
+        OtherItem = 1 << 2,
+        Item      = HealItem | OtherItem,
+        Feed      = 1 << 3
     }
 
-    public static CrucibleItemCategory GetCategoryOf(uint item)
+    public static CrucibleItemCategory GetCategoryOf(uint row)
     {
-        if (ShopGear.Contains(item))
-            return CrucibleItemCategory.Gear;
+        if (!Items.TryGetRow(row, out XBMItem item) || !item.Type.IsValid)
+            return CrucibleItemCategory.None;
 
-        if (ShopHealing.Contains(item))
-            return CrucibleItemCategory.HealItem;
+        CrucibleItemType type = (CrucibleItemType) item.Type.RowId;
 
-        if (ShopFeed.Contains(item))
-            return CrucibleItemCategory.Feed;
-
-        return CrucibleItemCategory.None;
+        return type switch
+        {
+            CrucibleItemType.BeastGear => CrucibleItemCategory.Gear,
+            CrucibleItemType.CrucibleItem when ShopHealing.Contains(row) => CrucibleItemCategory.HealItem,
+            CrucibleItemType.CrucibleItem => CrucibleItemCategory.OtherItem,
+            CrucibleItemType.Feed => CrucibleItemCategory.Feed,
+            _ => CrucibleItemCategory.None
+        };
     }
 }   

@@ -55,11 +55,11 @@
     },
     "Armoire": {
       "Name": "時裝衣櫃",
-      "Help": "在每次循環之間將物品存入時裝衣櫃"
+      "Help": "將物品存入時裝衣櫃"
     },
     "Glamour": {
       "Name": "幻化衣櫃",
-      "Help": "在每次循環之間將物品存入幻化衣櫃"
+      "Help": "將物品存入幻化衣櫃"
     },
     "Desynth": {
       "Name": "分解裝備",
@@ -74,7 +74,7 @@
     },
     "Coffers": {
       "Name": "開啟裝備箱",
-      "Help": "AutoDuty 將在每次循環之間開啟裝備箱（例如騎士武器箱）",
+      "Help": "AutoDuty 將開啟裝備箱（例如騎士武器箱）",
       "OpenCoffersWithGearset": "使用套裝開啟寶箱：",
       "CurrentGearset": "當前套裝",
       "UseBlacklist": "使用黑名單",
@@ -90,9 +90,9 @@
     },
     "ConsumeItems": {
       "Name": "使用消耗品",
-      "AutoConsumeHelp": "AutoDuty 將在運行時和每次循環間使用這些物品（如果狀態不存在）",
+      "AutoConsumeHelp": "AutoDuty 將在運行時使用這些物品（如果狀態不存在）",
       "IgnoreStatus": "忽略狀態",
-      "IgnoreStatusHelp": "AutoDuty 將在運行時和每次循環間始終使用這些物品（即使狀態已存在）",
+      "IgnoreStatusHelp": "AutoDuty 將在運行時使用這些物品（即使狀態已存在）",
       "MinTimeRemaining": "最短剩餘時間",
       "MinTimeRemainingHelp": "如果狀態剩餘時間少於此值（分鐘），將使用這些物品",
       "ItemName": "物品名稱",

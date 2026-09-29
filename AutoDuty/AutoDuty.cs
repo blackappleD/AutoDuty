@@ -256,9 +256,8 @@ public sealed class AutoDuty : IDalamudPlugin
         }
     } = PluginState.None;
 
-    internal int           indexer         = -1;
-    internal bool          mainListClicked = false;
-    internal IBattleChara? bossObject;
+    internal int  indexer         = -1;
+    internal bool mainListClicked = false;
 
     internal static IGameObject? ClosestObject => 
         Svc.Objects.Where(o => o.IsTargetable && o.ObjectKind.EqualsAny(ObjectKind.EventObj, ObjectKind.BattleNpc)).
@@ -1003,8 +1002,8 @@ public sealed class AutoDuty : IDalamudPlugin
                     break;
                 case false when this.Stage != Stage.Revived || DeathHelper.DeathState != PlayerLifeState.Revived:
                     Svc.Log.Debug($"We Revived, Setting Stage to Revived");
-                    DeathHelper.DeathState = PlayerLifeState.Revived;
                     this.Stage             = Stage.Revived;
+                    DeathHelper.DeathState = PlayerLifeState.Revived;
                     break;
             }
 
@@ -1366,8 +1365,7 @@ public sealed class AutoDuty : IDalamudPlugin
 
                 if (this.pathAction.Name.Equals("Boss") && this.pathAction.Position != Vector3.Zero && ObjectHelper.BelowDistanceToPlayer(this.pathAction.Position, 50, 10))
                 {
-                    this.bossObject = ObjectHelper.GetBossObject(25);
-                    if (this.bossObject != null)
+                    if (ObjectHelper.GetBossObject(25) != null)
                     {
                         if (MultiboxUtility.Config.Host)
                             MultiboxUtility.MultiboxBlockingNextStep = false;
@@ -1379,6 +1377,9 @@ public sealed class AutoDuty : IDalamudPlugin
             }
             return;
         }
+
+        if (!PlayerHelper.IsReady)
+            return;
 
         Svc.Log.Debug($"Starting Action {this.pathAction.ToCustomString()}");
 
@@ -1444,17 +1445,17 @@ public sealed class AutoDuty : IDalamudPlugin
             return;
         }
 
-        if (!VNavmesh_IPCSubscriber.SimpleMove_PathfindInProgress && !VNavmesh_IPCSubscriber.Path_IsRunning)
-        {
-            Chat.ExecuteCommand("/automove off");
-            VNavmesh_IPCSubscriber.Path_SetTolerance(0.25f);
-            if (this.pathAction is { Name: "MoveTo", Arguments.Count: > 0 } && bool.TryParse(this.pathAction.Arguments[0], out bool useMesh) && !useMesh)
-                VNavmesh_IPCSubscriber.Path_MoveTo([this.pathAction.Position], false);
-            else
-                VNavmesh_IPCSubscriber.SimpleMove_PathfindAndMoveTo(this.pathAction.Position, false);
+        if (VNavmesh_IPCSubscriber.SimpleMove_PathfindInProgress || VNavmesh_IPCSubscriber.Path_IsRunning)
+            VNavmesh_IPCSubscriber.Path_Stop();
 
-            this.Stage = Stage.Moving;
-        }
+        Chat.ExecuteCommand("/automove off");
+        VNavmesh_IPCSubscriber.Path_SetTolerance(0.25f);
+        if (this.pathAction is { Name: "MoveTo", Arguments.Count: > 0 } && bool.TryParse(this.pathAction.Arguments[0], out bool useMesh) && !useMesh)
+            VNavmesh_IPCSubscriber.Path_MoveTo([this.pathAction.Position], false);
+        else
+            VNavmesh_IPCSubscriber.SimpleMove_PathfindAndMoveTo(this.pathAction.Position, false);
+
+        this.Stage = Stage.Moving;
     }
 
     private void StageMoving()
@@ -1466,8 +1467,7 @@ public sealed class AutoDuty : IDalamudPlugin
 
         if (EzThrottler.Throttle("BossChecker", 25) && this.pathAction.Name.Equals("Boss") && this.pathAction.Position != Vector3.Zero && ObjectHelper.BelowDistanceToPlayer(this.pathAction.Position, 50, 10))
         {
-            this.bossObject = ObjectHelper.GetBossObject(25);
-            if (this.bossObject != null)
+            if (ObjectHelper.GetBossObject(25) != null)
             {
                 VNavmesh_IPCSubscriber.Path_Stop();
                 this.Stage = Stage.Action;
@@ -1579,8 +1579,7 @@ public sealed class AutoDuty : IDalamudPlugin
 
         if (this.pathAction.Name.Equals("Boss") && this.pathAction.Position != Vector3.Zero && ObjectHelper.GetDistanceToPlayer(this.pathAction.Position) < 50)
         {
-            this.bossObject = ObjectHelper.GetBossObject(25);
-            if (this.bossObject != null)
+            if (ObjectHelper.GetBossObject(25) != null)
             {
                 VNavmesh_IPCSubscriber.Path_Stop();
                 this.Stage = Stage.Action;
@@ -2095,7 +2094,8 @@ public sealed class AutoDuty : IDalamudPlugin
             }
         } = true;
 
-        public bool StopForCombat { get; set; } = true;
+        public bool          StopForCombat { get; set; } = true;
+        public IBattleChara? bossObject;
 
         public void FrameworkUpdate(IFramework framework) =>
             this.FrameworkUpdateInDuty(framework);

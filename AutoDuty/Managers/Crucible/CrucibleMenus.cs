@@ -11,6 +11,7 @@ namespace AutoDuty.Managers
     using System.Linq;
     using ECommons.Throttlers;
     using ECommons.UIHelpers.AddonMasterImplementations;
+    using Helpers;
     using Screens = CrucibleUi.Screens;
 
     internal sealed unsafe class CrucibleMenus
@@ -29,7 +30,7 @@ namespace AutoDuty.Managers
         private static readonly TimeSpan CommenceRetry = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan ShopStep      = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan FeedRetry     = TimeSpan.FromMilliseconds(1500);
-        private static readonly TimeSpan FeedTimeout   = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan FeedTimeout   = TimeSpan.FromSeconds(30);
         private static readonly TimeSpan ItemGap       = TimeSpan.FromSeconds(10);
         private static readonly TimeSpan ItemMenuWait  = TimeSpan.FromMilliseconds(1500);
 
@@ -368,6 +369,14 @@ namespace AutoDuty.Managers
                 return;
             }
 
+            AtkUnitBase* shop = CrucibleUi.Ready(CrucibleUi.ShopWindow);
+            if (shop == null)
+            {
+                this.ResetShopVisit();
+                return;
+            }
+
+
             if (this.FeedPending(now))
             {
                 if (now - this.confirmFrom <= ConfirmWindow && CrucibleUi.TryReady(CrucibleUi.YesNo, out AtkUnitBase* feedYes))
@@ -382,13 +391,16 @@ namespace AutoDuty.Managers
                 this.Feed(now);
                 return;
             }
-
-            AtkUnitBase* shop = CrucibleUi.Ready(CrucibleUi.ShopWindow);
-            if (shop == null)
+            else
             {
-                this.ResetShopVisit();
-                return;
+                AtkUnitBase* party = CrucibleUi.Ready(CrucibleUi.TeamWindow);
+                if (party != null)
+                {
+                    Screens.PetParty.Return(party);
+                    return;
+                }
             }
+
 
             if (now - this.confirmFrom <= ConfirmWindow && CrucibleUi.TryReady(CrucibleUi.YesNo, out AtkUnitBase* yes))
             {
@@ -439,13 +451,22 @@ namespace AutoDuty.Managers
 
         private ReaderXBMContentsItemShop.StockEntry? ChooseBuy(List<ReaderXBMContentsItemShop.StockEntry> stock, uint[] held, HashSet<uint> ownedGear)
         {
-            if (held.Length < ItemCap && FirstInStock(stock, CrucibleItemData.ShopHealing, held) is { } healing)
-                return healing;
+            bool itemRoom = held.Length    < ItemCap;
+            bool gearRoom = ownedGear.Count < GearCap;
 
-            if (ownedGear.Count < GearCap && FirstInStock(stock.Where(x => !ownedGear.Contains(x.Item) && !CrucibleItemData.BlockedGear(x.Item, ownedGear)), CrucibleItemData.ShopGearOrder, held) is { } gear)
-                return gear;
+            IEnumerable<ReaderXBMContentsItemShop.StockEntry> wanted = stock.Where(x =>
+                                                                                   {
+                                                                                       CrucibleItemData.CrucibleItemCategory category = CrucibleItemData.GetCategoryOf(x.Item);
+                                                                                       return category switch
+                                                                                       { 
+                                                                                           CrucibleItemData.CrucibleItemCategory.Gear => gearRoom && !ownedGear.Contains(x.Item) && !CrucibleItemData.BlockedGear(x.Item, ownedGear),
+                                                                                           CrucibleItemData.CrucibleItemCategory.Feed => !this.fedThisVisit,
+                                                                                           _ when CrucibleItemData.CrucibleItemCategory.Item.HasFlag(category) => itemRoom,
+                                                                                           _ => false
+                                                                                       };
+                                                                                   });
 
-            return this.fedThisVisit ? null : FirstInStock(stock, CrucibleItemData.ShopFeed, held);
+            return FirstInStock(wanted, CrucibleItemData.ShopOrder, held);
         }
 
         private static ReaderXBMContentsItemShop.StockEntry? FirstInStock(IEnumerable<ReaderXBMContentsItemShop.StockEntry> stock, uint[] priority, uint[] owned)
@@ -521,21 +542,52 @@ namespace AutoDuty.Managers
             if (hud == null)
                 return;
 
+            ReaderXBMContentsMainHUD reader = new(hud);
+
+            List<ReaderXBMContentsItemShop.ItemEntry> items  = reader.ItemEntries;
+
             bool  fighting = Svc.Condition[ConditionFlag.InCombat];
             float hp       = (float)me.CurrentHp / me.MaxHp;
-            if (hp >= (fighting ? FightLow : BoardLow))
-                return;
 
-            List<CrucibleUi.ItemSlot> items = CrucibleUi.HudItems(hud);
-            CrucibleUi.ItemSlot pick = (fighting ? CrucibleItemData.FightItems : CrucibleItemData.BoardItems).Select(row => items.FirstOrDefault(x => x.Row == row))
-                                                                          .FirstOrDefault(x => x.Row != 0);
-            if (pick.Row == 0)
-                return;
+            if (hp <= (fighting ? FightLow : BoardLow))
+                if (PickFromItems(fighting ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems))
+                    return;
 
-            Screens.MainHud.OpenItemMenu(hud, pick.Slot);
-            this.itemMenuFrom = now;
-            this.Status       = $"Using {pick.Name} at {hp:P0}";
-            Svc.Log.Info($"[Crucible] Items: using {pick.Name} (slot {pick.Slot}) at {hp:P0} {(fighting ? "in a fight" : "on the board")}");
+            foreach (uint[] statusItem in CrucibleItemData.StatusItems)
+                if (!PlayerHelper.HasStatus(statusItem[1]))
+                    if (Pick(items.FirstOrDefault(x => x.Id == statusItem[0])))
+                        return;
+            return;
+
+            bool PickFromItems(IEnumerable<uint> ids)
+            {
+                foreach (uint id in ids)
+                {
+                    foreach (ReaderXBMContentsItemShop.ItemEntry entry in items)
+                        if (entry.Id == id && entry.Available)
+                            return Pick(entry);
+                }
+                return false;
+            }
+
+            bool Pick(ReaderXBMContentsItemShop.ItemEntry? pick)
+            {
+                if (pick == null)
+                    return false;
+                if (pick.Id == 0)
+                    return false;
+                if (!pick.Available)
+                    return false;
+
+                int slot = reader.GetItemIndex(pick);
+
+                Screens.MainHud.OpenItemMenu(hud, slot);
+                this.itemMenuFrom = now;
+                this.Status       = $"Using {pick.Name} at {hp:P0}";
+                Svc.Log.Info($"[Crucible] Items: using {pick.Name} (slot {slot}) at {hp:P0} {(fighting ? "in a fight" : "on the board")}");
+
+                return true;
+            }
         }
     }
 }

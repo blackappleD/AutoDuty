@@ -210,41 +210,14 @@ public static class MultiboxUtility
                 }
 
                 if (!InDungeon)
-                {
-                    Chat.ExecuteCommand("/partycmd breakup");
-
-                    SchedulerHelper.ScheduleAction("MultiboxServer PartyBreakup Accept", () =>
-                                                                                         {
-                                                                                             unsafe
-                                                                                             {
-                                                                                                 Utf8String inviterName = InfoProxyPartyInvite.Instance()->InviterName;
-
-                                                                                                 if (UniversalParty.Length <= 1)
-                                                                                                 {
-                                                                                                     SchedulerHelper.DescheduleAction("MultiboxServer PartyBreakup Accept");
-                                                                                                     return;
-                                                                                                 }
-
-                                                                                                 if (GenericHelpers.TryGetAddonByName("SelectYesno", out AtkUnitBase* addonSelectYesno) &&
-                                                                                                     GenericHelpers.IsAddonReady(addonSelectYesno))
-                                                                                                 {
-                                                                                                     AddonMaster.SelectYesno yesno = new(addonSelectYesno);
-                                                                                                     if (yesno.Text.Contains(inviterName.ToString()))
-                                                                                                         yesno.Yes();
-                                                                                                     else
-                                                                                                         yesno.No();
-                                                                                                 }
-
-                                                                                                 if (GenericHelpers.TryGetAddonByName("Social", out AtkUnitBase* addonSocial) &&
-                                                                                                     GenericHelpers.IsAddonReady(addonSocial))
-                                                                                                 {
-                                                                                                     ErrorLog("/partycmd breakup opened the party menu instead");
-                                                                                                     SchedulerHelper.DescheduleAction("MultiboxServer PartyBreakup Accept");
-                                                                                                     return;
-                                                                                                 }
-                                                                                             }
-                                                                                         }, 500, false);
-                }
+                    unsafe
+                    {
+                        if(InfoProxyCrossRealm.IsLocalPlayerInParty())
+                            if (InfoProxyCrossRealm.IsLocalPlayerPartyLeader())
+                                InfoProxyPartyMember.Instance()->DisbandParty();
+                            else
+                                InfoProxyPartyMember.Instance()->LeaveParty();
+                    }
 
                 DebugLog("Server stopped");
             }
