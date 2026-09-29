@@ -476,6 +476,9 @@ public class ConfigurationProfileV2
     {
         private float imguiListX = 400;
 
+        /// <summary>Index of the entry being dragged during the last frame, -1 if none.</summary>
+        private int dragSourceIndex = -1;
+
         public LoopActionConfig<T>? FindConfig<T>() where T : LoopActionConfig<T>, new() =>  
             (LoopActionConfig<T>?) this.FirstOrDefault(lac => lac is T);
 
@@ -519,6 +522,7 @@ public class ConfigurationProfileV2
             string dragDropId = $"ADLoopAction{(uint)id.GetHashCode():X8}";
             int    moveFrom   = -1;
             int    moveTo     = -1;
+            int    dragging   = -1;
 
             for (int index = 0; index < this.Count; index++)
             {
@@ -533,11 +537,16 @@ public class ConfigurationProfileV2
                 if (ImGui.IsItemHovered())
                     ImGui.SetMouseCursor(ImGuiMouseCursor.ResizeAll);
 
-                if (ImGui.BeginDragDropSource())
+                // Pushed around the whole source so the preview tooltip window itself is translucent too
+                using (ImRaii.PushStyle(ImGuiStyleVar.Alpha, 0.75f))
                 {
-                    ImGuiDragDrop.SetDragDropPayload(dragDropId, index.ToString());
-                    ImGui.Text(actionConfig.DisplayName);
-                    ImGui.EndDragDropSource();
+                    if (ImGui.BeginDragDropSource())
+                    {
+                        ImGuiDragDrop.SetDragDropPayload(dragDropId, index.ToString());
+                        actionConfig.DrawDragPreview();
+                        ImGui.EndDragDropSource();
+                        dragging = index;
+                    }
                 }
 
                 ImGui.SameLine();
@@ -567,16 +576,36 @@ public class ConfigurationProfileV2
 
                 ImGui.EndGroup();
 
+                Vector2       rowMin   = ImGui.GetItemRectMin();
+                Vector2       rowMax   = ImGui.GetItemRectMax();
+                ImDrawListPtr drawList = ImGui.GetWindowDrawList();
+
+                // Dim the entry that is being dragged
+                if (index == dragging || index == this.dragSourceIndex)
+                    drawList.AddRectFilled(rowMin, rowMax, ImGui.GetColorU32(new Vector4(0, 0, 0, 0.5f)));
+
                 if (ImGui.BeginDragDropTarget())
                 {
-                    if (ImGuiDragDrop.AcceptDragDropPayload(dragDropId, out string payload) && int.TryParse(payload, out int from))
+                    ImGuiPayloadPtr payload = ImGui.AcceptDragDropPayload(dragDropId, ImGuiDragDropFlags.AcceptBeforeDelivery | ImGuiDragDropFlags.AcceptNoDrawDefaultRect);
+                    int             from    = this.dragSourceIndex;
+
+                    if (!payload.IsNull && from >= 0 && from != index)
                     {
-                        moveFrom = from;
-                        moveTo   = index;
+                        // Line where the entry will be inserted: below the target when moving down, above it when moving up
+                        float y = from < index ? rowMax.Y : rowMin.Y;
+                        drawList.AddLine(new Vector2(rowMin.X, y), new Vector2(rowMax.X, y), ImGui.GetColorU32(ImGuiCol.DragDropTarget), 2f.Scale());
+
+                        if (payload.IsDelivery())
+                        {
+                            moveFrom = from;
+                            moveTo   = index;
+                        }
                     }
                     ImGui.EndDragDropTarget();
                 }
             }
+
+            this.dragSourceIndex = dragging;
 
             if (moveFrom >= 0 && moveFrom < this.Count && moveFrom != moveTo)
             {

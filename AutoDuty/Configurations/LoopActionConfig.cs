@@ -91,6 +91,7 @@ public abstract class LoopActionConfig
     public abstract bool OnGUIButton();
     public abstract void SetConfigOpen(bool open);
     public abstract bool IsConfigOpen { get; }
+    public abstract void DrawDragPreview();
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -140,6 +141,27 @@ public abstract class LoopActionConfig<C> : LoopActionConfig where C : LoopActio
     }
 
     public override bool IsConfigOpen => this.configOpen;
+
+    /// <summary>A look-alike of the entry's header row, shown next to the cursor while it is being dragged.</summary>
+    public override void DrawDragPreview()
+    {
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+            ImGui.Text(FontAwesomeIcon.GripVertical.ToIconString());
+        ImGui.SameLine();
+
+        bool enabled = this.Enabled;
+        ImGui.Checkbox("##DragPreviewEnabled", ref enabled);
+        ImGui.SameLine();
+
+        if (this.HasConfig)
+        {
+            ImGuiHelper.DrawIcon(this.configOpen ? FontAwesomeIcon.CaretDown : FontAwesomeIcon.CaretRight);
+            ImGui.SameLine(0, 0);
+        }
+
+        ImGui.AlignTextToFramePadding();
+        ImGui.Text(Name);
+    }
 
     public override void OnGUI(bool openWhenEnabled = true)
     {
