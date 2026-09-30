@@ -66,7 +66,7 @@ namespace AutoDuty.Managers
             if (stop.Kind == CrucibleStopKind.Campsite)
                 return true;
 
-            IEnumerable<CrucibleBoardStop> stops = this.Paths.Where(x => x.From == stop.Id).Select(x => this.Stops.First(s => s.Id == x.To));
+            IEnumerable<CrucibleBoardStop> stops = this.NextStops(stop);
             foreach (CrucibleBoardStop cbs in stops)
             {
                 IEnumerable<CrucibleBoardStop> tmpPath = [..path, cbs];
