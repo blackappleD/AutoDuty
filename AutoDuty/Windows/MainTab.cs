@@ -1387,7 +1387,7 @@ namespace AutoDuty.Windows
             ImGui.BeginGroup();
             ImGui.TextUnformatted(info.Name);
             if (info.Type.Length > 0)
-                ImGui.TextColored(CrucibleFaded, info.Type);
+                ImGui.TextColored(CrucibleFaded, $"{info.Type} ({row})");
             ImGui.EndGroup();
 
             if (info.Summary.Length > 0)

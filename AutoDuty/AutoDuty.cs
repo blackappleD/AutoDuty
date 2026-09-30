@@ -2176,6 +2176,7 @@ public sealed class AutoDuty : IDalamudPlugin
         MultiboxUtility.Config?.MultiBox =  false;
         Svc.Framework.Update             -= this.Framework_Update;
         Svc.Framework.Update             -= SchedulerHelper.ScheduleInvoker;
+        InstanceContentCrucible.Dispose();
         FileHelper.FileSystemWatcher?.Dispose();
         FileHelper.fileWatcher?.Dispose();
         this.windowSystem?.RemoveAllWindows();

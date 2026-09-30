@@ -5,13 +5,17 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace AutoDuty.Managers
 {
+    using Dalamud.Game.ClientState.Objects.Enums;
+    using Dalamud.Game.ClientState.Objects.Types;
+    using ECommons.GameFunctions;
+    using ECommons.Throttlers;
+    using ECommons.UIHelpers.AddonMasterImplementations;
     using ECommons.UIHelpers.AtkReaderImplementations;
+    using External;
+    using Helpers;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using ECommons.Throttlers;
-    using ECommons.UIHelpers.AddonMasterImplementations;
-    using Helpers;
     using Screens = CrucibleUi.Screens;
 
     internal sealed unsafe class CrucibleMenus
@@ -523,18 +527,6 @@ namespace AutoDuty.Managers
 
             this.itemNext = now + TimeSpan.FromMilliseconds(250);
 
-            if (now - this.itemMenuFrom <= ItemMenuWait)
-            {
-                if (CrucibleUi.TryReady(CrucibleUi.ContextMenu, out AtkUnitBase* menu))
-                {
-                    Screens.Menu.ChooseFirst(menu);
-                    this.itemMenuFrom = DateTime.MinValue;
-                    this.itemLastUse  = now;
-                }
-
-                return;
-            }
-
             if (!Config.Items || now - this.itemLastUse < ItemGap || Svc.Objects.LocalPlayer is not { IsDead: false, MaxHp: > 0 } me)
                 return;
 
@@ -550,24 +542,46 @@ namespace AutoDuty.Managers
             float hp       = (float)me.CurrentHp / me.MaxHp;
 
             if (hp <= (fighting ? FightLow : BoardLow))
-                if (PickFromItems(fighting ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems))
+                if (Pick(PickFromItems(fighting ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems)))
                     return;
 
             foreach (uint[] statusItem in CrucibleItemData.StatusItems)
                 if (!PlayerHelper.HasStatus(statusItem[1]))
                     if (Pick(items.FirstOrDefault(x => x.Id == statusItem[0])))
                         return;
+
+            if (!fighting)
+                return;
+
+            ReaderXBMContentsItemShop.ItemEntry? dmgItem = PickFromItems(CrucibleItemData.CombatDamageItems);
+            if (dmgItem == null)
+                return;
+
+            List<IBattleNpc> enemies = Svc.Objects.Where(igo => igo is { ObjectKind: ObjectKind.BattleNpc, IsTargetable: true } && igo.IsHostile() && ObjectHelper.BelowDistanceToPlayer(igo.Position, 40f, 20f / 2f)).Cast<IBattleNpc>().ToList();
+            if (enemies.Count == 0)
+                return;
+
+            IBattleNpc bossObject = enemies.MaxBy(igo => igo.MaxHp)!;
+
+            IBattleNpc? topAdd = enemies.Except([bossObject]).MaxBy(igo => igo.MaxHp);
+
+            if (topAdd != null)
+            {
+                Svc.Targets.Target = topAdd;
+                Pick(dmgItem);
+            }
+
             return;
 
-            bool PickFromItems(IEnumerable<uint> ids)
+            ReaderXBMContentsItemShop.ItemEntry? PickFromItems(IEnumerable<uint> ids)
             {
                 foreach (uint id in ids)
                 {
                     foreach (ReaderXBMContentsItemShop.ItemEntry entry in items)
                         if (entry.Id == id && entry.Available)
-                            return Pick(entry);
+                            return entry;
                 }
-                return false;
+                return null;
             }
 
             bool Pick(ReaderXBMContentsItemShop.ItemEntry? pick)
@@ -581,8 +595,8 @@ namespace AutoDuty.Managers
 
                 int slot = reader.GetItemIndex(pick);
 
-                Screens.MainHud.OpenItemMenu(hud, slot);
-                this.itemMenuFrom = now;
+                InstanceContentCrucible.UseItem((uint) slot, 0);
+
                 this.Status       = $"Using {pick.Name} at {hp:P0}";
                 Svc.Log.Info($"[Crucible] Items: using {pick.Name} (slot {slot}) at {hp:P0} {(fighting ? "in a fight" : "on the board")}");
 
