@@ -264,6 +264,7 @@ public sealed class AutoDuty : IDalamudPlugin
             OrderBy(ObjectHelper.GetDistanceToPlayer).TryGetFirst(out IGameObject gameObject) ? gameObject : null;
     internal readonly OverrideCamera           overrideCamera = null!;
     internal          MainWindow               MainWindow { get; init; } = null!;
+    internal          CrucibleBoardWindow      CrucibleBoardWindow { get; init; } = null!;
     internal          Overlay                  Overlay    { get; init; } = null!;
     internal static   bool                     InDungeon  => ContentHelper.DictionaryContent.ContainsKey(Svc.ClientState.TerritoryType);
 
@@ -362,6 +363,8 @@ public sealed class AutoDuty : IDalamudPlugin
             this.MainWindow       = new MainWindow();
             this.windowSystem.AddWindow(this.MainWindow);
             this.windowSystem.AddWindow(this.Overlay);
+            this.CrucibleBoardWindow = new CrucibleBoardWindow();
+            this.windowSystem.AddWindow(this.CrucibleBoardWindow);
 
             if (Svc.ClientState.IsLoggedIn) 
                 this.ClientStateOnLogin();
@@ -382,6 +385,7 @@ public sealed class AutoDuty : IDalamudPlugin
                 (["start"], "starts autoduty when in a Duty", _ => this.Run(Svc.ClientState.TerritoryType, 1)),
                 (["stop"], "stops everything", _ => Plugin.Stage = Stage.Stopped),
                 (["pause"], "pause route", _ => Plugin.Stage     = Stage.Paused),
+                (["board"], "opens the Crucible board map", _ => this.CrucibleBoardWindow.Toggle()),
                 (["resume"], "resume route", _ =>
                                              {
                                                  if (Plugin.Stage == Stage.Paused)
@@ -2175,6 +2179,7 @@ public sealed class AutoDuty : IDalamudPlugin
         MultiboxUtility.Config?.MultiBox =  false;
         Svc.Framework.Update             -= this.Framework_Update;
         Svc.Framework.Update             -= SchedulerHelper.ScheduleInvoker;
+        InstanceContentCrucible.Dispose();
         FileHelper.FileSystemWatcher?.Dispose();
         FileHelper.fileWatcher?.Dispose();
         this.windowSystem?.RemoveAllWindows();
