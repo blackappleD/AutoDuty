@@ -58,8 +58,27 @@ namespace AutoDuty.Managers
             return cachedBoard;
         }
 
-        public IEnumerable<CrucibleBoardStop> NextStops(CrucibleBoardStop stop)
-            => this.Paths.Where(x => x.From == stop.Id).Select(x => this.Stops.First(s => s.Id == x.To));
+        public IEnumerable<CrucibleBoardStop> NextStops(CrucibleBoardStop stop) => 
+            this.Paths.Where(x => x.From == stop.Id).Select(x => this.Stops.First(s => s.Id == x.To));
+
+        public bool HasCampBeforeNextFight(CrucibleBoardStop stop, ref IEnumerable<CrucibleBoardStop> path)
+        {
+            if (stop.Kind == CrucibleStopKind.Campsite)
+                return true;
+
+            IEnumerable<CrucibleBoardStop> stops = this.Paths.Where(x => x.From == stop.Id).Select(x => this.Stops.First(s => s.Id == x.To));
+            foreach (CrucibleBoardStop cbs in stops)
+            {
+                IEnumerable<CrucibleBoardStop> tmpPath = [..path, cbs];
+                if (cbs.Kind == CrucibleStopKind.Campsite || (cbs.Kind is not (CrucibleStopKind.Enemy or CrucibleStopKind.Elite or CrucibleStopKind.Boss or CrucibleStopKind.Random) && this.HasCampBeforeNextFight(cbs, ref tmpPath)))
+                {
+                    path = tmpPath;
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         public CrucibleBoardStop? StopPlayerIsOn()
         {
