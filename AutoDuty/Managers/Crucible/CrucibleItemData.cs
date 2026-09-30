@@ -207,9 +207,9 @@ internal static class CrucibleItemData
     [
         [138, 4870], // Temporal Sands
         [99, 4846],  // G2 Reraiser
-        [98, 4846],   // G1 Reraiser
-        //[101, ??] // Merchant's Eye
-        [100, 4855] // Thief's Eye
+        [98, 4846],  // G1 Reraiser
+        [101, 4856], // Merchant's Eye
+        [100, 4855]  // Thief's Eye
     ];
 
     public static readonly uint[] CombatDamageItems =
