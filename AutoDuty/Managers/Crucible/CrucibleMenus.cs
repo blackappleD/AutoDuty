@@ -538,10 +538,14 @@ namespace AutoDuty.Managers
 
             List<ReaderXBMContentsItemShop.ItemEntry> items  = reader.ItemEntries;
 
-            bool  fighting = Svc.Condition[ConditionFlag.InCombat];
-            float hp       = (float)me.CurrentHp / me.MaxHp;
+            CrucibleBoard?     board = CrucibleBoard.Current();
+            CrucibleBoardStop? currentStop   = board?.StopPlayerIsOn();
 
-            if (hp <= (fighting ? FightLow : BoardLow))
+            bool               fighting       = currentStop == null;
+            float              hp             = (float)me.CurrentHp / me.MaxHp;
+
+            IEnumerable<CrucibleBoardStop> boardStops = [];
+            if (hp <= (fighting ? FightLow : BoardLow) && (fighting || !board!.HasCampBeforeNextFight(currentStop!, ref boardStops)))
                 if (Pick(PickFromItems(fighting ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems)))
                     return;
 

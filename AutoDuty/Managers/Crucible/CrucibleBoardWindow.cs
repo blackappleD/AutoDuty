@@ -2,6 +2,7 @@ using ECommons.DalamudServices;
 
 namespace AutoDuty.Managers
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
     using Dalamud.Bindings.ImGui;
@@ -48,7 +49,7 @@ namespace AutoDuty.Managers
             CrucibleBoard? board = CrucibleBoard.Current();
             if (board == null)
             {
-                ImGuiEx.Text("Not on a Crucible board.");
+                this.IsOpen = false;
                 return;
             }
 
@@ -56,6 +57,20 @@ namespace AutoDuty.Managers
 
             ImGuiEx.Text($"{board.Name}  (board {board.BoardNumber})");
             ImGuiEx.Text(here != null ? $"You are on: {here.Label}" : "You are off the board (fight arena?)");
+
+            if(here != null)
+            {
+                IEnumerable<CrucibleBoardStop> stops                  = [];
+                if(board.HasCampBeforeNextFight(here, ref stops))
+                {
+                    ImGuiEx.Text($"There is a camp before the next fight");
+                    ImGui.Indent();
+                    ImGui.Text("Path: " + string.Join("|", stops.Select(cbs => cbs.Label)));
+                    ImGui.Unindent();
+                }
+                else
+                    ImGuiEx.Text($"There is no camp before the next fight");
+            }
 
             ImGui.Separator();
             DrawMap(board, here);
