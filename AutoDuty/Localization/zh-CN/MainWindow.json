@@ -25,6 +25,11 @@
     "TT": {
       "RegisterCards": "自动收录背包卡片",
       "SellCards": "出售多余卡片"
+    },
+    "Staging": {
+      "NotSupported": "不支持在测试版（Staging）Dalamud 上使用。",
+      "SwitchHint": "请输入“/xlbranch”并选择 Release 分支，然后重启游戏。",
+      "UseAnyway": "仍在测试版上使用（不提供支持）"
     }
   }
 }

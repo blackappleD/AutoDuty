@@ -302,10 +302,10 @@ public sealed class MainWindow : Window, IDisposable
 
         if(DalamudHelper.IsOnStaging())
         {
-            ImGui.TextColored(GradientColor.Get(ImGuiHelper.ExperimentalColor, ImGuiHelper.ExperimentalColor2, 500), "NOT SUPPORTED ON STAGING.");
-            ImGui.Text("Please type in \"/xlbranch\" and pick Release, then restart the game.");
+            ImGui.TextColored(GradientColor.Get(ImGuiHelper.ExperimentalColor, ImGuiHelper.ExperimentalColor2, 500), Loc.Get("MainWindow.Staging.NotSupported"));
+            ImGui.Text(Loc.Get("MainWindow.Staging.SwitchHint"));
 
-            if (!ImGui.CollapsingHeader("Use despite staging. Support will not be given##stagingHeader"))
+            if (!ImGui.CollapsingHeader(Loc.Get("MainWindow.Staging.UseAnyway") + "##stagingHeader"))
                 return;
         }
 
