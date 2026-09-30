@@ -338,7 +338,8 @@ namespace AutoDuty.Managers
 
             internal static class StageDetail
             {
-                public static void Confirm(AtkUnitBase* layout) => AddonHelper.FireCallBack(layout, true, 8);
+                public static void SetDegree(AtkUnitBase* layout, CrucibleDegree degree) => AddonHelper.FireCallBack(layout, true, 2, (int)degree);
+                public static void Confirm(AtkUnitBase*   layout) => AddonHelper.FireCallBack(layout, true, 8);
             }
 
             internal static class Notebook
