@@ -1,5 +1,6 @@
 ﻿using AutoDuty.Helpers;
 using AutoDuty.IPC;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using ECommons;
@@ -7,14 +8,9 @@ using ECommons.DalamudServices;
 using ECommons.ExcelServices;
 using ECommons.GameFunctions;
 using ECommons.ImGuiMethods;
-using Dalamud.Bindings.ImGui;
 
 namespace AutoDuty.Windows
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.RegularExpressions;
     using Configurations;
     using Dalamud.Interface;
     using Dalamud.Interface.Textures.TextureWraps;
@@ -23,7 +19,12 @@ namespace AutoDuty.Windows
     using ECommons.PartyFunctions;
     using ECommons.Throttlers;
     using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+    using global::AutoDuty.Managers;
     using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
     using static Data.Classes;
     using Vector2 = System.Numerics.Vector2;
     using Vector4 = System.Numerics.Vector4;
@@ -322,6 +323,8 @@ namespace AutoDuty.Windows
                                 MainWindow.ShowPopup(Loc.Get("MainTab.Error"), Loc.Get("MainTab.ErrorGroupOf4"));
                             else if (Configuration is { Meta.DutyModeEnum: DutyMode.Regular, DutyConfig.OverridePartyValidation: false } && synced && !ObjectHelper.PartyValidation())
                                 MainWindow.ShowPopup(Loc.Get("MainTab.Error"), Loc.Get("MainTab.ErrorPartyMakeup"));
+                            else if (Configuration.Meta is { DutyModeEnum: DutyMode.Crucible } && CrucibleTeam.For(Configuration.Meta.Crucible.TeamMode).Count < 3)
+                                MainWindow.ShowPopup(Loc.Get("MainTab.Error"), Loc.Get("MainTab.Crucible.MinimumTeamCount"));
                             else if (ContentPathsManager.DictionaryPaths.ContainsKey(Plugin.CurrentTerritoryContent?.TerritoryType ?? 0))
                                 Plugin.Run();
                             else
