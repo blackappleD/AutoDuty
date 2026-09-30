@@ -920,6 +920,17 @@ namespace AutoDuty.Windows
                         ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.ModesHelp.{mode}"));
                 }
 
+                ImGui.SameLine();
+                CrucibleDegree degree = crucible.Degree;
+                ImGui.PushItemWidth(150f.Scale());
+                if (ImGuiEx.EnumCombo("##CrucibleDegrees", ref degree, Enum.GetValues<CrucibleDegree>().ToDictionary(cd => cd, cd => Loc.Get("MainTab.Crucible.Degrees." + cd))))
+                {
+                    crucible.Degree = degree;
+                    ConfigurationProfileV2.Save();
+                }
+                ImGui.PopItemWidth();
+
+
                 if (crucible.TeamMode == CrucibleTeamMode.Leveling)
                     foreach (CrucibleLevelingMode mode in Enum.GetValues<CrucibleLevelingMode>())
                     {

@@ -224,7 +224,13 @@
             Carry_Minus_2 = 3
         }
 
-
+        public enum CrucibleDegree
+        {
+            Standard = 0,
+            First = 1,
+            Second = 2,
+            Third = 3
+        }
         public enum LevelingMode : int
         {
             None = 0,

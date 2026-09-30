@@ -84,9 +84,10 @@ public class ConfigurationProfileV2
         [JsonObject(MemberSerialization.OptOut)]
         public class CrucibleConfig
         {
-            public CrucibleTeamMode     TeamMode     { get; set; } = CrucibleTeamMode.Recommended;
-            public CrucibleLevelingMode LevelingMode { get; set; } = CrucibleLevelingMode.Minus_3;
-            public List<uint>           CustomTeam   { get; set; } = [];
+            public CrucibleDegree         Degree        { get; set; } = CrucibleDegree.Standard;
+            public CrucibleTeamMode       TeamMode      { get; set; } = CrucibleTeamMode.Recommended;
+            public CrucibleLevelingMode   LevelingMode  { get; set; } = CrucibleLevelingMode.Minus_3;
+            public List<uint>             CustomTeam    { get; set; } = [];
             public List<CrucibleShopList> ShopLists     { get; set; } = [];
             public int                    ShopListIndex { get; set; } = 0;
             public List<uint>             ShopGearOrder { get; set; } = []; // legacy, only seeds ShopLists
