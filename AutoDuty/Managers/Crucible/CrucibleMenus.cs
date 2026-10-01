@@ -16,6 +16,7 @@ namespace AutoDuty.Managers
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Numerics;
     using Screens = CrucibleUi.Screens;
 
     internal sealed unsafe class CrucibleMenus
@@ -562,17 +563,18 @@ namespace AutoDuty.Managers
             if (dmgItem == null)
                 return;
 
-            List<IBattleNpc> enemies = Svc.Objects.Where(igo => igo is { ObjectKind: ObjectKind.BattleNpc, IsTargetable: true } && igo.IsHostile() && ObjectHelper.BelowDistanceToPlayer(igo.Position, 40f, 20f / 2f)).Cast<IBattleNpc>().ToList();
-            if (enemies.Count == 0)
+            List<IBattleNpc> enemies = Svc.Objects.Where(igo => igo is { ObjectKind: ObjectKind.BattleNpc, IsTargetable: true } && igo.IsHostile() && ObjectHelper.BelowDistanceToPlayer(igo.Position, 40f, 20f / 2f)).Cast<IBattleNpc>().Where(ibn => ibn.Health > 0).ToList();
+            if (enemies.Count < 4)
                 return;
 
-            IBattleNpc bossObject = enemies.MaxBy(igo => igo.MaxHp)!;
+            IBattleNpc   bossObject = enemies.MaxBy(igo => igo.MaxHp)!;
+            IBattleNpc[] battleNpcs = enemies.Except([bossObject]).ToArray();
 
-            IBattleNpc? topAdd = enemies.Except([bossObject]).MaxBy(igo => igo.MaxHp);
+            IBattleNpc? target = battleNpcs.FirstOrDefault(ibn => battleNpcs.Count(ibe => Vector2.DistanceSquared(ibn.Position2, ibe.Position2) < 121f) > 2);
 
-            if (topAdd != null)
+            if (target != null)
             {
-                Svc.Targets.Target = topAdd;
+                Svc.Targets.Target = target;
                 Pick(dmgItem);
             }
 
