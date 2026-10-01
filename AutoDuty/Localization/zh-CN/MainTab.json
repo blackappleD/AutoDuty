@@ -100,6 +100,13 @@
       "TableLegend": "底色高亮：该模式选用的队伍 · 将鼠标悬停在名称上可查看属性",
       "TableLegendCustom": "已勾选：你要带上的队伍 · 将鼠标悬停在名称上可查看属性",
       "NotSeen": "尚未读取等级\n将在下次组队时从魔物图鉴中读取",
+      "MinimumTeamCount": "Crucible 至少需要选择 3 只使魔",
+      "Degrees": {
+        "Standard": "标准",
+        "First": "一阶",
+        "Second": "二阶",
+        "Third": "三阶"
+      },
       "Modes": {
         "Recommended": "推荐",
         "Leveling": "练级",

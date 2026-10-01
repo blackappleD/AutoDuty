@@ -100,6 +100,13 @@
       "TableLegend": "底色highlight：該模式選用的隊伍 · 將滑鼠停留在名稱上可查看屬性",
       "TableLegendCustom": "已勾選：你要帶上的隊伍 · 將滑鼠停留在名稱上可查看屬性",
       "NotSeen": "尚未讀取等級\n將在下次組隊時從魔物圖鑑中讀取",
+      "MinimumTeamCount": "Crucible 至少需要選擇 3 隻使魔",
+      "Degrees": {
+        "Standard": "標準",
+        "First": "一階",
+        "Second": "二階",
+        "Third": "三階"
+      },
       "Modes": {
         "Recommended": "推薦",
         "Leveling": "練等",
