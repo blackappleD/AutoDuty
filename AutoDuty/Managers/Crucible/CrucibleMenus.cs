@@ -547,7 +547,7 @@ namespace AutoDuty.Managers
             float hp       = (float)me.CurrentHp / me.MaxHp;
 
             IEnumerable<CrucibleBoardStop> boardStops = [];
-            if (hp <= (InArena ? FightLow : BoardLow) && (InArena || !board!.HasCampBeforeNextFight(currentStop!, ref boardStops)))
+            if (hp <= (InArena ? FightLow : BoardLow) && (InArena && fighting || !InArena && !board!.HasCampBeforeNextFight(currentStop!, ref boardStops)))
                 if (Pick(PickFromItems(InArena ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems)))
                     return;
 
