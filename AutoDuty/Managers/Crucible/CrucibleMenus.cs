@@ -175,6 +175,16 @@ namespace AutoDuty.Managers
             {
                 ReaderXBMResult xbmResult = new(result);
 
+                Svc.Log.Info($"Crucible Results: Total Score: {xbmResult.TotalScore}, Rank: {xbmResult.Rank}" +
+                             "\n\tBeasts:\n" + 
+                             string.Join("\n", xbmResult.BeastEntries.Select(entry => $"{CrucibleTeam.Familiars[entry.Number].Name} ({entry.Number}) - Rank: {entry.PrevRank} -> {entry.NewRank}, XP: {entry.PrevXP} -> {entry.NewXP}")) +
+                             $"\n\tScores: Performance: {xbmResult.Performance} | MovesMade: {xbmResult.MovesMadeScore} | Enemy: {xbmResult.EnemyScore} | Elite: {xbmResult.EliteScore} | Boss: {xbmResult.BossScore} | HP: {xbmResult.RemainingHP} -> {xbmResult.RemainingHPScore}\n"+
+                             "Bonus Boost: " + xbmResult.BonusBoostScore + "\n" + 
+                             string.Join("\n", xbmResult.BonusBoostEntries.Select(entry => $"{entry.Name}: {entry.Score}")) +
+                             "\n\t Loot:\n" + 
+                             string.Join("\n", xbmResult.LootEntries.Select(entry => $"{entry.Name} ({entry.ItemId}) - Count: {entry.Count}"))
+                             );
+
                 foreach (ReaderXBMResult.BeastEntry entry in xbmResult.BeastEntries)
                     CrucibleTeam.UpdateFamiliar(entry.Number, entry.NewRank, entry.NewXP);
 
