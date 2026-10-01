@@ -608,10 +608,10 @@
         "Z": 0.0
       },
       "Arguments": [
-        "+12"
+        "+1"
       ],
       "Conditions": [],
-      "Note": "Skip the right branch steps",
+      "Note": "Skip the right branch steps (TODO: +12 when configurable)",
       "Flags": "None"
     },
     {
@@ -1862,6 +1862,10 @@
       {
         "Version": 363,
         "Change": "Changing to status based tile detection to allow handling of chance tiles. Testing stability of updated modules and rerouting to the current most stable path."
+      },
+      {
+        "Version": 373,
+        "Change": ""
       }
     ],
     "Notes": []
