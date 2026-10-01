@@ -903,13 +903,13 @@ namespace AutoDuty.Windows
 
             if (!inDungeon)
             {
-
                 ImGuiEx.LineCentered(() => ImGuiEx.TextUnderlined(Loc.Get("MainTab.Crucible.Team")));
 
                 foreach (CrucibleTeamMode mode in Enum.GetValues<CrucibleTeamMode>())
                 {
                     if (mode != CrucibleTeamMode.Recommended)
                         ImGui.SameLine();
+
                     if (ImGui.RadioButton(Loc.Get($"MainTab.Crucible.Modes.{mode}"), crucible.TeamMode == mode) && crucible.TeamMode != mode)
                     {
                         crucible.TeamMode = mode;
@@ -931,21 +931,56 @@ namespace AutoDuty.Windows
                 ImGui.PopItemWidth();
 
 
-                if (crucible.TeamMode == CrucibleTeamMode.Leveling)
-                    foreach (CrucibleLevelingMode mode in Enum.GetValues<CrucibleLevelingMode>())
-                    {
-                        if (mode != CrucibleLevelingMode.Full)
-                            ImGui.SameLine();
+                switch (crucible.TeamMode)
+                {
 
-                        if (ImGui.RadioButton(Loc.Get($"MainTab.Crucible.LevelingModes.{mode}"), crucible.LevelingMode == mode) && crucible.LevelingMode != mode)
+                    case CrucibleTeamMode.Recommended:
+                        ImGui.AlignTextToFramePadding();
+                        ImGui.Text(Loc.Get("MainTab.Crucible.RecommendedTeamCap"));
+                        ImGui.SameLine();
+                        ImGui.PushItemWidth(100f.Scale());
+                        int teamCap = crucible.RecommendedTeamCap;
+                        if (ImGui.InputInt("##RecommendedTeamCap", ref teamCap, 1))
                         {
-                            crucible.LevelingMode = mode;
+                            crucible.RecommendedTeamCap = teamCap;
                             ConfigurationProfileV2.Save();
                         }
+                        ImGui.PopItemWidth();
 
-                        if (ImGui.IsItemHovered())
-                            ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.LevelingModesHelp.{mode}"));
+                        if (crucible.RecommendedTeamCap != 15)
+                        {
+                            ImGui.SameLine();
+                            if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.RecommendedTeamCapClear")))
+                            {
+                                crucible.RecommendedTeamCap = 15;
+                                ConfigurationProfileV2.Save();
+                            }
+                        }
+
+                        break;
+                    case CrucibleTeamMode.Leveling:
+                    {
+                        foreach (CrucibleLevelingMode mode in Enum.GetValues<CrucibleLevelingMode>())
+                        {
+                            if (mode != CrucibleLevelingMode.Full)
+                                ImGui.SameLine();
+
+                            if (ImGui.RadioButton(Loc.Get($"MainTab.Crucible.LevelingModes.{mode}"), crucible.LevelingMode == mode) && crucible.LevelingMode != mode)
+                            {
+                                crucible.LevelingMode = mode;
+                                ConfigurationProfileV2.Save();
+                            }
+
+                            if (ImGui.IsItemHovered())
+                                ImGui.SetTooltip(Loc.Get($"MainTab.Crucible.LevelingModesHelp.{mode}"));
+                        }
+
+                        break;
                     }
+                    case CrucibleTeamMode.Custom:
+                    default:
+                        break;
+                }
 
                 List<uint>                                  team   = CrucibleTeam.For(crucible.TeamMode);
                 IReadOnlyDictionary<uint, CrucibleFamiliar> cached = CrucibleTeam.Familiars;

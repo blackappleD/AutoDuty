@@ -102,6 +102,8 @@
       "TableLegendCustom": "Ticked: the team you take · Hover a name for stats",
       "NotSeen": "Rank not read yet\nRead from the bestiary at the next team setup",
       "MinimumTeamCount": "Crucible requires at least 3 beasts selected",
+      "RecommendedTeamCap": "Team size",
+      "RecommendedTeamCapClear": "Uncap",
       "Degrees": {
         "Standard": "Standard",
         "First": "First Degree",
