@@ -207,7 +207,20 @@ internal static class CrucibleItemData
     [
         [138, 4870], // Temporal Sands
         [99, 4846],  // G2 Reraiser
-        [98, 4846]   // G1 Reraiser
+        [98, 4846],  // G1 Reraiser
+        [101, 4856], // Merchant's Eye
+        [100, 4855]  // Thief's Eye
+    ];
+
+    public static readonly uint[] CombatDamageItems =
+    [
+        128, // Fang of Fire
+        129, // Fang of Ice
+        130, // Fang of Water
+        131, // Fang of Lightning
+        132, // Fang of Earth
+        133, // Fang of Wind
+        134, // Vampiric Fang
     ];
 
     public static uint[] TreasureOrder => ShopHealingOrder.Concat(StatusItems.Select(x => x[0])).Concat(FightHealingItems).Concat(ShopGearOrder).Concat(ShopFeedOrder).Distinct().ToArray();

@@ -14,6 +14,7 @@ namespace AutoDuty.Managers
     using System;
     using System.Collections.Generic;
     using System.Numerics;
+    using FFXIVClientStructs.FFXIV.Client.Game;
     using static Data.Classes;
     using Screens = CrucibleUi.Screens;
 
@@ -84,7 +85,12 @@ namespace AutoDuty.Managers
                                  }, "RegisterCrucible-TeamCheck");
 
             AtkUnitBase* addon = null;
-            _taskManager.Enqueue(() => GenericHelpers.TryGetAddonByName(CrucibleUi.BoardLayout, out addon) && GenericHelpers.IsAddonReady(addon), "RegisterCrucible-Challenge");
+            _taskManager.Enqueue(() => GenericHelpers.TryGetAddonByName(CrucibleUi.BoardLayout, out addon) && GenericHelpers.IsAddonReady(addon),                                                    "RegisterCrucible-Challenge");
+            _taskManager.Enqueue(() =>
+                                 {
+                                     if (QuestManager.IsQuestComplete(71045u))
+                                         Screens.StageDetail.SetDegree(addon, Configuration.Meta.Crucible.Degree);
+                                 }, "RegisterCrucible-ChallengeDegrees");
             _taskManager.Enqueue(() =>
                                  {
                                      Screens.StageDetail.Confirm(addon);
