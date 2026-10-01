@@ -1266,8 +1266,9 @@ namespace AutoDuty.Windows
             }
         }
 
-        private static readonly Vector4 CrucibleShopGear        = ImGuiHelper.RoleDPSColor;
+        private static readonly Vector4 CrucibleShopGear        = ImGuiHelper.RoleTankColor;
         private static readonly Vector4 CrucibleShopItemHealing = ImGuiHelper.RoleHealerColor;
+        private static readonly Vector4 CrucibleShopItemDamage  = ImGuiHelper.RoleDPSColor;
         private static readonly Vector4 CrucibleShopFeed        = ImGuiHelper.RoleAllRounderColor;
 
 
@@ -1352,6 +1353,9 @@ namespace AutoDuty.Windows
                                 break;
                             case CrucibleItemData.CrucibleItemCategory.HealItem:
                                 ImGui.TextColored(CrucibleShopItemHealing, Loc.Get("MainTab.Crucible.HealingItem"));
+                                break;
+                            case CrucibleItemData.CrucibleItemCategory.DamageItem:
+                                ImGui.TextColored(CrucibleShopItemDamage, Loc.Get("MainTab.Crucible.DamageItem"));
                                 break;
                             case CrucibleItemData.CrucibleItemCategory.Feed:
                                 ImGui.TextColored(CrucibleShopFeed, Loc.Get("MainTab.Crucible.FeedItem"));
