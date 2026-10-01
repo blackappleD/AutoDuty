@@ -35,7 +35,7 @@ namespace AutoDuty.Managers
         private static readonly TimeSpan ShopStep      = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan FeedRetry     = TimeSpan.FromMilliseconds(1500);
         private static readonly TimeSpan FeedTimeout   = TimeSpan.FromSeconds(30);
-        private static readonly TimeSpan ItemGap       = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan ItemGap       = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan ItemMenuWait  = TimeSpan.FromMilliseconds(1500);
 
         private DateTime confirmFrom  = DateTime.MinValue;
@@ -541,20 +541,21 @@ namespace AutoDuty.Managers
             CrucibleBoard?     board = CrucibleBoard.Current();
             CrucibleBoardStop? currentStop   = board?.StopPlayerIsOn();
 
-            bool               fighting       = currentStop == null;
-            float              hp             = (float)me.CurrentHp / me.MaxHp;
+            bool  InArena  = currentStop == null;
+            bool  fighting = Svc.Condition[ConditionFlag.InCombat];
+            float hp       = (float)me.CurrentHp / me.MaxHp;
 
             IEnumerable<CrucibleBoardStop> boardStops = [];
-            if (hp <= (fighting ? FightLow : BoardLow) && (fighting || !board!.HasCampBeforeNextFight(currentStop!, ref boardStops)))
-                if (Pick(PickFromItems(fighting ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems)))
+            if (hp <= (InArena ? FightLow : BoardLow) && (InArena || !board!.HasCampBeforeNextFight(currentStop!, ref boardStops)))
+                if (Pick(PickFromItems(InArena ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems)))
                     return;
 
             foreach (uint[] statusItem in CrucibleItemData.StatusItems)
-                if (!PlayerHelper.HasStatus(statusItem[1]))
+                if (!PlayerHelper.HasStatus(statusItem[1]) && (statusItem[0] is not (100 or 101) || fighting))
                     if (Pick(items.FirstOrDefault(x => x.Id == statusItem[0])))
                         return;
 
-            if (!fighting)
+            if (!InArena)
                 return;
 
             ReaderXBMContentsItemShop.ItemEntry? dmgItem = PickFromItems(CrucibleItemData.CombatDamageItems);
@@ -601,8 +602,10 @@ namespace AutoDuty.Managers
 
                 InstanceContentCrucible.UseItem((uint) slot, 0);
 
+                this.itemLastUse = now;
+
                 this.Status       = $"Using {pick.Name} at {hp:P0}";
-                Svc.Log.Info($"[Crucible] Items: using {pick.Name} (slot {slot}) at {hp:P0} {(fighting ? "in a fight" : "on the board")}");
+                Svc.Log.Info($"[Crucible] Items: using {pick.Name} (slot {slot}) at {hp:P0} {(InArena ? "in a fight" : "on the board")}");
 
                 return true;
             }
