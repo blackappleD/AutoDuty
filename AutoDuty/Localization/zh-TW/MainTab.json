@@ -80,6 +80,7 @@
       "GearItem": "裝備",
       "FeedItem": "飼料",
       "ItemItem": "道具",
+      "DamageItem": "傷害",
       "ShopListHelp": "AutoDuty 用於購買的商店清單",
       "RenameShopListHelp": "重新命名此商店清單",
       "NewShopList": "新增",
@@ -101,6 +102,8 @@
       "TableLegendCustom": "已勾選：你要帶上的隊伍 · 將滑鼠停留在名稱上可查看屬性",
       "NotSeen": "尚未讀取等級\n將在下次組隊時從魔物圖鑑中讀取",
       "MinimumTeamCount": "Crucible 至少需要選擇 3 隻使魔",
+      "RecommendedTeamCap": "隊伍上限",
+      "RecommendedTeamCapClear": "取消上限",
       "Degrees": {
         "Standard": "標準",
         "First": "一階",
