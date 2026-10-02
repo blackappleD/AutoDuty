@@ -92,13 +92,19 @@ public class ConfigurationProfileV2
             public int                    ShopListIndex { get; set; } = 0;
             public List<uint>             ShopGearOrder { get; set; } = []; // legacy, only seeds ShopLists
 
-            public bool FightPicks          { get; set; } = true;
-            public bool Loot                { get; set; } = true;
-            public bool Treasure            { get; set; } = true;
-            public bool Shop                { get; set; } = true;
-            public bool Rest                { get; set; } = true;
-            public bool Items               { get; set; } = true;
-            public bool RespectGearRequirements   { get; set; } = true;
+            public bool FightPicks              { get; set; }                  = true;
+            public bool Loot                    { get; set; }                  = true;
+            public bool Treasure                { get; set; }                  = true;
+            public bool Shop                    { get; set; }                  = true;
+            public bool Rest                    { get; set; }                  = true;
+            public bool Items                   { get; set; }                  = true;
+            public bool RespectGearRequirements { get; set; }                  = true;
+
+            public int RecommendedTeamCap
+            {
+                get;
+                set => field = Math.Clamp(value, 3, 15);
+            } = 15;
         }
 
         [JsonObject(MemberSerialization.OptOut)]

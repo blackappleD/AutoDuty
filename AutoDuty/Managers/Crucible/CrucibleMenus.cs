@@ -16,6 +16,7 @@ namespace AutoDuty.Managers
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Numerics;
     using Screens = CrucibleUi.Screens;
 
     internal sealed unsafe class CrucibleMenus
@@ -35,7 +36,7 @@ namespace AutoDuty.Managers
         private static readonly TimeSpan ShopStep      = TimeSpan.FromSeconds(1);
         private static readonly TimeSpan FeedRetry     = TimeSpan.FromMilliseconds(1500);
         private static readonly TimeSpan FeedTimeout   = TimeSpan.FromSeconds(30);
-        private static readonly TimeSpan ItemGap       = TimeSpan.FromSeconds(10);
+        private static readonly TimeSpan ItemGap       = TimeSpan.FromSeconds(5);
         private static readonly TimeSpan ItemMenuWait  = TimeSpan.FromMilliseconds(1500);
 
         private DateTime confirmFrom  = DateTime.MinValue;
@@ -173,6 +174,16 @@ namespace AutoDuty.Managers
             if (CrucibleUi.TryReady(CrucibleUi.ResultWindow, out AtkUnitBase* result))
             {
                 ReaderXBMResult xbmResult = new(result);
+
+                Svc.Log.Info($"Crucible Results: Total Score: {xbmResult.TotalScore}, Rank: {xbmResult.Rank}" +
+                             "\nBeasts:\n\t" + 
+                             string.Join("\n\t", xbmResult.BeastEntries.Select(entry => $"{CrucibleTeam.Familiars[entry.Number].Name} ({entry.Number}) - Rank: {entry.PrevRank} -> {entry.NewRank}, XP: {entry.PrevXP} -> {entry.NewXP}")) +
+                             $"\nScores: Performance: {xbmResult.Performance} | MovesMade: {xbmResult.MovesMadeScore} | Enemy: {xbmResult.EnemyScore} | Elite: {xbmResult.EliteScore} | Boss: {xbmResult.BossScore} | HP: {xbmResult.RemainingHP} -> {xbmResult.RemainingHPScore}\n"+
+                             "Bonus Boost: " + xbmResult.BonusBoostScore + "\n\t" + 
+                             string.Join("\n\t", xbmResult.BonusBoostEntries.Select(entry => $"{entry.Name}: {entry.Score}")) +
+                             "\n Loot:\n\t" + 
+                             string.Join("\n\t", xbmResult.LootEntries.Select(entry => $"{entry.Name} ({entry.ItemId}) - Count: {entry.Count}"))
+                             );
 
                 foreach (ReaderXBMResult.BeastEntry entry in xbmResult.BeastEntries)
                     CrucibleTeam.UpdateFamiliar(entry.Number, entry.NewRank, entry.NewXP);
@@ -541,37 +552,39 @@ namespace AutoDuty.Managers
             CrucibleBoard?     board = CrucibleBoard.Current();
             CrucibleBoardStop? currentStop   = board?.StopPlayerIsOn();
 
-            bool               fighting       = currentStop == null;
-            float              hp             = (float)me.CurrentHp / me.MaxHp;
+            bool  InArena  = currentStop == null;
+            bool  fighting = Svc.Condition[ConditionFlag.InCombat];
+            float hp       = (float)me.CurrentHp / me.MaxHp;
 
             IEnumerable<CrucibleBoardStop> boardStops = [];
-            if (hp <= (fighting ? FightLow : BoardLow) && (fighting || !board!.HasCampBeforeNextFight(currentStop!, ref boardStops)))
-                if (Pick(PickFromItems(fighting ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems)))
+            if (hp <= (InArena ? FightLow : BoardLow) && (InArena && fighting || !InArena && !board!.HasCampBeforeNextFight(currentStop!, ref boardStops)))
+                if (Pick(PickFromItems(InArena ? CrucibleItemData.FightHealingItems : CrucibleItemData.BoardHealingItems)))
                     return;
 
             foreach (uint[] statusItem in CrucibleItemData.StatusItems)
-                if (!PlayerHelper.HasStatus(statusItem[1]))
+                if (!PlayerHelper.HasStatus(statusItem[1]) && (statusItem[0] is not (100 or 101) || fighting))
                     if (Pick(items.FirstOrDefault(x => x.Id == statusItem[0])))
                         return;
 
-            if (!fighting)
+            if (!InArena)
                 return;
 
             ReaderXBMContentsItemShop.ItemEntry? dmgItem = PickFromItems(CrucibleItemData.CombatDamageItems);
             if (dmgItem == null)
                 return;
 
-            List<IBattleNpc> enemies = Svc.Objects.Where(igo => igo is { ObjectKind: ObjectKind.BattleNpc, IsTargetable: true } && igo.IsHostile() && ObjectHelper.BelowDistanceToPlayer(igo.Position, 40f, 20f / 2f)).Cast<IBattleNpc>().ToList();
-            if (enemies.Count == 0)
+            List<IBattleNpc> enemies = Svc.Objects.Where(igo => igo is { ObjectKind: ObjectKind.BattleNpc, IsTargetable: true } && igo.IsHostile() && ObjectHelper.BelowDistanceToPlayer(igo.Position, 40f, 20f / 2f)).Cast<IBattleNpc>().Where(ibn => ibn.Health > 0).ToList();
+            if (enemies.Count < 4)
                 return;
 
-            IBattleNpc bossObject = enemies.MaxBy(igo => igo.MaxHp)!;
+            IBattleNpc   bossObject = enemies.MaxBy(igo => igo.MaxHp)!;
+            IBattleNpc[] battleNpcs = enemies.Except([bossObject]).ToArray();
 
-            IBattleNpc? topAdd = enemies.Except([bossObject]).MaxBy(igo => igo.MaxHp);
+            IBattleNpc? target = battleNpcs.FirstOrDefault(ibn => battleNpcs.Count(ibe => Vector2.DistanceSquared(ibn.Position2, ibe.Position2) < 121f) > 2);
 
-            if (topAdd != null)
+            if (target != null)
             {
-                Svc.Targets.Target = topAdd;
+                Svc.Targets.Target = target;
                 Pick(dmgItem);
             }
 
@@ -601,8 +614,10 @@ namespace AutoDuty.Managers
 
                 InstanceContentCrucible.UseItem((uint) slot, 0);
 
+                this.itemLastUse = now;
+
                 this.Status       = $"Using {pick.Name} at {hp:P0}";
-                Svc.Log.Info($"[Crucible] Items: using {pick.Name} (slot {slot}) at {hp:P0} {(fighting ? "in a fight" : "on the board")}");
+                Svc.Log.Info($"[Crucible] Items: using {pick.Name} (slot {slot}) at {hp:P0} {(InArena ? "in a fight" : "on the board")}");
 
                 return true;
             }

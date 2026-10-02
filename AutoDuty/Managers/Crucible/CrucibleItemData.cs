@@ -314,12 +314,13 @@ internal static class CrucibleItemData
     [Flags]
     public enum CrucibleItemCategory
     {
-        None      = 0,
-        Gear      = 1 << 0,
-        HealItem  = 1 << 1,
-        OtherItem = 1 << 2,
-        Item      = HealItem | OtherItem,
-        Feed      = 1 << 3
+        None       = 0,
+        Gear       = 1 << 0,
+        HealItem   = 1 << 1,
+        DamageItem = 1 << 2,
+        OtherItem  = 1 << 3,
+        Item       = HealItem | DamageItem | OtherItem,
+        Feed       = 1 << 4
     }
 
     public static CrucibleItemCategory GetCategoryOf(uint row)
@@ -333,6 +334,7 @@ internal static class CrucibleItemData
         {
             CrucibleItemType.BeastGear => CrucibleItemCategory.Gear,
             CrucibleItemType.CrucibleItem when ShopHealing.Contains(row) => CrucibleItemCategory.HealItem,
+            CrucibleItemType.CrucibleItem when CombatDamageItems.Contains(row) => CrucibleItemCategory.DamageItem,
             CrucibleItemType.CrucibleItem => CrucibleItemCategory.OtherItem,
             CrucibleItemType.Feed => CrucibleItemCategory.Feed,
             _ => CrucibleItemCategory.None
