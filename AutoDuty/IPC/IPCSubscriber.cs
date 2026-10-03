@@ -402,7 +402,7 @@ namespace AutoDuty.IPC
             (fc ? Lifestream.HasFreeCompanyHouse() : Lifestream.HasPrivateHouse()) ?? false;
 
         public static void Teleport(PropertyType type) =>
-            Lifestream.EnqueuePropertyShortcut(PropertyType.Auto, HouseEnterMode.Enter_house);
+            Lifestream.EnqueuePropertyShortcut(type, HouseEnterMode.Enter_house);
 
         public static bool IsBusy =>
             Lifestream.IsBusy();
