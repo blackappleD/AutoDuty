@@ -9,7 +9,7 @@ using Lumina.Excel.Sheets.Experimental;
 
 namespace AutoDuty.Managers;
 
-internal static class CrucibleItemData
+public static class CrucibleItemData
 {
     public static readonly uint[] ShopHealing =
     [
@@ -223,21 +223,19 @@ internal static class CrucibleItemData
         134, // Vampiric Fang
     ];
 
-    public static uint[] TreasureOrder => ShopHealingOrder.Concat(StatusItems.Select(x => x[0])).Concat(FightHealingItems).Concat(ShopGearOrder).Concat(ShopFeedOrder).Distinct().ToArray();
-
-    public static uint[] ShopItems => ShopHealing.Concat(StatusItems.Select(x => x[0])).Concat(ShopGear).Concat(ShopFeed).Concat(Items.Where(item => item.Type.RowId != 0).Select(item => item.RowId)).ToArray();
+    public static uint[] ShopItems => ShopHealing.Concat(StatusItems.Select(x => x[0])).Concat(CombatDamageItems).Concat(ShopGear).Concat(ShopFeed).Concat(Items.Where(item => item.Type.RowId != 0).Select(item => item.RowId)).ToArray();
 
     public static ConfigurationProfileV2.MetaConfig.CrucibleShopList ActiveShopList
     {
         get
         {
-            ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = AutoDuty.Configuration.Meta.Crucible;
+            ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = Configuration.Meta.Crucible;
             if (crucible.ShopLists.Count == 0)
             {
                 crucible.ShopLists.Add(new ConfigurationProfileV2.MetaConfig.CrucibleShopList
                                        {
-                                           Order = CompleteShopOrder(crucible.ShopGearOrder).ToList()
-                                       });
+                                           Order = crucible.ShopGearOrder.Select<uint, ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry>(id => id).ToList()
+                                       }.CompleteList());
                 crucible.ShopGearOrder = [];
             }
 
@@ -246,18 +244,10 @@ internal static class CrucibleItemData
         }
     }
 
-    public static uint[] CompleteShopOrder(IEnumerable<uint> order) =>
-        order.Where(ShopItems.Contains).Concat(ShopItems).Distinct().ToArray();
+    public static List<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry> ShopOrder => ActiveShopList.CompleteList().Order;
+    public static List<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry> ShopOrderActive => ShopOrder.Where(e => !e.Blocked).ToList();
 
-    public static uint[] ShopOrder => CompleteShopOrder(ActiveShopList.Order);
-
-    public static uint[] ShopGearOrder    => ShopOrder.Where(ShopGear.Contains).ToArray();
-    public static uint[] ShopHealingOrder => ShopOrder.Where(ShopHealing.Contains).ToArray();
-    public static uint[] ShopFeedOrder    => ShopOrder.Where(ShopFeed.Contains).ToArray();
-
-    private static ExcelSheet<XBMItem>? items;
-
-    private static ExcelSheet<XBMItem> Items => items ??= Svc.Data.GetExcelSheet<XBMItem>();
+    private static ExcelSheet<XBMItem> Items => field ??= Svc.Data.GetExcelSheet<XBMItem>();
 
     public static readonly Dictionary<uint, uint[]> GearRequires = new()
     {
@@ -267,7 +257,7 @@ internal static class CrucibleItemData
 
     public static bool BlockedGear(uint row, HashSet<uint> ownedGear)
     {
-        ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = AutoDuty.Configuration.Meta.Crucible;
+        ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = Configuration.Meta.Crucible;
 
         bool secondElementalAxe = ElemntalAxes.Contains(row) && ownedGear.Any(ElemntalAxes.Contains);
         bool missingRequirement = crucible.RespectGearRequirements && GearRequires.TryGetValue(row, out uint[]? required) && !ownedGear.Any(required.Contains);
@@ -299,7 +289,7 @@ internal static class CrucibleItemData
 
     public static int TreasureRank(uint row)
     {
-        int index = Array.IndexOf(TreasureOrder, row);
+        int index = ShopOrderActive.FindIndex(e => e.ID == row);
         return index < 0 ? int.MaxValue : index;
     }
 
