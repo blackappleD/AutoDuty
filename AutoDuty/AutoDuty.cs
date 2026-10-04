@@ -1915,6 +1915,7 @@ public sealed class AutoDuty : IDalamudPlugin
         {
             Configuration.DutyConfig.BossMod.MaxDistanceToTargetRoleBased = true;
             Configuration.DutyConfig.BossMod.PositionalRoleBased          = true;
+            Configuration.DutyConfig.BossMod.PositionalAvarice            = true;
         }
 
         BossMod_IPCSubscriber.SetMovement(true);
