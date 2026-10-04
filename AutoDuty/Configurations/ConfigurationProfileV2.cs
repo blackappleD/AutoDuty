@@ -105,6 +105,8 @@ public class ConfigurationProfileV2
                 get;
                 set => field = Math.Clamp(value, 3, 15);
             } = 15;
+
+            public int ClassificationLock { get; set; } = 0;
         }
 
         [JsonObject(MemberSerialization.OptOut)]
