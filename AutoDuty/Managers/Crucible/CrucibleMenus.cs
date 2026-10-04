@@ -147,7 +147,6 @@ namespace AutoDuty.Managers
 
                 if (gearEntries.Count() < GearCap || itemEntries.Count() < ItemCap)
                     foreach (ReaderXBMContentsBooty.LootChoice gearChoice in choices)
-                    {
                         if (CrucibleItemData.ShopGear.Contains(gearChoice.Item))
                         {
                             if (gearEntries.All(ge => ge.Id != gearChoice.Item) && gearEntries.Count() < GearCap)
@@ -163,8 +162,6 @@ namespace AutoDuty.Managers
                             this.confirmFrom = now;
                             return;
                         }
-                        
-                    }
 
                 Screens.Booty.Close(loot);
                 this.confirmFrom = now;
@@ -481,14 +478,14 @@ namespace AutoDuty.Managers
                                                                                        };
                                                                                    });
 
-            return FirstInStock(wanted, CrucibleItemData.ShopOrder, held);
+            return FirstInStock(wanted, CrucibleItemData.ShopOrderActive, held);
         }
 
-        private static ReaderXBMContentsItemShop.StockEntry? FirstInStock(IEnumerable<ReaderXBMContentsItemShop.StockEntry> stock, uint[] priority, uint[] owned)
+        private static ReaderXBMContentsItemShop.StockEntry? FirstInStock(IEnumerable<ReaderXBMContentsItemShop.StockEntry> stock, List<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry> priority, uint[] owned)
         {
             Dictionary<uint, ReaderXBMContentsItemShop.StockEntry> byRow = stock.GroupBy(x => x.Item).ToDictionary(g => g.Key, g => g.First());
-            foreach (uint row in priority)
-                if (!owned.Contains(row) && byRow.TryGetValue(row, out ReaderXBMContentsItemShop.StockEntry? entry))
+            foreach (ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry row in priority)
+                if (!owned.Contains(row.ID) && byRow.TryGetValue(row.ID, out ReaderXBMContentsItemShop.StockEntry? entry))
                     return entry;
             return null;
         }

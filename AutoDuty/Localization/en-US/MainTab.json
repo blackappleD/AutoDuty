@@ -77,6 +77,8 @@
       "ShopOrderHelp": "Top is bought first · Drag the handle or type a new # to move an item · Hover a name for details",
       "ShopItem": "Item",
       "ShopItemType": "Type",
+      "ShopItemBlocked": "Block",
+      "ShopItemBlockedHelp": "Won't be bought or used.\nHold Ctrl to set everything in the category",
       "HealingItem": "Healing",
       "GearItem": "Gear",
       "FeedItem": "Feed",
