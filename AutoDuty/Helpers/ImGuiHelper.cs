@@ -153,6 +153,18 @@ namespace AutoDuty.Helpers
                 }
         }
 
+        public static Vector4 GetRandomColor(this string input)
+        {
+            uint hash = 5381;
+            foreach (char c in input)
+                hash = (hash << 5) + hash + c;
+            float hue = hash % 360 / 360.0f;
+
+            float r = 0, g = 0, b = 0;
+            ImGui.ColorConvertHSVtoRGB(hue, 0.7f, 0.9f, ref r, ref g, ref b);
+            return new Vector4(r, g, b, 1.0f);
+        }
+
         internal static EndUnconditionally RequiresPlugin(ExternalPlugin plugins, string id, string? message = null, bool inline = false, bool write = true)
         {
             if (plugins == ExternalPlugin.None)

@@ -188,10 +188,8 @@ namespace AutoDuty.Managers
             if (number == 0 || rank == 0)
                 return null;
 
-            return new CrucibleFamiliar
+            return new CrucibleFamiliar(number)
                    {
-                       Number             = number,
-                       Name               = reader.CurrentName.GetText(),
                        Rank               = rank,
                        Hp                 = reader.CurrentMaxHP,
                        Exp                = reader.CurrentXP.ToString(),
@@ -200,7 +198,6 @@ namespace AutoDuty.Managers
                        Constitution       = reader.CurrentConstitution,
                        Intelligence       = reader.CurrentIntelligence,
                        MagicResistance    = reader.CurrentMagicResistance,
-                       Classification     = reader.CurrentClassification.GetText()
                    };
         }
 
@@ -230,10 +227,8 @@ namespace AutoDuty.Managers
             if (name.Length == 0 || hp.Length == 0)
                 return null;
 
-            return new CrucibleFamiliar
+            return new CrucibleFamiliar((uint)DigitParsers.Digits(Text(uld, 12)))
                    {
-                       Number             = (uint)DigitParsers.Digits(Text(uld, 12)),
-                       Name               = name,
                        Rank               = DigitParsers.Digits(Text(uld, 40)),
                        Hp                 = MaxOf(hp),
                        Strength           = DigitParsers.Digits(ComponentText(uld, 47, 3)),
@@ -242,8 +237,7 @@ namespace AutoDuty.Managers
                        Intelligence       = DigitParsers.Digits(ComponentText(uld, 50, 3)),
                        MagicResistance    = DigitParsers.Digits(ComponentText(uld, 51, 3)),
                        Exp                = Text(uld, 42),
-                       Classification     = Text(uld, 21),
-                       Element            = DigitParsers.LeadingGlyphs().Replace(Text(uld, 23), "")
+                       //Element            = DigitParsers.LeadingGlyphs().Replace(Text(uld, 23), "")
                    };
         }
 
@@ -251,7 +245,7 @@ namespace AutoDuty.Managers
         {
             TryNumber(exp, out float total);
             return total / 100f;
-
+            
             static bool TryNumber(string text, out float value)
             {
                 Match match = DigitParsers.GroupedNumber().Match(text);

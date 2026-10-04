@@ -66,6 +66,7 @@
       "Familiars": "Familiars {0}/{1}",
       "Familiar": "Familiar",
       "Rank": "Rank",
+      "Classification": "Classification",
       "CustomFull": "Team is full ({0} max)\nUntick one to pick another",
       "ClearRanks": "Clear saved ranks",
       "ClearRanksHelp": "Forget saved ranks\nHold Ctrl and click",
@@ -104,6 +105,7 @@
       "MinimumTeamCount": "Crucible requires at least 3 beasts selected",
       "RecommendedTeamCap": "Team size",
       "RecommendedTeamCapClear": "Uncap",
+      "NoClassificationLock": "All kins",
       "Degrees": {
         "Standard": "Standard",
         "First": "First Degree",
