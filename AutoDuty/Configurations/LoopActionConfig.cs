@@ -805,13 +805,18 @@ public class RetireLoopActionConfig : LoopActionConfig<RetireLoopActionConfig>
     public override string OverlayName => Loc.Get("Overlay.Button.Retire");
 
     [JsonProperty] public RetireLocation RetireLocationEnum { get; set; } = RetireLocation.Inn;
+    [JsonProperty] public bool AdjustForDutyModes { get; set; } = true;
 
     protected override void RunInternal(ref bool queue)
     {
+        if (this.AdjustForDutyModes && Configuration.Meta.DutyModeEnum is DutyMode.Crucible)
+            return;
+
         Plugin.taskManager.Enqueue(() => Svc.Log.Debug($"Retire Between Loop Action"));
 
         switch (this.RetireLocationEnum)
         {
+            case { } when this.AdjustForDutyModes && Configuration.Meta.DutyModeEnum is DutyMode.Squadron:
             case RetireLocation.GC_Barracks:
                 Plugin.taskManager.Enqueue(() => GotoBarracksHelper.Invoke(), "Loop-GotoBarracksInvoke");
                 break;
@@ -860,6 +865,15 @@ public class RetireLoopActionConfig : LoopActionConfig<RetireLoopActionConfig>
 
             ImGui.EndCombo();
         }
+        ImGui.PopItemWidth();
+
+        bool adjustForDutyModes = this.AdjustForDutyModes;
+        if (ImGui.Checkbox(Loc.Get("LoopActions.Retire.AdjustForDutyModes"), ref adjustForDutyModes))
+        {
+            this.AdjustForDutyModes = adjustForDutyModes;
+            ConfigurationProfileV2.Save();
+        }
+        ImGuiComponents.HelpMarker(Loc.Get("LoopActions.Retire.AdjustForDutyModesHelp"));
     }
 }
 
