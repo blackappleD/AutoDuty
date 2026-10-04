@@ -28,7 +28,7 @@ namespace AutoDuty.Managers
         public CrucibleFamiliar() { }
         public CrucibleFamiliar(uint number) => this.number = number;
 
-        [JsonIgnore] public CrucibleFamiliarSheetData SheetData => CrucibleTeam.FamiliarSheetDatas[this.number];
+        [JsonIgnore] public CrucibleFamiliarSheetData SheetData => this.number > 0 ? CrucibleTeam.FamiliarSheetDatas[this.number] : CrucibleFamiliarSheetData.invalid;
 
         public int Rank
         {
@@ -58,6 +58,14 @@ namespace AutoDuty.Managers
         public required     string Element            { get; set; }
         public required     byte   Classification     { get; init;}
         [JsonIgnore] public string ClassificationName => CrucibleTeam.ClassificationSheetNames[this.Classification];
+
+        public static readonly CrucibleFamiliarSheetData invalid = new()
+                                                                   {
+                                                                       Number         = 0,
+                                                                       Name           = null,
+                                                                       Element        = null,
+                                                                       Classification = 0
+                                                                   };
     }
 
     [JsonObject(MemberSerialization.OptOut)]
