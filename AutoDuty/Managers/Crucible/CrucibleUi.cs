@@ -249,8 +249,8 @@ namespace AutoDuty.Managers
 
         public static float ExpShare(string exp)
         {
-            int slash = exp.IndexOf('/');
-            return slash > 0 && TryNumber(exp[..slash], out float have) && TryNumber(exp[(slash + 1)..], out float need) && need > 0 ? have / need : 0f;
+            TryNumber(exp, out float total);
+            return total / 100f;
 
             static bool TryNumber(string text, out float value)
             {
