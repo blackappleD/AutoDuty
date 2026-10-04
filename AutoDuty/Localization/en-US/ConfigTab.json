@@ -66,6 +66,7 @@
         "MaxDistanceMelee": "Max Distance To Target | Melee",
         "MaxDistanceRanged": "Max Distance To Target | Ranged",
         "PositionalRoleBased": "Set Positional Based on Player Role",
+        "PositionalAvarice": "Set Positional Based on Avarice",
         "UseDefaultSettings": "Use Default BMAI Settings",
         "UseDefaultSettingsHelp": "Clicking this will reset your BMAI config to the default and *recommended* settings for AD"
       },
