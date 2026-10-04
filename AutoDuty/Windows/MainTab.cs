@@ -1322,7 +1322,7 @@ namespace AutoDuty.Windows
         {
             try
             {
-                string text = (ImGui.GetClipboardText() ?? "").Trim();
+                string text = (ImGui.GetClipboardText() ?? string.Empty).Trim();
                 string name = "Imported";
 
                 List<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry> order;
@@ -1380,11 +1380,11 @@ namespace AutoDuty.Windows
 
             dragDrop.Begin();
 
-            using (ImRaii.TableDisposable orderTable = ImRaii.Table("Crucible Shop Order Table", 5, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
+            using (ImRaii.TableDisposable orderTable = ImRaii.Table("Crucible Shop Order Table", 6, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
             {
                 if (orderTable)
                 {
-                    ImGui.TableSetupScrollFreeze(5, 1);
+                    ImGui.TableSetupScrollFreeze(6, 1);
                     ImGui.TableSetupColumn("##Reorder");
                     ImGui.TableSetupColumn("#");
                     string blockString = Loc.Get("MainTab.Crucible.ShopItemBlocked");

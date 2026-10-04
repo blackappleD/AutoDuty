@@ -223,7 +223,7 @@ public static class CrucibleItemData
         134, // Vampiric Fang
     ];
 
-    public static uint[] ShopItems => ShopHealing.Concat(StatusItems.Select(x => x[0])).Concat(CombatDamageItems).Concat(ShopGear).Concat(ShopFeed).Concat(Items.Where(item => item.Type.RowId != 0).Select(item => item.RowId)).ToArray();
+    public static uint[] ShopItems => ShopHealing.Concat(StatusItems.Select(x => x[0])).Concat(CombatDamageItems).Concat(ShopGear).Concat(ShopFeed).Concat(Items.Where(item => item.Type.RowId != 0).Select(item => item.RowId)).Distinct().ToArray();
 
     public static ConfigurationProfileV2.MetaConfig.CrucibleShopList ActiveShopList
     {
