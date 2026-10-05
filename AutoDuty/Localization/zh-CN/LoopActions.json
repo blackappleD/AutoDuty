@@ -98,7 +98,9 @@
     },
     "Retire": {
       "Name": "前往待机点",
-      "LifestreamNotRegistered": "（未在 Lifestream 中注册）"
+      "LifestreamNotRegistered": "未安装 Lifestream",
+      "AdjustForDutyModes": "根据激活的副本模式调整",
+      "AdjustForDutyModesHelp": "冒险者分队模式将返回军营。\n探索深层副本不执行任何操作"
     },
     "ConsumeItems": {
       "Name": "使用消耗品",

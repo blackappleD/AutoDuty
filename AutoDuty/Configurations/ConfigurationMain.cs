@@ -62,7 +62,7 @@ public class ConfigurationMain
     }
 
     [JsonProperty]
-    public Dictionary<ulong, CrucibleCharacterData> crucibleByCID = [];
+    public Dictionary<ulong, CrucibleCharacterData> crucibleConfigByCID = [];
 
     public const string PLAYLISTNAME_EPHEMERAL = "Ephemeral";
     [JsonProperty]

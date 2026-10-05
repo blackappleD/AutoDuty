@@ -19,6 +19,7 @@ namespace AutoDuty.Windows
     using ECommons.PartyFunctions;
     using ECommons.Throttlers;
     using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+    using FFXIVClientStructs.FFXIV.Common.Lua;
     using global::AutoDuty.Managers;
     using Newtonsoft.Json;
     using System;
@@ -26,6 +27,7 @@ namespace AutoDuty.Windows
     using System.Linq;
     using System.Text.RegularExpressions;
     using static Data.Classes;
+    using static System.Net.Mime.MediaTypeNames;
     using Vector2 = System.Numerics.Vector2;
     using Vector4 = System.Numerics.Vector4;
 
@@ -988,6 +990,43 @@ namespace AutoDuty.Windows
 
                 if (ImGui.CollapsingHeader($"{Loc.Get("MainTab.Crucible.Familiars", team.Count, CrucibleTeam.TeamSize())}###CrucibleFamiliars"))
                 {
+                    string classificationValueName = crucible.ClassificationLock > 0 ? CrucibleTeam.ClassificationSheetNames[crucible.ClassificationLock] : Loc.Get("MainTab.Crucible.NoClassificationLock");
+                    ImGui.PushItemWidth(80f.Scale());
+                    
+                    if (ImGui.BeginCombo("##CrucibleFamiliarClassificationSelection", classificationValueName, ImGuiComboFlags.HeightLargest))
+                    {
+                        ImGui.SetItemAllowOverlap();
+                        if (ImGui.Selectable("##CrucibleClassificationNoLock", crucible.ClassificationLock == 0))
+                        {
+                            crucible.ClassificationLock = 0;
+                            ConfigurationProfileV2.Save();
+                        }
+
+                        ImGui.SameLine();
+
+                        string classificationNoLock = Loc.Get("MainTab.Crucible.NoClassificationLock");
+                        ImGui.TextColored(classificationNoLock.GetRandomColor(), classificationNoLock);
+
+                        for (int i = 1; i < CrucibleTeam.ClassificationSheetNames.Length; i++)
+                        {
+                            ImGui.SetItemAllowOverlap();
+                            if (ImGui.Selectable("##CrucibleClassification" + i, i == crucible.ClassificationLock) && i != crucible.ClassificationLock)
+                            {
+                                crucible.ClassificationLock = i;
+                                ConfigurationProfileV2.Save();
+                            }
+                            ImGui.SameLine();
+
+                            string classificationName = CrucibleTeam.ClassificationSheetNames[i];
+                            ImGui.TextColored(classificationName.GetRandomColor(), classificationName);
+                        }
+                        ImGui.EndCombo();
+                    }
+
+                    ImGui.SameLine();
+                    ImGui.PopItemWidth();
+                    ImGui.SameLine();
+
                     using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl || cached.Count == 0))
                         if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearRanks")))
                             CrucibleTeam.ClearSaved();
@@ -1022,10 +1061,10 @@ namespace AutoDuty.Windows
         }
 
         private static readonly Vector4 CruciblePickedRow = new(0.25f, 0.55f, 0.95f, 0.18f);
+        private static readonly Vector4 CrucibleBlockedRow = new(0.95f, 0.25f, 0.25f, 0.18f);
         private static readonly Vector4 CrucibleFaded     = new(1f, 1f, 1f, 0.45f);
 
-        private static void DrawCrucibleFamiliarTable(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible, List<uint> team,
-                                                      IReadOnlyDictionary<uint, CrucibleFamiliar> cached, List<uint> owned)
+        private static void DrawCrucibleFamiliarTable(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible, List<uint> team, IReadOnlyDictionary<uint, CrucibleFamiliar> cached, List<uint> owned)
         {
             bool custom = crucible.TeamMode == CrucibleTeamMode.Custom;
 
@@ -1033,24 +1072,25 @@ namespace AutoDuty.Windows
             {
                 CrucibleTeamMode.Leveling    => CrucibleTeam.Leveling(false),
                 CrucibleTeamMode.Recommended => CrucibleTeam.Recommended(false),
-                _ => owned
+                _ => owned.Where(x => crucible.ClassificationLock == 0 || CrucibleTeam.FamiliarSheetDatas[x].Classification == crucible.ClassificationLock)
             };
 
             float scale     = ImGuiHelpers.GlobalScale;
             float rowHeight = ImGui.GetFrameHeightWithSpacing();
             float height    = Math.Min(owned.Count + 1, 12) * rowHeight + 4 * scale;
 
-            const ImGuiTableFlags flags = ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.BordersOuter | ImGuiTableFlags.ScrollY | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.PadOuterX;
-            if (!ImGui.BeginTable("##CrucibleTable", 6, flags, new Vector2(0, height)))
+            const ImGuiTableFlags flags = ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.BordersOuter | ImGuiTableFlags.ScrollY | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.PadOuterX;
+            if (!ImGui.BeginTable("##CrucibleTable", 7, flags, new Vector2(0, height)))
                 return;
 
             ImGui.TableSetupScrollFreeze(0, 1);
-            ImGui.TableSetupColumn("##pick",                                 ImGuiTableColumnFlags.WidthFixed, ImGui.GetFrameHeight());
-            ImGui.TableSetupColumn("No.",                                    ImGuiTableColumnFlags.WidthFixed, 28 * scale);
-            ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.Familiar"),    ImGuiTableColumnFlags.WidthStretch);
-            ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.Rank"),        ImGuiTableColumnFlags.WidthFixed, 36 * scale);
-            ImGui.TableSetupColumn("EXP",                                    ImGuiTableColumnFlags.WidthFixed, 90 * scale);
-            ImGui.TableSetupColumn("HP",                                     ImGuiTableColumnFlags.WidthFixed, 44 * scale);
+            ImGui.TableSetupColumn("##pick",                                   ImGuiTableColumnFlags.WidthFixed, ImGui.GetFrameHeight());
+            ImGui.TableSetupColumn("No.",                                      ImGuiTableColumnFlags.WidthFixed, 28 * scale);
+            ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.Familiar"),       ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.Classification"), ImGuiTableColumnFlags.WidthFixed, 100 * scale);
+            ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.Rank"),           ImGuiTableColumnFlags.WidthFixed, 36 * scale);
+            ImGui.TableSetupColumn("EXP",                                      ImGuiTableColumnFlags.WidthFixed, 90 * scale);
+            ImGui.TableSetupColumn("HP",                                       ImGuiTableColumnFlags.WidthFixed, 44 * scale);
             ImGui.TableHeadersRow();
 
             foreach (uint number in rows)
@@ -1082,6 +1122,13 @@ namespace AutoDuty.Windows
 
                 ImGui.TableNextColumn();
                 ImGui.AlignTextToFramePadding();
+                if (!(familiar?.SheetData.ClassificationName.IsNullOrEmpty() ?? true))
+                    Centered(familiar.SheetData.ClassificationName, familiar.SheetData.ClassificationName.GetRandomColor());
+                else
+                    Centered("—", CrucibleFaded);
+
+                ImGui.TableNextColumn();
+                ImGui.AlignTextToFramePadding();
                 if (familiar is { Rank: > 0 })
                     Centered(familiar.Rank.ToString(), null);
                 else
@@ -1090,7 +1137,9 @@ namespace AutoDuty.Windows
                 ImGui.TableNextColumn();
                 float share = CrucibleUi.ExpShare(familiar?.Exp ?? "");
                 if (familiar is { Exp.Length: > 0 })
+                {
                     ImGui.ProgressBar(share, new Vector2(-1, ImGui.GetFrameHeight()), familiar.Exp);
+                }
                 else
                 {
                     ImGui.AlignTextToFramePadding();
@@ -1100,9 +1149,9 @@ namespace AutoDuty.Windows
                 ImGui.TableNextColumn();
                 ImGui.AlignTextToFramePadding();
                 if (familiar is { Hp: > 0 })
-                    RightAligned(familiar.Hp.ToString(), null);
+                    Centered(familiar.Hp.ToString(), null);
                 else
-                    RightAligned("—", CrucibleFaded);
+                    Centered("—", CrucibleFaded);
             }
 
             ImGui.EndTable();
@@ -1130,8 +1179,8 @@ namespace AutoDuty.Windows
             }
         }
 
-        private static ImGuiEx.RealtimeDragDrop<uint>? _crucibleShopDragDrop;
-        private static (uint Row, int Position)? _crucibleShopTyped;
+        private static ImGuiEx.RealtimeDragDrop<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry>? _crucibleShopDragDrop;
+        private static (ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry Row, int Position)? _crucibleShopTyped;
 
         private static void DrawCrucibleShopSettings(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible)
         {
@@ -1141,7 +1190,7 @@ namespace AutoDuty.Windows
             if (!active.Order.SequenceEqual(CrucibleItemData.ShopOrder))
                 active.Order = CrucibleItemData.ShopOrder.ToList();
 
-            ImGui.SetNextItemWidth(160 * ImGuiHelpers.GlobalScale);
+            ImGui.SetNextItemWidth(160f.Scale());
             if (ImGui.BeginCombo("##CrucibleShopList", active.Name))
             {
                 for (int i = 0; i < crucible.ShopLists.Count; i++)
@@ -1160,7 +1209,7 @@ namespace AutoDuty.Windows
                 ImGui.SetTooltip(Loc.Get("MainTab.Crucible.ShopListHelp"));
 
             ImGui.SameLine();
-            ImGui.SetNextItemWidth(140 * ImGuiHelpers.GlobalScale);
+            ImGui.SetNextItemWidth(140f.Scale());
             string name = active.Name;
             if (ImGui.InputText("##CrucibleShopListName", ref name, 64))
                 active.Name = name;
@@ -1210,13 +1259,14 @@ namespace AutoDuty.Windows
             if (ImGui.IsItemHovered())
                 ImGui.SetTooltip(Loc.Get("MainTab.Crucible.ImportShopOrderHelp"));
 
-            if (!active.Order.SequenceEqual(CrucibleItemData.ShopItems))
+            if (active.OrderChanged)
             {
                 ImGui.SameLine();
                 using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl))
                     if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearShopOrder")))
                     {
-                        active.Order = CrucibleItemData.ShopItems.ToList();
+                        active.Order = [];
+                        active.CompleteList();
                         ConfigurationProfileV2.Save();
                     }
 
@@ -1241,13 +1291,16 @@ namespace AutoDuty.Windows
             }
         }
 
-        private static void AddShopList(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible, string name, IEnumerable<uint> order)
+        private static void AddShopList(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible, string name, IEnumerable<uint> order) =>
+            AddShopList(crucible, name, order.Select(id => (ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry)id));
+
+        private static void AddShopList(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible, string name, IEnumerable<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry> order)
         {
             crucible.ShopLists.Add(new ConfigurationProfileV2.MetaConfig.CrucibleShopList
                                    {
                                        Name  = UniqueShopListName(crucible, name, null),
-                                       Order = CrucibleItemData.CompleteShopOrder(order).ToList()
-                                   });
+                                       Order = order.ToList()
+                                   }.CompleteList());
             crucible.ShopListIndex = crucible.ShopLists.Count - 1;
             ConfigurationProfileV2.Save();
         }
@@ -1269,9 +1322,10 @@ namespace AutoDuty.Windows
         {
             try
             {
-                string     text  = (ImGui.GetClipboardText() ?? "").Trim();
-                string     name  = "Imported";
-                List<uint> order;
+                string text = (ImGui.GetClipboardText() ?? string.Empty).Trim();
+                string name = "Imported";
+
+                List<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry> order;
 
                 if (text.StartsWith('{') && JsonConvert.DeserializeObject<ConfigurationProfileV2.MetaConfig.CrucibleShopList>(text) is { } list)
                 {
@@ -1281,10 +1335,10 @@ namespace AutoDuty.Windows
                 }
                 else
                 {
-                    order = Regex.Matches(text, "[0-9]+").Select(m => uint.TryParse(m.Value, out uint row) ? row : 0).ToList();
+                    order = RegexHelper.NumberParserRegex().Matches(text).Select(m => uint.TryParse(m.Value, out uint row) ? row : 0).Where(x => x != 0).Select(id => (ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry) id).ToList();
                 }
 
-                List<uint> valid = order.Where(CrucibleItemData.ShopItems.Contains).Distinct().ToList();
+                List<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry> valid = order.Where(x => CrucibleItemData.ShopItems.Contains(x.ID)).Distinct().ToList();
                 if (valid.Count == 0)
                 {
                     Notify.Error(Loc.Get("MainTab.Crucible.ImportShopOrderFailed"));
@@ -1307,11 +1361,11 @@ namespace AutoDuty.Windows
         private static readonly Vector4 CrucibleShopFeed        = ImGuiHelper.RoleAllRounderColor;
 
 
-        private static void CrucibleShopOrderTable(List<uint> order)
+        private static void CrucibleShopOrderTable(List<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry> order)
         {
-            ImGuiEx.RealtimeDragDrop<uint> dragDrop = _crucibleShopDragDrop ??= new ImGuiEx.RealtimeDragDrop<uint>(
+            ImGuiEx.RealtimeDragDrop<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry> dragDrop = _crucibleShopDragDrop ??= new ImGuiEx.RealtimeDragDrop<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry>(
                 "CrucibleShopDragDrop",
-                row => row.ToString(),
+                row => row.ID.ToString(),
                 smallButton: false
             );
 
@@ -1319,35 +1373,67 @@ namespace AutoDuty.Windows
             if (!child.Success)
                 return;
 
-            uint[] before = order.ToArray();
+            ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry[] before = order.ToArray();
 
             int moveFromIndex = -1;
             int moveToIndex   = -1;
 
             dragDrop.Begin();
 
-            using (ImRaii.TableDisposable orderTable = ImRaii.Table("Crucible Shop Order Table", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
+            using (ImRaii.TableDisposable orderTable = ImRaii.Table("Crucible Shop Order Table", 6, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
             {
                 if (orderTable)
                 {
-                    ImGui.TableSetupScrollFreeze(5, 1);
+                    ImGui.TableSetupScrollFreeze(6, 1);
                     ImGui.TableSetupColumn("##Reorder");
                     ImGui.TableSetupColumn("#");
+                    string blockString = Loc.Get("MainTab.Crucible.ShopItemBlocked");
+                    ImGui.TableSetupColumn(blockString, ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize(blockString).X + 20f.Scale());
                     ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.ShopItem"));
                     ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.ShopItemType"));
                     ImGui.TableSetupColumn("##Spacer", ImGuiTableColumnFlags.WidthStretch);
 
-                    ImGui.TableHeadersRow();
+                    ImGui.TableNextRow(ImGuiTableRowFlags.Headers);
+
+                    int columnCount = ImGui.TableGetColumnCount();
+                    for (int column = 0; column < columnCount; column++)
+                    {
+                        if (!ImGui.TableSetColumnIndex(column))
+                            continue;
+
+                        string name = ImGui.TableGetColumnName(column);
+
+                        ImGui.PushID(column);
+
+                        if (column == 2)
+                        {
+                            ImGui.TextUnformatted(name);
+                            ImGui.SameLine(0, 0);
+                            ImGuiComponents.HelpMarker(Loc.Get("MainTab.Crucible.ShopItemBlockedHelp"));
+                        }
+                        else
+                        {
+                            ImGui.TableHeader(name);
+                        }
+
+                        ImGui.PopID();
+                    }
+
+                    (CrucibleItemData.CrucibleItemCategory category, bool value)? blockValue = null;
 
                     for (int i = 0; i < order.Count; i++)
                     {
                         ImGui.PushID(i);
 
-                        uint row = order[i];
+                        ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry row = order[i];
 
                         ImGui.TableNextRow();
                         dragDrop.NextRow();
-                        dragDrop.SetRowColor(row);
+
+                        if(row.Blocked)
+                            ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg1, ImGui.ColorConvertFloat4ToU32(CrucibleBlockedRow));
+
+                        dragDrop.SetRowColor(row.ID);
 
                         ImGui.TableSetColumnIndex(0);
                         dragDrop.DrawButtonDummy(row, order, i);
@@ -1372,14 +1458,34 @@ namespace AutoDuty.Windows
 
                         ImGui.TableNextColumn();
                         ImGui.AlignTextToFramePadding();
-                        ImGui.TextUnformatted(CrucibleItemData.NameOf(row));
+
+                        CrucibleItemData.CrucibleItemCategory itemCategory = row.GetCategory;
+
+                        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + Math.Max(0, (ImGui.GetContentRegionAvail().X - 25f.Scale()) / 2));
+                        bool blocked = row.Blocked;
+                        if (ImGui.Checkbox("###CrucibleBlock_" + row.ID, ref blocked))
+                        {
+                            if (ImGui.GetIO().KeyCtrl)
+                            {
+                                blockValue = (row.GetCategory, row.Blocked);
+                            }
+                            else
+                            {
+                                row.Blocked = blocked;
+                                ConfigurationProfileV2.Save();
+                            }
+                        }
+
+                        ImGui.TableNextColumn();
+                        ImGui.AlignTextToFramePadding();
+                        ImGui.TextUnformatted(CrucibleItemData.NameOf(row.ID));
                         if (ImGui.IsItemHovered())
-                            DrawCrucibleItemTooltip(row);
+                            DrawCrucibleItemTooltip(row.ID);
 
                         ImGui.TableNextColumn();
                         ImGui.AlignTextToFramePadding();
 
-                        CrucibleItemData.CrucibleItemCategory category = CrucibleItemData.GetCategoryOf(row);
+                        CrucibleItemData.CrucibleItemCategory category = itemCategory;
 
                         switch (category)
                         {
@@ -1404,6 +1510,11 @@ namespace AutoDuty.Windows
                         }
                         ImGui.PopID();
                     }
+
+                    if (blockValue != null)
+                        foreach (ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry entry in order)
+                            if (entry.GetCategory == blockValue.Value.category && entry.Blocked == blockValue.Value.value)
+                                entry.Blocked = !blockValue.Value.value;
                 }
             }
 
@@ -1412,14 +1523,13 @@ namespace AutoDuty.Windows
             bool typedNewPosition = moveFromIndex >= 0 && moveFromIndex != moveToIndex;
             if (typedNewPosition)
             {
-                uint movedItem = order[moveFromIndex];
+                ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry movedItem = order[moveFromIndex];
                 order.RemoveAt(moveFromIndex);
                 order.Insert(moveToIndex, movedItem);
             }
 
             if (!order.SequenceEqual(before))
                 ConfigurationProfileV2.Save();
-            
         }
 
         private static void DrawCrucibleItemTooltip(uint row)
@@ -1468,8 +1578,8 @@ namespace AutoDuty.Windows
             }
             else
             {
-                if (familiar.Classification.Length > 0)
-                    ImGui.TextColored(CrucibleFaded, familiar.Classification);
+                if (familiar.SheetData.ClassificationName.Length > 0)
+                    ImGui.TextColored(CrucibleFaded, familiar.SheetData.ClassificationName);
 
                 ImGui.Separator();
                 if (ImGui.BeginTable("##CrucibleStats", 2, ImGuiTableFlags.SizingFixedFit))
@@ -1487,6 +1597,7 @@ namespace AutoDuty.Windows
             }
 
             ImGui.EndTooltip();
+            return;
 
             static void Stat(string label, string value)
             {
@@ -1562,7 +1673,7 @@ namespace AutoDuty.Windows
                             }
                         }
 
-                       ConfigurationProfileV2.Save();
+                        ConfigurationProfileV2.Save();
                     }
                 }
 

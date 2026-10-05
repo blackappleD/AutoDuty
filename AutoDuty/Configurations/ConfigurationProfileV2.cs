@@ -105,13 +105,44 @@ public class ConfigurationProfileV2
                 get;
                 set => field = Math.Clamp(value, 3, 15);
             } = 15;
+
+            public int ClassificationLock { get; set; } = 0;
         }
 
         [JsonObject(MemberSerialization.OptOut)]
         public class CrucibleShopList
         {
-            public string     Name  { get; set; } = "Default";
-            public List<uint> Order { get; set; } = [];
+            public string     Name      { get; set; } = "Default";
+            public List<Entry> Order     { get; set; } = [];
+
+            public CrucibleShopList CompleteList()
+            {
+                IEnumerable<uint> uints = this.Order.Select(e => e.ID);
+                foreach (uint id in CrucibleItemData.ShopItems.Where(id => !uints.Contains(id)).ToList())
+                    this.Order.Add(id);
+
+                return this;
+            }
+
+            [JsonIgnore]
+            public bool IsCompleted => CrucibleItemData.ShopItems.All(id => this.Order.Any(e => e.ID == id));
+
+            [JsonIgnore]
+            public bool OrderChanged => CrucibleItemData.ShopItems.Length != this.Order.Count || CrucibleItemData.ShopItems.Where((id, index) => id != this.Order[index].ID).Any();
+
+            [JsonObject(MemberSerialization.OptOut)]
+            public class Entry
+            {
+                public required uint ID      { get; set; }
+                public          bool Blocked { get; set; }
+
+                [JsonIgnore]
+                public CrucibleItemData.CrucibleItemCategory GetCategory =>
+                    CrucibleItemData.GetCategoryOf(this.ID);
+
+                public static implicit operator Entry(long id) => (uint)id;
+                public static implicit operator Entry(uint id) => new() { ID = id };
+            }
         }
 
         public bool ShowMainWindowOnStartup { get; set; } = false;

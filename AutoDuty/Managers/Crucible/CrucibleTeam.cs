@@ -3,8 +3,9 @@ using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Excel;
-using Lumina.Excel.Sheets;
+using Lumina.Excel.Sheets.Experimental;
 using Newtonsoft.Json;
+#pragma warning disable PendingExcelSchema
 
 namespace AutoDuty.Managers
 {
@@ -15,13 +16,19 @@ namespace AutoDuty.Managers
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using Helpers;
     using Screens = CrucibleUi.Screens;
 
     [JsonObject(MemberSerialization.OptOut)]
     public record CrucibleFamiliar
     {
-        public uint   Number             { get; set; }
-        public string Name               { get; set; } = string.Empty;
+        [JsonProperty]
+        private readonly uint number;
+
+        public CrucibleFamiliar() { }
+        public CrucibleFamiliar(uint number) => this.number = number;
+
+        [JsonIgnore] public CrucibleFamiliarSheetData SheetData => this.number > 0 ? CrucibleTeam.FamiliarSheetDatas[this.number] : CrucibleFamiliarSheetData.invalid;
 
         public int Rank
         {
@@ -40,17 +47,49 @@ namespace AutoDuty.Managers
         public int    Intelligence       { get; set; }
         public int    MagicResistance    { get; set; }
         public string Exp                { get; set; } = string.Empty;
-        public string Classification     { get; set; } = string.Empty;
-        public string Element            { get; set; } = string.Empty;
-
+        
         public int Score() => this.Hp + this.Strength + this.PhysicalResistance + this.Constitution + this.Intelligence + this.MagicResistance;
+    }
+
+    public record CrucibleFamiliarSheetData
+    {
+        public required     uint   Number             { get; init; }
+        public required     string Name               { get; init; }
+        public required     string Element            { get; set; }
+        public required     byte   Classification     { get; init;}
+        [JsonIgnore] public string ClassificationName => CrucibleTeam.ClassificationSheetNames[this.Classification];
+
+        public static readonly CrucibleFamiliarSheetData invalid = new()
+                                                                   {
+                                                                       Number         = 0,
+                                                                       Name           = null,
+                                                                       Element        = null,
+                                                                       Classification = 0
+                                                                   };
     }
 
     [JsonObject(MemberSerialization.OptOut)]
     public class CrucibleCharacterData
     {
-        public Dictionary<uint, CrucibleFamiliar> Familiars { get; set; } = [];
-        public List<uint>                         Team      { get; set; } = [];
+        public SortedDictionary<uint, CrucibleFamiliar> Familiars { get; set; } = [];
+        public List<uint>                               Team      { get; set; } = [];
+
+        public CrucibleCharacterData()
+        {
+        }
+
+        public CrucibleCharacterData(bool createFamiliars)
+        {
+            if(createFamiliars)
+                this.FillBasicFamiliars();
+        }
+
+        public void FillBasicFamiliars()
+        {
+            this.Familiars.Clear();
+            foreach (uint key in CrucibleTeam.FamiliarSheetDatas.Keys)
+                this.Familiars[key] = new CrucibleFamiliar(key);
+        }
     }
 
     internal static unsafe class CrucibleTeam
@@ -91,6 +130,59 @@ namespace AutoDuty.Managers
         private static readonly string[]  DetailWindows = ["XBMMonsterBookDetail", "XBMPetActionDetail"];
         private static readonly TimeSpan CacheInterval = TimeSpan.FromMilliseconds(750);
 
+        public static SortedDictionary<uint, CrucibleFamiliar> FamiliarsFallback => field ??= new SortedDictionary<uint, CrucibleFamiliar>(FamiliarSheetDatas.Keys.ToDictionary(key => key, key => new CrucibleFamiliar(key)));
+
+        public static SortedDictionary<uint, CrucibleFamiliarSheetData> FamiliarSheetDatas
+        {
+            get
+            {
+                if (field != null)
+                    return field;
+
+                SortedDictionary<uint, CrucibleFamiliarSheetData> familiars = [];
+
+                foreach (XBMPet familiar in Svc.Data.GetExcelSheet<XBMPet>())
+                    if (familiar.RowId > 0 && familiar.Pet.ValueNullable?.Name.ExtractText() is { Length: > 0 } name)
+                        familiars[familiar.RowId] = new CrucibleFamiliarSheetData
+                                                    {
+                                                        Number         = familiar.RowId,
+                                                        Name           = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(name),
+                                                        Element        = "", //familiar.Element.Value?.Name.ExtractText() ?? string.Empty,
+                                                        Classification = familiar.Classification
+                                                    };
+
+                return field = familiars;
+            }
+        }
+
+
+        public static string[] ClassificationSheetNames
+        {
+            get
+            {
+                if (field != null)
+                    return field;
+
+                try
+                {
+                    byte     maxIds = Svc.Data.GetExcelSheet<RawRow>(name: "XBMPet").Max(p => p.ReadUInt8(24));
+                    string[] names = new string[maxIds+1];
+
+                    names[0] = string.Empty;
+                    for (uint i = 1; i <= maxIds; i++)
+                        names[i] = Svc.Data.GetExcelSheet<Addon>().GetRow(17740 + i).Text.GetText();
+
+                    return field = names;
+                }
+                catch (Exception ex)
+                {
+                    Svc.Log.Error(ex, "[Crucible] Couldn't read the XBMPet sheet; familiar names are unknown");
+                }
+
+                return [];
+            }
+        }
+
         private static SortedDictionary<uint, string> SheetNames
         {
             get
@@ -123,15 +215,23 @@ namespace AutoDuty.Managers
             if (!Player.Available)
                 return null;
 
-            Dictionary<ulong, CrucibleCharacterData> all = ConfigurationMain.Instance.crucibleByCID;
-            if (!all.TryGetValue(Player.CID, out CrucibleCharacterData? mine) && create)
-                all[Player.CID] = mine = new CrucibleCharacterData();
+            Dictionary<ulong, CrucibleCharacterData> all = ConfigurationMain.Instance.crucibleConfigByCID;
+            if (!all.TryGetValue(Player.CID, out CrucibleCharacterData? mine))
+            {
+                if (create)
+                    all[Player.CID] = mine = new CrucibleCharacterData(true);
+            }
+            else if(mine!.Familiars.Count < FamiliarSheetDatas.Count)
+            {
+                mine.FillBasicFamiliars();
+            }
+
             return mine;
         }
 
         public static void ClearSaved()
         {
-            if (!Player.Available || !ConfigurationMain.Instance.crucibleByCID.Remove(Player.CID))
+            if (!Player.Available || !ConfigurationMain.Instance.crucibleConfigByCID.Remove(Player.CID))
                 return;
 
             Svc.Log.Info("[Crucible] Cleared the saved familiar ranks for this character");
@@ -139,25 +239,23 @@ namespace AutoDuty.Managers
         }
 
         public static IReadOnlyDictionary<uint, CrucibleFamiliar> Familiars =>
-            Mine(false)?.Familiars ?? new Dictionary<uint, CrucibleFamiliar>();
+            Mine(false)?.Familiars ?? FamiliarsFallback;
 
         public static IReadOnlyList<uint> CurrentTeam =>
             Mine(false)?.Team ?? [];
 
-        public static string NameOf(uint number) =>
-            Familiars.TryGetValue(number, out CrucibleFamiliar? seen) && seen.Name.Length > 0 ? seen.Name :
-            SheetNames.TryGetValue(number, out string? name) ? name : $"No. {number}";
+        public static string NameOf(uint number) => Familiars.TryGetValue(number, out CrucibleFamiliar? seen) && seen.SheetData.Name.Length > 0 ? 
+                                                        seen.SheetData.Name : 
+                                                        SheetNames.TryGetValue(number, out string? name) ? name : $"No. {number}";
 
         public static uint NumberFor(string name)
         {
             if (name.Length == 0)
                 return 0;
 
-            CrucibleFamiliar? seen = Familiars.Values.FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase));
-            if (seen is { Number: > 0 })
-                return seen.Number;
-
-            return SheetNames.FirstOrDefault(x => string.Equals(x.Value, name, StringComparison.OrdinalIgnoreCase)).Key;
+            CrucibleFamiliar? seen = Familiars.Values.FirstOrDefault(x => string.Equals(x.SheetData.Name, name, StringComparison.OrdinalIgnoreCase));
+            
+            return seen is { SheetData.Number: > 0 } ? seen.SheetData.Number : SheetNames.FirstOrDefault(x => string.Equals(x.Value, name, StringComparison.OrdinalIgnoreCase)).Key;
         }
 
         public static IEnumerable<uint> Owned()
@@ -165,7 +263,6 @@ namespace AutoDuty.Managers
             XBMManager* manager = XBMManager.Instance();
             bool        ready   = manager != null && manager->State == XBMManager.DataState.Received;
             IReadOnlyDictionary<uint, CrucibleFamiliar> cached = Familiars;
-
             return SheetNames.Keys.Where(x => ready ? manager->IsPetUnlocked(x) : cached.ContainsKey(x));
         }
 
@@ -187,8 +284,12 @@ namespace AutoDuty.Managers
 
         public static List<uint> Custom()
         {
+            ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = ConfigurationMain.Instance.GetCurrentConfig.Meta.Crucible;
+
             HashSet<uint> owned = Owned().ToHashSet();
-            return AutoDuty.Configuration.Meta.Crucible.CustomTeam.Distinct().Where(owned.Contains).Take(TeamSize()).ToList();
+            crucible.CustomTeam = crucible.CustomTeam.Where(x => crucible.ClassificationLock == 0 || FamiliarSheetDatas[x].Classification == crucible.ClassificationLock).ToList();
+
+            return crucible.CustomTeam.Distinct().Where(owned.Contains).Take(TeamSize()).ToList();
         }
 
         public static bool SetCustomPick(uint number, bool pick)
@@ -223,8 +324,10 @@ namespace AutoDuty.Managers
 
         public static List<uint> Recommended(bool sizeCap)
         {
-            IReadOnlyDictionary<uint, CrucibleFamiliar> cached = Familiars;
-            return Owned().OrderByDescending(x => cached.TryGetValue(x, out CrucibleFamiliar? f) ? f.Rank : -1)
+            ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible = ConfigurationMain.Instance.GetCurrentConfig.Meta.Crucible;
+            IReadOnlyDictionary<uint, CrucibleFamiliar>      cached   = Familiars;
+            return Owned().Where(x => crucible.ClassificationLock == 0 || FamiliarSheetDatas[x].Classification == crucible.ClassificationLock)
+                  .OrderByDescending(x => cached.TryGetValue(x, out CrucibleFamiliar? f) ? f.Rank : -1)
                           .ThenByDescending(x => cached.TryGetValue(x, out CrucibleFamiliar? f) ? f.Score() : -1)
                           .ThenBy(x => x)
                           .Take(sizeCap ? TeamSize() : int.MaxValue)
@@ -233,9 +336,10 @@ namespace AutoDuty.Managers
 
         public static List<uint> Leveling(bool sizeCap)
         {
-            CrucibleLevelingMode levelingMode = ConfigurationMain.Instance.GetCurrentConfig.Meta.Crucible.LevelingMode;
+            ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible     = ConfigurationMain.Instance.GetCurrentConfig.Meta.Crucible;
+            CrucibleLevelingMode                             levelingMode = crucible.LevelingMode;
 
-            IOrderedEnumerable<uint> levelingFamiliars = Owned().OrderBy(x => LevelingKey(x)).ThenBy(x => x);
+            IOrderedEnumerable<uint> levelingFamiliars = Owned().Where(x => crucible.ClassificationLock == 0 || FamiliarSheetDatas[x].Classification == crucible.ClassificationLock).OrderBy(x => LevelingKey(x)).ThenBy(x => x);
 
             return levelingMode switch
             {
@@ -328,7 +432,7 @@ namespace AutoDuty.Managers
 
         public static void UpdateFamiliar(uint number, uint rank, uint xp)
         {
-            Dictionary<uint, CrucibleFamiliar> familiars = Mine(true)!.Familiars;
+            SortedDictionary<uint, CrucibleFamiliar> familiars = Mine(true)!.Familiars;
             if (familiars.TryGetValue(number, out CrucibleFamiliar? familiar))
             {
                 familiar.Rank = (int)rank;
@@ -341,13 +445,11 @@ namespace AutoDuty.Managers
 
         private static bool RememberFamiliar(CrucibleFamiliar seen)
         {
-            if (seen.Number == 0)
-                seen.Number = NumberFor(seen.Name);
-            if (seen.Number == 0)
+            if (seen.SheetData.Number == 0)
                 return false;
 
-            Dictionary<uint, CrucibleFamiliar> familiars = Mine(true)!.Familiars;
-            familiars.TryGetValue(seen.Number, out CrucibleFamiliar? before);
+            SortedDictionary<uint, CrucibleFamiliar> familiars = Mine(true)!.Familiars;
+            familiars.TryGetValue(seen.SheetData.Number, out CrucibleFamiliar? before);
 
             if (seen != before)
             {
@@ -355,7 +457,7 @@ namespace AutoDuty.Managers
                     if (seen.Rank < before.Rank)
                         return false;
 
-                familiars[seen.Number] = seen;
+                familiars[seen.SheetData.Number] = seen;
                 return true;
             }
 
@@ -367,23 +469,23 @@ namespace AutoDuty.Managers
             if (row.MaxHP == 0)
                 return false;
 
-            Dictionary<uint, CrucibleFamiliar> familiars = Mine(true)!.Familiars;
-            familiars.TryGetValue(number, out CrucibleFamiliar? before);
+            SortedDictionary<uint, CrucibleFamiliar> familiars = Mine(true)!.Familiars;
 
-            CrucibleFamiliar familiar = (before ?? new CrucibleFamiliar { Number = number }) with
-                                        {
-                                            Name               = row.Name.GetText(),
-                                            Rank               = (int) row.Rank,
-                                            Hp                 = (int)row.MaxHP,
-                                            Strength           = row.Strength,
-                                            PhysicalResistance = row.PhysResistance,
-                                            Constitution       = row.Constitution,
-                                            Intelligence       = row.Intelligence,
-                                            MagicResistance    = row.MagicResistance
-                                        };
+            CrucibleFamiliar familiar = familiars[number];
+
+            if (row.Rank <= familiar.Rank)
+                return false;
+
+            familiar.Rank               = row.Rank;
+            familiar.Hp                 = (int)row.MaxHP;
+            familiar.Strength           = row.Strength;
+            familiar.PhysicalResistance = row.PhysResistance;
+            familiar.Constitution       = row.Constitution;
+            familiar.Intelligence       = row.Intelligence;
+            familiar.MagicResistance    = row.MagicResistance;
 
             familiars[number] = familiar;
-            return familiar != before;
+            return true;
         }
     }
 
@@ -614,7 +716,7 @@ namespace AutoDuty.Managers
             if (this.scanning != 0)
             {
                 Svc.Log.Debug("Scanning");
-                if (CrucibleUi.BestiarySelected(notebook) is { } selected && selected.Number == this.scanning)
+                if (CrucibleUi.BestiarySelected(notebook) is { } selected && selected.SheetData.Number == this.scanning)
                 {
                     this.scanChanged |= CrucibleTeam.RememberFamiliarUnsaved(selected);
                     this.scanQueue.Remove(this.scanning);

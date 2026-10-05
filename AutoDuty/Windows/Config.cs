@@ -911,6 +911,25 @@ public static class ConfigTab
                             ImGui.EndPopup();
                         }
                     }
+
+                    if (Configuration.DutyConfig.BossMod.PositionalRoleBased)
+                    {
+                        using ImGuiHelper.EndUnconditionally __ = ImGuiHelper.RequiresPlugin(ExternalPlugin.Avarice, "ConfigAvarice");
+
+                        ImGui.Indent();
+                        bool avaricePositional = Configuration.DutyConfig.BossMod.PositionalAvarice;
+                        if (ImGui.Checkbox(Loc.Get("ConfigTab.Duty.BMAI.PositionalAvarice"), ref avaricePositional))
+                        {
+                            Configuration.DutyConfig.BossMod.PositionalAvarice = avaricePositional;
+                            BMRoleChecks();
+                            ConfigurationProfileV2.Save();
+                        }
+
+
+                        ImGui.Unindent();
+                    }
+
+
                     if (ImGui.Button(Loc.Get("ConfigTab.Duty.BMAI.UseDefaultSettings")))
                     {
                         Configuration.DutyConfig.BossMod.MaxDistanceToTargetRoleBased = true;
