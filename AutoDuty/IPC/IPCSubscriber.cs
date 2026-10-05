@@ -19,7 +19,7 @@ namespace AutoDuty.IPC
     using Helpers;
     using Data;
     using ECommons.IPC.Subscribers.AutoRetainer;
-    using ECommons.IPC.Subscribers.LifestreamIPC;
+    using ECommons.IPC.Subscribers.Lifestream;
     using ECommons.IPC.Subscribers.RotationSolverReborn;
     using ECommons.IPC.Subscribers.Skippy;
     using WrathCombo.API;
