@@ -106,7 +106,7 @@ namespace AutoDuty.Managers
 
 
 
-            if (Config.Rest && !this.FeedPending(now) && !CrucibleUi.IsOpen(CrucibleUi.ShopWindow) && !CrucibleUi.IsOpen(CrucibleUi.BoardLayout) &&
+            if (!this.FeedPending(now) && !CrucibleUi.IsOpen(CrucibleUi.ShopWindow) && !CrucibleUi.IsOpen(CrucibleUi.BoardLayout) &&
                 CrucibleUi.TryReady(CrucibleUi.TeamWindow, out AtkUnitBase* party))
             {
                 this.Rest(party, now);
@@ -318,6 +318,13 @@ namespace AutoDuty.Managers
 
         private void Rest(AtkUnitBase* party, DateTime now)
         {
+            if (!Config.Rest)
+            {
+                Screens.PetParty.RestReturn(party);
+                this.confirmFrom = now;
+                return;
+            }
+
             if (this.restPicks == null)
             {
                 if (CrucibleUi.Team() is not { Count: > 0 } rows)
