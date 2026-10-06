@@ -320,8 +320,10 @@ namespace AutoDuty.Managers
                 public static void Pick(AtkUnitBase*         party, int row) => AddonHelper.FireCallBack(party, true, 1, row);
                 public static void OpenRowMenu(AtkUnitBase*  party, int row) => AddonHelper.FireCallBack(party, true, 2, row);
                 public static void OpenBestiary(AtkUnitBase* party) => AddonHelper.FireCallBack(party, true, 5);
+                public static void RestReturn(AtkUnitBase*   party) => AddonHelper.FireCallBack(party, true, 4);
                 public static bool Rest(AtkUnitBase*         party) => ClickButton(party, RestOrReturnButton);
                 public static bool Return(AtkUnitBase*       party) => ClickButton(party, RestOrReturnButton);
+
             }
 
             internal static class StageList

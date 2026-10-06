@@ -11,7 +11,7 @@ using ECommons.Automation.NeoTaskManager;
 using ECommons.DalamudServices;
 using ECommons.ImGuiMethods;
 using ECommons.IPC.Subscribers.AutoRetainer;
-using ECommons.IPC.Subscribers.LifestreamIPC;
+using ECommons.IPC.Subscribers.Lifestream;
 using ECommons.MathHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;

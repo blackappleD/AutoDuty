@@ -19,7 +19,7 @@ namespace AutoDuty.IPC
     using Helpers;
     using Data;
     using ECommons.IPC.Subscribers.AutoRetainer;
-    using ECommons.IPC.Subscribers.LifestreamIPC;
+    using ECommons.IPC.Subscribers.Lifestream;
     using ECommons.IPC.Subscribers.RotationSolverReborn;
     using ECommons.IPC.Subscribers.Skippy;
     using WrathCombo.API;
@@ -380,16 +380,16 @@ namespace AutoDuty.IPC
 
         public static void RotationAuto()
         {
-            RotationSolverReborn.OtherCommand(RotationSolverRebornIPC.OtherCommandType.Settings, $"HostileType {AutoDuty.Configuration.DutyConfig.RSR.TargetHostileType}");
-            RotationSolverReborn.OtherCommand(RotationSolverRebornIPC.OtherCommandType.Settings, "FriendlyPartyNpcHealRaise3 true");
-            RotationSolverReborn.OtherCommand(RotationSolverRebornIPC.OtherCommandType.Settings, "AutoOffAfterCombat false");
-            RotationSolverReborn.OtherCommand(RotationSolverRebornIPC.OtherCommandType.Settings, "TargetFreely true");
-            RotationSolverReborn.AutodutyChangeOperatingMode(RotationSolverRebornIPC.StateCommandType.AutoDuty, Plugin.currentPlayerItemLevelAndClassJob.Value.GetCombatRole() == CombatRole.Tank ?
-                                                                                                                    AutoDuty.Configuration.DutyConfig.RSR.TargetingTypeTank :
-                                                                                                                    AutoDuty.Configuration.DutyConfig.RSR.TargetingTypeNonTank);
+            RotationSolverReborn.AutodutyChangeOperatingModeWithOverrides(RotationSolverRebornIPC.StateCommandType.AutoDuty, Plugin.currentPlayerItemLevelAndClassJob.Value.GetCombatRole() == CombatRole.Tank ?
+                                                                                                                    Configuration.DutyConfig.RSR.TargetingTypeTank :
+                                                                                                                    Configuration.DutyConfig.RSR.TargetingTypeNonTank, 
+                                                                          Configuration.DutyConfig.RSR.TargetHostileType, 
+                                                                          RotationSolverRebornIPC.SettingOverride.ForceOn, 
+                                                                          RotationSolverRebornIPC.SettingOverride.ForceOff, 
+                                                                          RotationSolverRebornIPC.SettingOverride.ForceOn);
         }
 
-        public static void RotationStop() => RotationSolverReborn.ChangeOperatingMode(RotationSolverRebornIPC.StateCommandType.Off);
+        public static void RotationStop() => RotationSolverReborn.ChangeOperatingModeWithOverrides(RotationSolverRebornIPC.StateCommandType.Off, RotationSolverRebornIPC.TargetHostileType.AllTargetsCanAttack, RotationSolverRebornIPC.SettingOverride.UseSetting, RotationSolverRebornIPC.SettingOverride.UseSetting, RotationSolverRebornIPC.SettingOverride.UseSetting);
     }
 
     public static class Skippy_IPCSubscriber
