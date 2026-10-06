@@ -110,6 +110,16 @@ namespace AutoDuty.IPC
                 }
         }
 
+        public static void SetBasicSettings()
+        {
+            BossMod.Configuration(["ActionTweaksConfig", "PreventMovingWhileCasting", "true"], false);
+            BossMod.Configuration(["ActionTweaksConfig", "GTMode", "2"],                       false);
+            BossMod.Configuration(["ActionTweaksConfig", "DashSafety", "true"],                false);
+            BossMod.Configuration(["ActionTweaksConfig", "DashSafetyExtra", "true"],           false);
+            BossMod.Configuration(["BossmoduleConfig", "AllowAutomaticActions", "true"],       false);
+            BossMod.Configuration(["BossmoduleConfig", "AllowAutomaticInteract", "true"],      true);
+        }
+
         public static void SetRange(float range)
         {
             if (AutoDuty.Configuration.DutyConfig.AutoManageBossModAISettings)
