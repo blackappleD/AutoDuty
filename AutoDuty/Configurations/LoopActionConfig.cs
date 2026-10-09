@@ -1215,7 +1215,7 @@ public class PlaylistSwitchLoopActionConfig : LoopActionConfig<PlaylistSwitchLoo
             return;
 
         PlaylistEntry? currentEntry = Plugin.PlaylistCurrentEntry;
-        if (currentEntry != null && ++currentEntry.curCount < currentEntry.count)
+        if (currentEntry != null && ++currentEntry.curCount < currentEntry.count && !currentEntry.TerminationConfig.ShouldStop)
         {
             Svc.Log.Debug($"repeating the duty once more: {currentEntry.curCount + 1} of {currentEntry.count}");
         }
@@ -1223,6 +1223,7 @@ public class PlaylistSwitchLoopActionConfig : LoopActionConfig<PlaylistSwitchLoo
         {
             Svc.Log.Debug("next playlist entry");
             Plugin.playlistIndex++;
+
             if (Plugin.playlistIndex >= Plugin.PlaylistCurrent.Entries.Count)
             {
                 Svc.Log.Debug("playlist done");

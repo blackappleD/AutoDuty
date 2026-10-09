@@ -679,8 +679,7 @@ namespace AutoDuty.Windows
                                                         using (ImRaii.Enabled())
                                                         {
                                                             if (LevelingHelper.levelingListExperimental.Contains(item.Value.TerritoryType))
-                                                                ImGuiEx.HelpMarker("This dungeon is currently in testing for reliability.\nDo report any issues with it", symbolOverride: FontAwesomeIcon.ExclamationTriangle.ToIconString(),
-                                                                                   color: EzColor.Yellow);
+                                                                ImGuiEx.HelpMarker("This dungeon is currently in testing for reliability.\nDo report any issues with it", symbolOverride: FontAwesomeIcon.ExclamationTriangle.ToIconString(), color: EzColor.Yellow);
                                                             if (item.Value.TerritoryType == 1048u)
                                                                 ImGuiEx.HelpMarker("CutsceneSkip detected. Please keep it actually on.", symbolOverride: FontAwesomeIcon.ExclamationTriangle.ToIconString(), color: EzColor.Blue);
                                                         }
@@ -852,13 +851,18 @@ namespace AutoDuty.Windows
                                                 }
                                             }
 
-                                            if (entry.DutyMode == DutyMode.Variant)
+                                            if (entry is { DutyMode: DutyMode.Variant, Id: 1315 })
                                             {
                                                 ImGui.PushItemWidth(80f.Scale());
                                                 ImGui.SameLine();
                                                 ImGui.InputByte($"###Playlist{i}PathIndex", ref entry.variantPathIndex, 1);
                                                 ImGui.PopItemWidth();
                                             }
+
+                                            ImGui.SameLine();
+
+                                            if (ImGuiEx.IconButtonWithText(entry.terminationConfigOpen ? FontAwesomeIcon.CaretDown : FontAwesomeIcon.CaretRight, $"T##Playlist{i}Termination"))
+                                                entry.terminationConfigOpen = !entry.terminationConfigOpen;
 
                                             ImGui.SameLine();
 
@@ -875,11 +879,20 @@ namespace AutoDuty.Windows
 
                                             if (ImGuiComponents.IconButton($"Playlist{i}Trash", FontAwesomeIcon.TrashAlt))
                                                 Plugin.PlaylistCurrent.Entries.RemoveAt(i);
+
+
+                                            if (entry.terminationConfigOpen)
+                                            {
+                                                ImGui.PushID($"Playlist{i}TerminationEntry_");
+                                                ImGui.Indent();
+                                                entry.TerminationConfig.Draw();
+                                                ImGui.Unindent();
+                                                ImGui.PopID();
+                                            }
                                         }
 
                                         if (ImGuiComponents.IconButton("PlaylistAdd", FontAwesomeIcon.Plus)) 
                                             Plugin.PlaylistCurrent.Entries.Add(new PlaylistEntry { DutyMode = Plugin.PlaylistCurrent.Entries.Count != 0 ? Plugin.PlaylistCurrent.Entries.Last().DutyMode : DutyMode.Support });
-
                                         break;
                                     }
                             }
