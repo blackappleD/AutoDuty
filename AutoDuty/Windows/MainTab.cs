@@ -631,25 +631,25 @@ namespace AutoDuty.Windows
                     if (!ImGui.BeginListBox("##DutyList", new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y))) 
                         return;
 
-                    if (Player.Job.GetCombatRole() == CombatRole.NonCombat)
-                    {
-                        ImGuiEx.TextWrapped(new Vector4(255, 1, 0, 1), Loc.Get("MainTab.SwitchCombatJob"));
-                    }
-                    else if (Player.Job is not Job.BST && Configuration.Meta.DutyModeEnum is DutyMode.Crucible)
-                    {
-                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.CrucibleRestriction"));
-                    }
-                    else if (Player.Job is Job.BLU or Job.BST && Configuration.Meta.DutyModeEnum is not (DutyMode.Regular or DutyMode.Trial or DutyMode.Raid or DutyMode.Crucible))
-                    {
-                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.LimitedJobRestriction"));
-                    }
-                    else if (VNavmesh_IPCSubscriber.IsEnabled && BossMod_IPCSubscriber.IsEnabled)
+                    if (VNavmesh_IPCSubscriber.IsEnabled && BossMod_IPCSubscriber.IsEnabled)
                     {
                         if (PlayerHelper.IsReady)
                             switch (Configuration.Meta.AutoDutyModeEnum)
                             {
                                 case AutoDutyMode.Looping:
-                                    if (Plugin.LevelingModeEnum != LevelingMode.None)
+                                    if (Player.Job.GetCombatRole() == CombatRole.NonCombat)
+                                    {
+                                        ImGuiEx.TextWrapped(new Vector4(255, 1, 0, 1), Loc.Get("MainTab.SwitchCombatJob"));
+                                    }
+                                    else if (Player.Job is not Job.BST && Configuration.Meta.DutyModeEnum is DutyMode.Crucible)
+                                    {
+                                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.CrucibleRestriction"));
+                                    }
+                                    else if (Player.Job is Job.BLU or Job.BST && Configuration.Meta.DutyModeEnum is not (DutyMode.Regular or DutyMode.Trial or DutyMode.Raid or DutyMode.Crucible))
+                                    {
+                                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.LimitedJobRestriction"));
+                                    } 
+                                    else if (Plugin.LevelingModeEnum != LevelingMode.None)
                                     {
                                         if (Player.Job.GetCombatRole() == CombatRole.NonCombat ||
                                             (Plugin.LevelingModeEnum.IsTrustLeveling() &&
@@ -679,7 +679,8 @@ namespace AutoDuty.Windows
                                                         using (ImRaii.Enabled())
                                                         {
                                                             if (LevelingHelper.levelingListExperimental.Contains(item.Value.TerritoryType))
-                                                                ImGuiEx.HelpMarker("This dungeon is currently in testing for reliability.\nDo report any issues with it", symbolOverride: FontAwesomeIcon.ExclamationTriangle.ToIconString(), color: EzColor.Yellow);
+                                                                ImGuiEx.HelpMarker("This dungeon is currently in testing for reliability.\nDo report any issues with it", symbolOverride: FontAwesomeIcon.ExclamationTriangle.ToIconString(),
+                                                                                   color: EzColor.Yellow);
                                                             if (item.Value.TerritoryType == 1048u)
                                                                 ImGuiEx.HelpMarker("CutsceneSkip detected. Please keep it actually on.", symbolOverride: FontAwesomeIcon.ExclamationTriangle.ToIconString(), color: EzColor.Blue);
                                                         }
