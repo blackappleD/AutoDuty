@@ -325,7 +325,7 @@ public sealed class AutoDuty : IDalamudPlugin
             this.assemblyDirectoryInfo = this.assemblyFileInfo.Directory;
 
             this.Version = 
-                ((PluginInterface.IsDev     ? new Version(0,0,0, 381) :
+                ((PluginInterface.IsDev     ? new Version(0,0,0, 382) :
                   PluginInterface.IsTesting ? PluginInterface.Manifest.TestingAssemblyVersion ?? PluginInterface.Manifest.AssemblyVersion : PluginInterface.Manifest.AssemblyVersion)!).Revision;
 
             if (!this.configDirectory.Exists)
@@ -877,21 +877,6 @@ public sealed class AutoDuty : IDalamudPlugin
         }
     }
 
-    private unsafe bool StopLoop =>
-        Configuration.Loop.Termination.Enabled &&
-        (this.CurrentTerritoryContent == null                                                                     ||
-         (Configuration.Loop.Termination.StopLevel      && Player.Level                             >= Configuration.Loop.Termination.StopLevelInt) ||
-         (Configuration.Loop.Termination.StopNoRestedXP && AgentHUD.Instance()->ExpRestedExperience == 0)                          ||
-         (Configuration.Loop.Termination.TerminationBLUSpellsEnabled && (Configuration.Loop.Termination.TerminationBLUSpellsAll ?
-                                                            Configuration.Loop.Termination.TerminationBLUSpells.All(BLUHelper.SpellUnlocked) :
-                                                            Configuration.Loop.Termination.TerminationBLUSpells.Any(BLUHelper.SpellUnlocked))) ||
-         (Configuration.Loop.Termination.StopItemQty && (Configuration.Loop.Termination.StopItemAll ?
-                                            Configuration.Loop.Termination.StopItemQtyItemDictionary.All(x => InventoryManager.Instance()->GetInventoryItemCount(x.Key) >= x.Value.Value) :
-                                            Configuration.Loop.Termination.StopItemQtyItemDictionary.Any(x => InventoryManager.Instance()->GetInventoryItemCount(x.Key) >= x.Value.Value))) ||
-         (Configuration.Loop.Termination.StopWhenDutyGathered && GlamourLog_IPCSubscriber.AllStoredFromDungeon(Plugin.CurrentTerritoryContent.TerritoryType)) ||
-         (Configuration.Loop.Termination.TerminationInventoryFree && Configuration.Loop.Termination.TerminationInventoryFreeSlots >= InventoryHelper.SlotsFree) ||
-         (Configuration.Loop.Termination.TerminationiLvl && InventoryHelper.CurrentItemLevel >= Configuration.Loop.Termination.TerminationiLvlInt));
-
     private void TrustLeveling()
     {
         if (this.TrustLevelingEnabled && TrustHelper.Members.Any(tm => tm.Value.Level < tm.Value.LevelCap))
@@ -967,7 +952,7 @@ public sealed class AutoDuty : IDalamudPlugin
 
                 this.taskManager.Enqueue(() =>
                                          {
-                                             if (this.StopLoop)
+                                             if (Configuration.Loop.Termination.ShouldStop)
                                              {
                                                  this.taskManager.Enqueue(() => Svc.Log.Info($"Loop Stop Condition Encountered, Stopping Loop"));
                                                  this.LoopTasks(false, Configuration is { Loop.Between: { Enabled: true, ExecuteLastLoop: true }});
