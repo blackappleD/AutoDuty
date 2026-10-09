@@ -28,6 +28,7 @@ namespace AutoDuty.Helpers
         protected override int TimeOut { get; set; } = 0;
 
         private const int  START_TIMEOUT_MS            = 15_000;
+        private const int  STOP_TIMEOUT_MS             = 10_000;
         private const int  NOT_RUNNING_GRACE_MS        = 3_000;
         private const uint ROLE_QUEST_JOURNAL_CATEGORY = 95;
 
@@ -37,7 +38,9 @@ namespace AutoDuty.Helpers
         {
             Idle,
             Starting,
-            Running
+            Running,
+            /// <summary>Waiting for Questionable to actually stop before anything else is done.</summary>
+            Stopping
         }
 
         /// <summary>Quests that Questionable failed to complete this session, so they're not retried every loop.</summary>
@@ -52,6 +55,7 @@ namespace AutoDuty.Helpers
         private DateTime  phaseStarted;
         private DateTime  questStarted;
         private DateTime? notRunningSince;
+        private DateTime  stopRequested;
 
         internal override void Start()
         {
@@ -61,22 +65,26 @@ namespace AutoDuty.Helpers
                 return;
             }
 
-            if (Questionable_IPCSubscriber.IsRunning)
-            {
-                Svc.Log.Info("Questionable is already running, skipping Job Quests");
+            if (State == ActionState.Running)
                 return;
-            }
 
-            if (FindNextQuest(this.ActionConfig.IncludeRoleQuests) == null)
+            // Skipping here would let the following loop actions (e.g. retiring to the inn) run while Questionable is
+            // still moving the character, both sides then keep cancelling each other's teleports
+            bool questionableRunning = Questionable_IPCSubscriber.IsRunning;
+
+            if (!questionableRunning && FindNextQuest(this.ActionConfig.IncludeRoleQuests) == null)
             {
                 this.DebugLog("No job quests available");
                 return;
             }
 
-            if (State != ActionState.Running)
+            this.ResetState();
+            base.Start();
+
+            if (questionableRunning)
             {
-                this.ResetState();
-                base.Start();
+                this.InfoLog("Questionable is already running, stopping it before doing job quests");
+                this.StopQuestionable(DateTime.Now);
             }
         }
 
@@ -86,13 +94,44 @@ namespace AutoDuty.Helpers
                 Questionable_IPCSubscriber.Stop();
 
             this.ResetState();
+            this.stopRequested = DateTime.Now;
             base.Stop();
+        }
+
+        /// <summary>
+        /// Only report the helper as finished once Questionable has actually stopped, otherwise the next loop action
+        /// starts while Questionable is still running.
+        /// </summary>
+        protected override void HelperStopUpdate(IFramework framework)
+        {
+            if (Questionable_IPCSubscriber.IsRunning)
+            {
+                if ((DateTime.Now - this.stopRequested).TotalMilliseconds < STOP_TIMEOUT_MS)
+                {
+                    if (EzThrottler.Throttle($"{this.Name}-StopQuestionable", 1000))
+                        Questionable_IPCSubscriber.Stop();
+                    return;
+                }
+
+                if (EzThrottler.Throttle($"{this.Name}-StopQuestionableTimeout", 60_000))
+                    this.InfoLog("Questionable did not stop in time, finishing anyway");
+            }
+
+            base.HelperStopUpdate(framework);
         }
 
         private void ResetState()
         {
             this.phase           = Phase.Idle;
             this.currentQuest    = 0;
+            this.notRunningSince = null;
+        }
+
+        private void StopQuestionable(DateTime now)
+        {
+            Questionable_IPCSubscriber.Stop();
+            this.phase           = Phase.Stopping;
+            this.phaseStarted    = now;
             this.notRunningSince = null;
         }
 
@@ -119,6 +158,14 @@ namespace AutoDuty.Helpers
                 {
                     if (!PlayerHelper.IsReadyFull)
                         return;
+
+                    // never run anything alongside a Questionable that got (re)started by something else
+                    if (Questionable_IPCSubscriber.IsRunning)
+                    {
+                        this.InfoLog("Questionable is running unexpectedly, stopping it before continuing");
+                        this.StopQuestionable(now);
+                        return;
+                    }
 
                     uint? next = FindNextQuest(this.ActionConfig.IncludeRoleQuests);
                     if (next == null)
@@ -158,7 +205,7 @@ namespace AutoDuty.Helpers
                     {
                         this.InfoLog($"Questionable did not start quest {this.currentQuest}, skipping it");
                         failedQuests.Add(this.currentQuest);
-                        this.phase = Phase.Idle;
+                        this.StopQuestionable(now);
                     }
                     break;
                 }
@@ -167,9 +214,8 @@ namespace AutoDuty.Helpers
                     if (this.ActionConfig.TimeoutMinutes > 0 && (now - this.questStarted).TotalMinutes > this.ActionConfig.TimeoutMinutes)
                     {
                         this.InfoLog($"Quest {this.currentQuest} timed out, skipping it");
-                        Questionable_IPCSubscriber.Stop();
                         failedQuests.Add(this.currentQuest);
-                        this.phase = Phase.Idle;
+                        this.StopQuestionable(now);
                         return;
                     }
 
@@ -193,6 +239,27 @@ namespace AutoDuty.Helpers
                         this.InfoLog($"Questionable stopped without completing quest {this.currentQuest}, skipping it");
                         failedQuests.Add(this.currentQuest);
                     }
+
+                    this.phase = Phase.Idle;
+                    break;
+                }
+                case Phase.Stopping:
+                {
+                    if (Questionable_IPCSubscriber.IsRunning)
+                    {
+                        this.notRunningSince = null;
+                        if ((now - this.phaseStarted).TotalMilliseconds > STOP_TIMEOUT_MS)
+                        {
+                            this.InfoLog("Questionable is still running, asking it to stop again");
+                            this.StopQuestionable(now);
+                        }
+                        return;
+                    }
+
+                    // make sure it stays stopped before the next quest or loop action takes over
+                    this.notRunningSince ??= now;
+                    if ((now - this.notRunningSince.Value).TotalMilliseconds < NOT_RUNNING_GRACE_MS)
+                        return;
 
                     this.phase = Phase.Idle;
                     break;
