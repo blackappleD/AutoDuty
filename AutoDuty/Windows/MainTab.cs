@@ -631,25 +631,25 @@ namespace AutoDuty.Windows
                     if (!ImGui.BeginListBox("##DutyList", new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y))) 
                         return;
 
-                    if (Player.Job.GetCombatRole() == CombatRole.NonCombat)
-                    {
-                        ImGuiEx.TextWrapped(new Vector4(255, 1, 0, 1), Loc.Get("MainTab.SwitchCombatJob"));
-                    }
-                    else if (Player.Job is not Job.BST && Configuration.Meta.DutyModeEnum is DutyMode.Crucible)
-                    {
-                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.CrucibleRestriction"));
-                    }
-                    else if (Player.Job is Job.BLU or Job.BST && Configuration.Meta.DutyModeEnum is not (DutyMode.Regular or DutyMode.Trial or DutyMode.Raid or DutyMode.Crucible))
-                    {
-                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.LimitedJobRestriction"));
-                    }
-                    else if (VNavmesh_IPCSubscriber.IsEnabled && BossMod_IPCSubscriber.IsEnabled)
+                    if (VNavmesh_IPCSubscriber.IsEnabled && BossMod_IPCSubscriber.IsEnabled)
                     {
                         if (PlayerHelper.IsReady)
                             switch (Configuration.Meta.AutoDutyModeEnum)
                             {
                                 case AutoDutyMode.Looping:
-                                    if (Plugin.LevelingModeEnum != LevelingMode.None)
+                                    if (Player.Job.GetCombatRole() == CombatRole.NonCombat)
+                                    {
+                                        ImGuiEx.TextWrapped(new Vector4(255, 1, 0, 1), Loc.Get("MainTab.SwitchCombatJob"));
+                                    }
+                                    else if (Player.Job is not Job.BST && Configuration.Meta.DutyModeEnum is DutyMode.Crucible)
+                                    {
+                                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.CrucibleRestriction"));
+                                    }
+                                    else if (Player.Job is Job.BLU or Job.BST && Configuration.Meta.DutyModeEnum is not (DutyMode.Regular or DutyMode.Trial or DutyMode.Raid or DutyMode.Crucible))
+                                    {
+                                        ImGuiEx.TextWrapped(new Vector4(0, 1, 1, 1), Loc.Get("MainTab.LimitedJobRestriction"));
+                                    } 
+                                    else if (Plugin.LevelingModeEnum != LevelingMode.None)
                                     {
                                         if (Player.Job.GetCombatRole() == CombatRole.NonCombat ||
                                             (Plugin.LevelingModeEnum.IsTrustLeveling() &&
@@ -851,13 +851,18 @@ namespace AutoDuty.Windows
                                                 }
                                             }
 
-                                            if (entry.DutyMode == DutyMode.Variant)
+                                            if (entry is { DutyMode: DutyMode.Variant, Id: 1315 })
                                             {
                                                 ImGui.PushItemWidth(80f.Scale());
                                                 ImGui.SameLine();
                                                 ImGui.InputByte($"###Playlist{i}PathIndex", ref entry.variantPathIndex, 1);
                                                 ImGui.PopItemWidth();
                                             }
+
+                                            ImGui.SameLine();
+
+                                            if (ImGuiEx.IconButtonWithText(entry.terminationConfigOpen ? FontAwesomeIcon.CaretDown : FontAwesomeIcon.CaretRight, $"T##Playlist{i}Termination"))
+                                                entry.terminationConfigOpen = !entry.terminationConfigOpen;
 
                                             ImGui.SameLine();
 
@@ -874,11 +879,20 @@ namespace AutoDuty.Windows
 
                                             if (ImGuiComponents.IconButton($"Playlist{i}Trash", FontAwesomeIcon.TrashAlt))
                                                 Plugin.PlaylistCurrent.Entries.RemoveAt(i);
+
+
+                                            if (entry.terminationConfigOpen)
+                                            {
+                                                ImGui.PushID($"Playlist{i}TerminationEntry_");
+                                                ImGui.Indent();
+                                                entry.TerminationConfig.Draw();
+                                                ImGui.Unindent();
+                                                ImGui.PopID();
+                                            }
                                         }
 
                                         if (ImGuiComponents.IconButton("PlaylistAdd", FontAwesomeIcon.Plus)) 
                                             Plugin.PlaylistCurrent.Entries.Add(new PlaylistEntry { DutyMode = Plugin.PlaylistCurrent.Entries.Count != 0 ? Plugin.PlaylistCurrent.Entries.Last().DutyMode : DutyMode.Support });
-
                                         break;
                                     }
                             }
