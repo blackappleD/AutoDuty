@@ -325,7 +325,7 @@ public sealed class AutoDuty : IDalamudPlugin
             this.assemblyDirectoryInfo = this.assemblyFileInfo.Directory;
 
             this.Version = 
-                ((PluginInterface.IsDev     ? new Version(0,0,0, 382) :
+                ((PluginInterface.IsDev     ? new Version(0,0,0, 383) :
                   PluginInterface.IsTesting ? PluginInterface.Manifest.TestingAssemblyVersion ?? PluginInterface.Manifest.AssemblyVersion : PluginInterface.Manifest.AssemblyVersion)!).Revision;
 
             if (!this.configDirectory.Exists)
@@ -1805,6 +1805,8 @@ public sealed class AutoDuty : IDalamudPlugin
             Svc.Log.Debug($"Setting YesAlready Enabled: {on}");
             YesAlready_IPCSubscriber.SetState(on);
         }
+
+        BossMod_IPCSubscriber.SetBasicSettings(on);
     }
 
     internal void SetRotationPluginSettings(bool on, bool ignoreConfig = false, bool ignoreTimer = false)
@@ -1905,7 +1907,6 @@ public sealed class AutoDuty : IDalamudPlugin
             Configuration.DutyConfig.BossMod.PositionalAvarice            = true;
         }
 
-        BossMod_IPCSubscriber.SetBasicSettings();
         BossMod_IPCSubscriber.SetMovement(true);
         BossMod_IPCSubscriber.SetRange(Configuration.DutyConfig.BossMod.MaxDistanceToTargetFloat);
     }

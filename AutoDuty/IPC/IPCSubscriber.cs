@@ -14,6 +14,7 @@ namespace AutoDuty.IPC
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Configurations;
     using ECommons.GameFunctions;
     using Helpers;
@@ -110,14 +111,38 @@ namespace AutoDuty.IPC
                 }
         }
 
-        public static void SetBasicSettings()
+        public static Dictionary<string, string> RestoreValues = [];
+
+        public static void SetBasicSettings(bool restore)
         {
-            BossMod.Configuration(["ActionTweaksConfig", "PreventMovingWhileCasting", "true"], false);
-            BossMod.Configuration(["ActionTweaksConfig", "GTMode", "2"],                       false);
-            BossMod.Configuration(["ActionTweaksConfig", "DashSafety", "true"],                false);
-            BossMod.Configuration(["ActionTweaksConfig", "DashSafetyExtra", "true"],           false);
-            BossMod.Configuration(["BossmoduleConfig", "AllowAutomaticActions", "true"],       false);
-            BossMod.Configuration(["BossmoduleConfig", "AllowAutomaticInteract", "true"],      true);
+            static string SaveKey(string[] cfg) => string.Join(".", cfg);
+
+            void SetBossModConfig(string[] cfg, string value, bool save)
+            {
+
+                string saveKey = SaveKey(cfg);
+
+                if (restore)
+                    if(RestoreValues.TryGetValue(saveKey, out string restoreValue))
+                    {
+                        BossMod.Configuration([.. cfg, restoreValue], save);
+                        RestoreValues.Remove(saveKey);
+                        return;
+                    }
+
+                if (RestoreValues.ContainsKey(saveKey))
+                    return;
+
+                RestoreValues[saveKey] = BossMod.Configuration(cfg, false).FirstOrDefault();
+                BossMod.Configuration([..cfg, value], save);
+            }
+
+            SetBossModConfig(["ActionTweaksConfig", "PreventMovingWhileCasting"], "true", false);
+            SetBossModConfig(["ActionTweaksConfig", "GTMode"], "2",                       false);
+            SetBossModConfig(["ActionTweaksConfig", "DashSafety"], "true",                false);
+            SetBossModConfig(["ActionTweaksConfig", "DashSafetyExtra"], "true",           false);
+            SetBossModConfig(["BossmoduleConfig", "AllowAutomaticActions"], "true",       false);
+            SetBossModConfig(["BossmoduleConfig", "AllowAutomaticInteract"], "true",      true);
         }
 
         public static void SetRange(float range)
