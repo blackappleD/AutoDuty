@@ -588,9 +588,9 @@ public class ConfigurationProfileV2
                         ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
                         int terminationiLvlInt = this.TerminationiLvlInt;
 
-                        if (ConfigTab.MakeSliderOrInput(ref terminationiLvlInt, "##ItemLevel", 1, 100))
+                        if (ConfigTab.MakeSliderOrInput(ref terminationiLvlInt, "##ItemLevel", 1, 999))
                         {
-                            this.TerminationiLvlInt = Math.Clamp(terminationiLvlInt, 1, 100);
+                            this.TerminationiLvlInt = Math.Clamp(terminationiLvlInt, 1, 999);
                             ConfigurationProfileV2.Save();
                         }
                         ImGui.PopItemWidth();
