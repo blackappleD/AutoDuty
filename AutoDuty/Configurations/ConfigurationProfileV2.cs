@@ -89,13 +89,15 @@ public class ConfigurationProfileV2
         [JsonObject(MemberSerialization.OptOut)]
         public class CrucibleConfig
         {
-            public CrucibleDegree         Degree        { get; set; } = CrucibleDegree.Standard;
-            public CrucibleTeamMode       TeamMode      { get; set; } = CrucibleTeamMode.Recommended;
-            public CrucibleLevelingMode   LevelingMode  { get; set; } = CrucibleLevelingMode.Minus_3;
-            public List<uint>             CustomTeam    { get; set; } = [];
-            public List<CrucibleShopList> ShopLists     { get; set; } = [];
-            public int                    ShopListIndex { get; set; } = 0;
-            public List<uint>             ShopGearOrder { get; set; } = []; // legacy, only seeds ShopLists
+            public CrucibleDegree         Degree         { get; set; } = CrucibleDegree.Standard;
+            public CrucibleTeamMode       TeamMode       { get; set; } = CrucibleTeamMode.Recommended;
+            public CrucibleLevelingMode   LevelingMode   { get; set; } = CrucibleLevelingMode.Minus_3;
+            public List<uint>             CustomTeam     { get; set; } = [];
+            public List<CrucibleShopList> ShopLists      { get; set; } = [];
+            public int                    ShopListIndex  { get; set; } = 0;
+            public List<uint>             ShopGearOrder  { get; set; } = []; // legacy, only seeds ShopLists
+            public List<BeastTierList>    BeastTierLists { get; set; } = [];
+            public int                    BeastTierListIndex { get; set; } = 0;
 
             public bool FightPicks              { get; set; }                  = true;
             public bool Loot                    { get; set; }                  = true;
@@ -114,8 +116,13 @@ public class ConfigurationProfileV2
             public int ClassificationLock { get; set; } = 0;
         }
 
+        public interface ICrucibleList
+        {
+            public string Name { get; set; }
+        }
+
         [JsonObject(MemberSerialization.OptOut)]
-        public class CrucibleShopList
+        public class CrucibleShopList : ICrucibleList
         {
             public string     Name      { get; set; } = "Default";
             public List<Entry> Order     { get; set; } = [];

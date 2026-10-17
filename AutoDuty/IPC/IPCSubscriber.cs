@@ -115,25 +115,29 @@ namespace AutoDuty.IPC
 
         public static void SetBasicSettings(bool restore)
         {
+            if (!IsEnabled)
+                return;
+
             static string SaveKey(string[] cfg) => string.Join(".", cfg);
 
             void SetBossModConfig(string[] cfg, string value, bool save)
             {
-
                 string saveKey = SaveKey(cfg);
 
                 if (restore)
+                {
                     if(RestoreValues.TryGetValue(saveKey, out string restoreValue))
                     {
                         BossMod.Configuration([.. cfg, restoreValue], save);
                         RestoreValues.Remove(saveKey);
-                        return;
                     }
+                    return;
+                }
 
                 if (RestoreValues.ContainsKey(saveKey))
                     return;
 
-                RestoreValues[saveKey] = BossMod.Configuration(cfg, false).FirstOrDefault();
+                RestoreValues[saveKey] = BossMod.Configuration(cfg, false)?.FirstOrDefault();
                 BossMod.Configuration([..cfg, value], save);
             }
 

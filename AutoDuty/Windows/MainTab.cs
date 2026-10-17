@@ -1064,6 +1064,8 @@ namespace AutoDuty.Windows
                     else
                         DrawCrucibleFamiliarTable(crucible, team, cached, owned);
                 }
+                if (ImGui.CollapsingHeader(Loc.Get("MainTab.Crucible.TierList") + "###TierList"))
+                    DrawCrucibleFamiliarTierTable(crucible);
             }
 
             if (ImGui.CollapsingHeader($"{Loc.Get("MainTab.Crucible.Menus")}###CrucibleMenus"))
@@ -1074,9 +1076,10 @@ namespace AutoDuty.Windows
                     DrawCrucibleShopSettings(crucible);
         }
 
-        private static readonly Vector4 CruciblePickedRow = new(0.25f, 0.55f, 0.95f, 0.18f);
-        private static readonly Vector4 CrucibleBlockedRow = new(0.95f, 0.25f, 0.25f, 0.18f);
-        private static readonly Vector4 CrucibleFaded     = new(1f, 1f, 1f, 0.45f);
+        private static readonly Vector4 CruciblePickedRow         = new(0.25f, 0.55f, 0.95f, 0.18f);
+        private static readonly Vector4 CrucibleBlockedRow        = new(0.95f, 0.25f, 0.25f, 0.18f);
+        private static readonly Vector4 CrucibleBlockHighlightRow = new(0.855f, 0.439f, 0.839f, 0.18f);
+        private static readonly Vector4 CrucibleFaded             = new(1f, 1f, 1f, 0.45f);
 
         private static void DrawCrucibleFamiliarTable(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible, List<uint> team, IReadOnlyDictionary<uint, CrucibleFamiliar> cached, List<uint> owned)
         {
@@ -1094,7 +1097,7 @@ namespace AutoDuty.Windows
             float height    = Math.Min(owned.Count + 1, 12) * rowHeight + 4 * scale;
 
             const ImGuiTableFlags flags = ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.BordersOuter | ImGuiTableFlags.ScrollY | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.PadOuterX;
-            if (!ImGui.BeginTable("##CrucibleTable", 7, flags, new Vector2(0, height)))
+            if (!ImGui.BeginTable("##CrucibleFamiliarTable", 7, flags, new Vector2(0, height)))
                 return;
 
             ImGui.TableSetupScrollFreeze(0, 1);
@@ -1193,8 +1196,109 @@ namespace AutoDuty.Windows
             }
         }
 
+        private static void DrawCrucibleFamiliarTierTable(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible)
+        {
+            ImGui.Separator();
+            BeastTierList active = BeastTierList.ActiveTierList;
+            if (!active.IsCompleted)
+            {
+                active.Complete();
+                ConfigurationProfileV2.Save();
+            }
+
+            ImGui.SetNextItemWidth(160f.Scale());
+            if (ImGui.BeginCombo("##CrucibleBeastTierList", active.Name))
+            {
+                for (int i = 0; i < crucible.BeastTierLists.Count; i++)
+                {
+                    ImGui.PushID(i);
+                    if (ImGui.Selectable(crucible.BeastTierLists[i].Name, i == crucible.BeastTierListIndex) && i != crucible.BeastTierListIndex)
+                    {
+                        crucible.BeastTierListIndex = i;
+                        ConfigurationProfileV2.Save();
+                    }
+                    ImGui.PopID();
+                }
+                ImGui.EndCombo();
+            }
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(Loc.Get("MainTab.Crucible.BeastTierListHelp"));
+
+            ImGui.SameLine();
+            ImGui.SetNextItemWidth(140f.Scale());
+            string name = active.Name;
+            if (ImGui.InputText("##CrucibleBeastTierListName", ref name, 64))
+                active.Name = name;
+            if (ImGui.IsItemDeactivatedAfterEdit())
+            {
+                active.Name = UniqueListName(crucible.BeastTierLists, active.Name.Trim().Length > 0 ? active.Name.Trim() : "Tier List", active);
+                ConfigurationProfileV2.Save();
+            }
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(Loc.Get("MainTab.Crucible.RenameBeastTierListHelp"));
+
+            ImGui.SameLine();
+            if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.NewBeastTierList")))
+                AddTierList(crucible, "Tier List", BeastTierList.beastTierListDefault);
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(Loc.Get("MainTab.Crucible.NewBeastTierListHelp"));
+
+            ImGui.SameLine();
+            if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.CopyBeastTierList")))
+                AddTierList(crucible, active.Name, active);
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(Loc.Get("MainTab.Crucible.CopyBeastTierListHelp"));
+
+            ImGui.SameLine();
+            using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl || crucible.BeastTierLists.Count <= 1))
+                if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.DeleteBeastTierList")))
+                {
+                    crucible.BeastTierLists.RemoveAt(crucible.BeastTierListIndex);
+                    crucible.BeastTierListIndex = Math.Max(0, crucible.BeastTierListIndex - 1);
+                    ConfigurationProfileV2.Save();
+                    return;
+                }
+            if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                ImGui.SetTooltip(Loc.Get("MainTab.Crucible.DeleteBeastTierListHelp"));
+
+            if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ExportBeastTierList")))
+            {
+                ImGui.SetClipboardText(JsonConvert.SerializeObject(active));
+                Notify.Success(Loc.Get("MainTab.Crucible.ExportBeastTierListDone"));
+            }
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(Loc.Get("MainTab.Crucible.ExportBeastTierListHelp"));
+
+            ImGui.SameLine();
+            if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ImportBeastTierList")))
+                ImportBeastTierList(crucible);
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(Loc.Get("MainTab.Crucible.ImportBeastTierListHelp"));
+
+            if (active.OrderChanged)
+            {
+                ImGui.SameLine();
+                using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl))
+                    if (ImGui.SmallButton(Loc.Get("MainTab.Crucible.ClearBeastTierOrder")))
+                    {
+                        active.Clear();
+                        active.Complete();
+                        ConfigurationProfileV2.Save();
+                    }
+
+                if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                    ImGui.SetTooltip(Loc.Get("MainTab.Crucible.ClearBeastTierOrderHelp"));
+            }
+
+            ImGui.TextColored(CrucibleFaded, Loc.Get("MainTab.Crucible.BeastTierOrderHelp"));
+
+            CrucibleBeastTierTable(active);
+        }
+
         private static ImGuiEx.RealtimeDragDrop<ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry>? _crucibleShopDragDrop;
-        private static (ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry Row, int Position)? _crucibleShopTyped;
+        private static ImGuiEx.RealtimeDragDrop<BeastTierList.Entry>?                                      _crucibleBeastTierDragDrop;
+        private static (ConfigurationProfileV2.MetaConfig.CrucibleShopList.Entry Row, int Position)?       _crucibleShopTyped;
+        private static (BeastTierList.Entry Row, int Position)?                                            _crucibleBeastTierTyped;
 
         private static void DrawCrucibleShopSettings(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible)
         {
@@ -1229,7 +1333,7 @@ namespace AutoDuty.Windows
                 active.Name = name;
             if (ImGui.IsItemDeactivatedAfterEdit())
             {
-                active.Name = UniqueShopListName(crucible, active.Name.Trim().Length > 0 ? active.Name.Trim() : "Shop List", active);
+                active.Name = UniqueListName(crucible.ShopLists, active.Name.Trim().Length > 0 ? active.Name.Trim() : "Shop List", active);
                 ConfigurationProfileV2.Save();
             }
             if (ImGui.IsItemHovered())
@@ -1312,16 +1416,226 @@ namespace AutoDuty.Windows
         {
             crucible.ShopLists.Add(new ConfigurationProfileV2.MetaConfig.CrucibleShopList
                                    {
-                                       Name  = UniqueShopListName(crucible, name, null),
+                                       Name  = UniqueListName(crucible.ShopLists, name, null),
                                        Order = order.ToList()
                                    }.CompleteList());
             crucible.ShopListIndex = crucible.ShopLists.Count - 1;
             ConfigurationProfileV2.Save();
         }
 
-        private static string UniqueShopListName(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible, string name, ConfigurationProfileV2.MetaConfig.CrucibleShopList? self)
+        private static void AddTierList(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible, string name, IEnumerable<uint> order) =>
+            AddTierList(crucible, name, order.Select(id => (BeastTierList.Entry) id));
+
+        private static void AddTierList(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible, string name, IEnumerable<BeastTierList.Entry> order)
         {
-            bool Taken(string candidate) => crucible.ShopLists.Any(l => l != self && l.Name.Equals(candidate, StringComparison.OrdinalIgnoreCase));
+            BeastTierList beastTierList = new() { Name  = UniqueListName(crucible.BeastTierLists, name, null), };
+            beastTierList.AddRange(order);
+            beastTierList.Complete();
+
+            crucible.BeastTierLists.Add(beastTierList);
+            crucible.BeastTierListIndex = crucible.BeastTierLists.Count - 1;
+            ConfigurationProfileV2.Save();
+        }
+
+        private static void CrucibleBeastTierTable(BeastTierList order)
+        {
+            ImGuiEx.RealtimeDragDrop<BeastTierList.Entry> dragDrop = _crucibleBeastTierDragDrop ??= new ImGuiEx.RealtimeDragDrop<BeastTierList.Entry>("CrucibleBeastTierDragDrop", row => row.ID.ToString(), smallButton: false);
+
+            using ImRaii.ChildDisposable child = ImRaii.Child("##Sidebar", new Vector2(0, ImGui.GetContentRegionAvail().Y - 100f.Scale()), true);
+            if (!child.Success)
+                return;
+
+            BeastTierList.Entry[] before = order.ToArray();
+
+            int moveFromIndex = -1;
+            int moveToIndex = -1;
+
+            dragDrop.Begin();
+
+            using (ImRaii.TableDisposable orderTable = ImRaii.Table("Crucible Beast Tier Table", 8, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
+            {
+                if (orderTable)
+                {
+                    ImGui.TableSetupScrollFreeze(8, 1);
+                    ImGui.TableSetupColumn("##Reorder");
+                    ImGui.TableSetupColumn("#");
+                    ImGui.TableSetupColumn("No.", ImGuiTableColumnFlags.WidthFixed, 28f.Scale());
+                    string blockString = Loc.Get("MainTab.Crucible.BeastTierPickBlocked");
+                    ImGui.TableSetupColumn(blockString, ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize(blockString).X + 20f.Scale());
+                    blockString = Loc.Get("MainTab.Crucible.BeastTierFightBlocked");
+                    ImGui.TableSetupColumn(blockString, ImGuiTableColumnFlags.WidthFixed, ImGui.CalcTextSize(blockString).X + 20f.Scale());
+                    ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.Familiar"));
+                    ImGui.TableSetupColumn(Loc.Get("MainTab.Crucible.Classification"));
+                    ImGui.TableSetupColumn("##Spacer", ImGuiTableColumnFlags.WidthStretch);
+
+                    ImGui.TableNextRow(ImGuiTableRowFlags.Headers);
+
+                    int columnCount = ImGui.TableGetColumnCount();
+                    for (int column = 0; column < columnCount; column++)
+                    {
+                        if (!ImGui.TableSetColumnIndex(column))
+                            continue;
+
+                        string name = ImGui.TableGetColumnName(column);
+
+                        ImGui.PushID(column);
+
+                        if (column is 3 or 4)
+                        {
+                            ImGui.TextUnformatted(name);
+                            ImGui.SameLine(0, 0);
+                            ImGuiComponents.HelpMarker(Loc.Get(column switch
+                            {
+                                3 => "MainTab.Crucible.BeastTierPickBlockedHelp", 
+                                4 => "MainTab.Crucible.BeastTierFightBlockedHelp"
+                            }));
+                        }
+                        else
+                        {
+                            ImGui.TableHeader(name);
+                        }
+
+                        ImGui.PopID();
+                    }
+
+                    (bool pick, byte classification, bool value)? blockValue = null;
+
+                    for (int i = 0; i < order.Count; i++)
+                    {
+                        ImGui.PushID(i);
+
+                        BeastTierList.Entry       row      = order[i];
+                        CrucibleFamiliarSheetData rowSheet = CrucibleTeam.FamiliarSheetDatas[row.ID];
+
+
+                        ImGui.TableNextRow();
+                        dragDrop.NextRow();
+
+                        if (row.PickBlock)
+                            ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg1, ImGui.ColorConvertFloat4ToU32(CrucibleBlockedRow));
+                        else if(row.BattleBlock)
+                            ImGui.TableSetBgColor(ImGuiTableBgTarget.RowBg1, ImGui.ColorConvertFloat4ToU32(CrucibleBlockHighlightRow));
+
+                        dragDrop.SetRowColor(row.ID);
+
+                        ImGui.TableSetColumnIndex(0);
+                        dragDrop.DrawButtonDummy(row, order, i);
+
+                        ImGui.TableNextColumn();
+                        ImGui.SetNextItemWidth(40 * ImGuiHelpers.GlobalScale);
+                        int position = _crucibleBeastTierTyped?.Row == row ? _crucibleBeastTierTyped.Value.Position : i + 1;
+                        if (ImGui.InputInt("##Position", ref position, 0, 0))
+                            _crucibleBeastTierTyped = (row, position);
+
+                        if (ImGui.IsItemDeactivated())
+                        {
+                            if (_crucibleBeastTierTyped?.Row == row)
+                            {
+                                int typedPosition = Math.Clamp(_crucibleBeastTierTyped.Value.Position, 1, order.Count);
+
+                                moveFromIndex = i;
+                                moveToIndex = typedPosition - 1;
+                                _crucibleBeastTierTyped = null;
+                            }
+                        }
+
+
+                        ImGui.TableNextColumn();
+                        ImGui.AlignTextToFramePadding();
+                        Centered(row.ID.ToString(), CrucibleFaded);
+
+                        ImGui.TableNextColumn();
+                        ImGui.AlignTextToFramePadding();
+
+                        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + Math.Max(0, (ImGui.GetContentRegionAvail().X - 25f.Scale()) / 2));
+                        bool blocked = row.PickBlock;
+                        if (ImGui.Checkbox("###CrucibleTierPickBlock_" + row.ID, ref blocked))
+                        {
+                            if (ImGui.GetIO().KeyCtrl)
+                            {
+                                blockValue = (true, rowSheet.Classification, row.PickBlock);
+                            }
+                            else
+                            {
+                                row.PickBlock = blocked;
+                                ConfigurationProfileV2.Save();
+                            }
+                        }
+
+                        ImGui.TableNextColumn();
+                        ImGui.AlignTextToFramePadding();
+
+                        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + Math.Max(0, (ImGui.GetContentRegionAvail().X - 25f.Scale()) / 2));
+
+                        blocked = row.BattleBlock;
+                        if (ImGui.Checkbox("###CrucibleTierBattleBlock_" + row.ID, ref blocked))
+                        {
+                            if (ImGui.GetIO().KeyCtrl)
+                            {
+                                blockValue = (false, rowSheet.Classification, row.BattleBlock);
+                            }
+                            else
+                            {
+                                row.BattleBlock = blocked;
+                                ConfigurationProfileV2.Save();
+                            }
+                        }
+
+                        ImGui.TableNextColumn();
+                        ImGui.AlignTextToFramePadding();
+                        ImGui.TextUnformatted(rowSheet.Name);
+
+                        ImGui.TableNextColumn();
+                        ImGui.AlignTextToFramePadding();
+
+                        ImGui.TextColored(rowSheet.ClassificationName.GetRandomColor(), rowSheet.ClassificationName);
+                        ImGui.PopID();
+                    }
+
+                    if (blockValue != null)
+                        foreach (BeastTierList.Entry entry in order)
+                            if (CrucibleTeam.FamiliarSheetDatas[entry.ID].Classification == blockValue.Value.classification && (blockValue.Value.pick ? entry.PickBlock : entry.BattleBlock) == blockValue.Value.value)
+                                if(blockValue.Value.pick)
+                                    entry.PickBlock = !blockValue.Value.value;
+                                else
+                                    entry.BattleBlock = !blockValue.Value.value;
+                }
+            }
+
+            dragDrop.End();
+
+            bool typedNewPosition = moveFromIndex >= 0 && moveFromIndex != moveToIndex;
+            if (typedNewPosition)
+            {
+                BeastTierList.Entry movedItem = order[moveFromIndex];
+                order.RemoveAt(moveFromIndex);
+                order.Insert(moveToIndex, movedItem);
+            }
+
+            if (!order.SequenceEqual(before))
+                ConfigurationProfileV2.Save();
+            return;
+
+            static void Centered(string text, Vector4? color)
+            {
+                ImGui.SetCursorPosX(ImGui.GetCursorPosX() + Math.Max(0, (ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(text).X) / 2));
+                Text(text, color);
+            }
+
+            static void Text(string text, Vector4? color)
+            {
+                if (color is { } c)
+                    ImGui.TextColored(c, text);
+                else
+                    ImGui.TextUnformatted(text);
+            }
+        }
+
+
+        private static string UniqueListName<T>(List<T> entries, string name, object? self) where T : class, ConfigurationProfileV2.MetaConfig.ICrucibleList
+        {
+            bool Taken(string candidate) => 
+                entries.Any(l => l != self && l.Name.Equals(candidate, StringComparison.OrdinalIgnoreCase));
 
             if (!Taken(name))
                 return name;
@@ -1369,6 +1683,44 @@ namespace AutoDuty.Windows
             }
         }
 
+        private static void ImportBeastTierList(ConfigurationProfileV2.MetaConfig.CrucibleConfig crucible)
+        {
+            try
+            {
+                string text = (ImGui.GetClipboardText() ?? string.Empty).Trim();
+                string name = "Imported";
+
+                BeastTierList order;
+
+                if (text.StartsWith('{') && JsonConvert.DeserializeObject<BeastTierList>(text) is { } list)
+                {
+                    if (list.Name.Trim().Length > 0)
+                        name = UniqueListName(crucible.BeastTierLists, list.Name.Trim(), null);
+                    order = list;
+                }
+                else
+                {
+                    order = new BeastTierList { Name = UniqueListName(crucible.BeastTierLists, name, null) };
+                    order.AddRange(RegexHelper.NumberParserRegex().Matches(text).Select(m => uint.TryParse(m.Value, out uint row) ? row : 0).Where(x => x != 0).Select(id => (BeastTierList.Entry)id));
+                }
+
+                List<BeastTierList.Entry> valid = order.Where(x => BeastTierList.beastTierListDefault.Contains(x.ID)).Distinct().ToList();
+                if (valid.Count == 0)
+                {
+                    Notify.Error(Loc.Get("MainTab.Crucible.ImportBeastTierListFailed"));
+                    return;
+                }
+
+                AddTierList(crucible, name, valid);
+                Notify.Success(Loc.Get("MainTab.Crucible.ImportBeastTierListDone", crucible.BeastTierLists[crucible.BeastTierListIndex].Name));
+            }
+            catch (Exception ex)
+            {
+                Svc.Log.Warning(ex, "[Crucible] Couldn't import the beast tier list from the clipboard");
+                Notify.Error(Loc.Get("MainTab.Crucible.ImportBeastTierListFailed"));
+            }
+        }
+
         private static readonly Vector4 CrucibleShopGear        = ImGuiHelper.RoleTankColor;
         private static readonly Vector4 CrucibleShopItemHealing = ImGuiHelper.RoleHealerColor;
         private static readonly Vector4 CrucibleShopItemDamage  = ImGuiHelper.RoleDPSColor;
@@ -1383,7 +1735,7 @@ namespace AutoDuty.Windows
                 smallButton: false
             );
 
-            using ImRaii.ChildDisposable child = ImRaii.Child("##Sidebar", new Vector2(0, ImGui.GetContentRegionAvail().Y-100f.Scale()), true);
+            using ImRaii.ChildDisposable child = ImRaii.Child("##CrucibleShopSidebar", new Vector2(0, ImGui.GetContentRegionAvail().Y-100f.Scale()), true);
             if (!child.Success)
                 return;
 
