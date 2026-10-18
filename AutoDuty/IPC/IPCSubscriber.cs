@@ -111,11 +111,11 @@ namespace AutoDuty.IPC
                 }
         }
 
-        public static Dictionary<string, string> RestoreValues = [];
+        public static readonly Dictionary<string, string> RestoreValues = [];
 
         public static void SetBasicSettings(bool restore)
         {
-            if (!IsEnabled)
+            if (!IsEnabled || !Configuration.DutyConfig.AutoManageBossModAISettings)
                 return;
 
             static string SaveKey(string[] cfg) => string.Join(".", cfg);
