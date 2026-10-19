@@ -6,6 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using System.Globalization;
 using System.Numerics;
 using static ECommons.IPC.ECommonsIPC;
+using static global::AutoDuty.Data.Enums;
 
 // ReSharper disable InconsistentNaming
 #nullable disable
@@ -548,6 +549,114 @@ namespace AutoDuty.IPC
         }
     }
 
+
+    public static class Knightshopper_IPCSubsriber
+    {
+        private static  EzIPCDisposalToken[] _disposalTokens = EzIPC.Init(typeof(Knightshopper_IPCSubsriber), "Knightshopper");
+        internal static bool IsEnabled => IPCSubscriber_Common.IsReady("Knightshopper");
+
+        public enum CurrencyId
+        {
+            BicolorGemstone = 0,
+
+            // 1 is reserved for unsupported company seals; keep existing IDs unchanged.
+            Gil            = 2,
+            Hunt           = 3,
+            MGP            = 4,
+            PVP            = 5,
+            Scrip          = 6,
+            Tomestone      = 7,
+            Firmament      = 8,
+            Cosmocredits   = 9,
+            OccultCrescent = 10,
+        }
+
+        public enum StartResult
+        {
+            Started         = 0,
+            Busy            = 1,
+            InvalidCurrency = 2,
+            EmptyList       = 3,
+            NotReady        = 4,
+            NotLoggedIn     = 5,
+            NotAllowed      = 6,
+            ItemUnavailable = 7,
+            InvalidQuantity = 8,
+        }
+
+        public enum PurchaseState
+        {
+            Unknown               = 0,
+            Running               = 1,
+            CancellationRequested = 2,
+            Succeeded             = 3,
+            Failed                = 4,
+            Cancelled             = 5,
+        }
+
+        extension(PurchaseState State)
+        {
+            public bool IsFinished() => State is PurchaseState.Succeeded or PurchaseState.Failed or PurchaseState.Cancelled;
+        }
+
+        [EzIPC]                        private static Func<int>                                                      ApiVersion;
+        [EzIPC]                        private static Func<bool>                                                     IsBusy;
+        [EzIPC("Purchase.Start")]      private static Func<int, (int, Guid, string)>                                 PurchaseStart;
+        [EzIPC("Purchase.StartItems")] private static Func<int, (uint ItemId, uint Quantity)[], (int, Guid, string)> PurchaseStartItems;
+        [EzIPC("Purchase.GetStatus")]  private static Func<Guid, (int, int, int, uint, string)>                      PurchaseGetStatus;
+        [EzIPC("Purchase.IsRunning")]  private static Func<Guid, bool>                                               PurchaseIsRunning;
+        [EzIPC("Purchase.Cancel")]     private static Func<Guid, bool>                                               PurchaseCancel;
+
+        private static Guid currentPurchase = Guid.Empty;
+
+        public static bool StartShopping(CurrencyId currency)
+        {
+            (int, Guid, string) response = PurchaseStart((int)currency);
+
+            switch ((StartResult)response.Item1)
+            {
+                case StartResult.Started:
+                    currentPurchase = response.Item2;
+                    return true;
+                case StartResult.Busy:
+                case StartResult.InvalidCurrency:
+                case StartResult.EmptyList:
+                case StartResult.NotReady:
+                case StartResult.NotLoggedIn:
+                case StartResult.NotAllowed:
+                case StartResult.ItemUnavailable:
+                case StartResult.InvalidQuantity:
+                default:
+                    Svc.Log.Info($"Knightshopper rejected: {(StartResult)response.Item1} | {response.Item3}");
+                    return false;
+            }
+        }
+
+        // Quantities are target inventory totals. Duplicate IDs use the largest quantity.
+        // Unique items are capped at one. Purchases are grouped across the fewest unlocked vendors.
+        // Full inventory or a rejected transaction fails the operation and reports a message.
+        /*
+        public static StartResponse StartShoppingForItems(CurrencyId currency, (uint ItemId, uint Quantity)[] items)
+        {
+            (int, Guid, string) response = PurchaseStartItems((int)currency, items);
+            return new StartResponse((StartResult)response.Item1, response.Item2, response.Item3);
+        }*/
+
+        public static PurchaseState GetStatus()
+        {
+            if(currentPurchase == Guid.Empty)
+                return PurchaseState.Unknown;
+
+            (int, int, int, uint, string) status = PurchaseGetStatus(currentPurchase);
+            return (PurchaseState) status.Item1;
+        }
+
+        public static bool IsRunning() => PurchaseIsRunning(currentPurchase);
+
+        public static bool Cancel() => PurchaseCancel(currentPurchase);
+
+        internal static void Dispose() => IPCSubscriber_Common.DisposeAll(_disposalTokens);
+    }
 
     internal static class IPCSubscriber_Common
     {

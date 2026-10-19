@@ -365,7 +365,8 @@
             AntiAFK              = 1 << 9,
             Pandora              = 1 << 10,
             GlamourLog           = 1 << 11,
-            Questionable         = 1 << 12
+            Questionable         = 1 << 12,
+            Knightshopper        = 1 << 13,
         }
 
         public enum ConditionType

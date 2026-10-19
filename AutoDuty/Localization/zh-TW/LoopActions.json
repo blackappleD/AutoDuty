@@ -73,6 +73,11 @@
       "TimeoutHelp": "單個任務超過此時間會停止 Questionable 並跳過該任務。0 為不限時。",
       "ClearSkipped": "重試已跳過的任務（{0}）"
     },
+    "Shop": {
+      "Name": "商店購物",
+      "Help": "依 Knightshopper 中的設定從各類商店購買物品",
+      "CurrencySelection": "貨幣"
+    },
     "Desynth": {
       "Name": "分解裝備",
       "OnlySkillUps": "僅提升分解熟練度時分解",

@@ -21,7 +21,8 @@
       "ConsumeItems": "使用物品",
       "ExecuteCommands": "执行命令",
       "Wait": "等待(?)",
-      "PlaySound": "提示音"
+      "PlaySound": "提示音",
+      "Shop": "购物"
     },
     "Tooltip": {
       "TurnIn": "点击前往大国防联军补给处，并调用 AutoRetainer 的军票上缴功能",
@@ -31,7 +32,8 @@
       "ExtractMissing": "魔晶石精制需要完成任务：物尽其用",
       "Repair": "点击修理装备",
       "Equip": "点击装备推荐装备",
-      "Coffers": "点击开启宝箱"
+      "Coffers": "点击开启宝箱",
+      "Shop": "点击从已配置的商店购买物品"
     },
     "Popup": {
       "MissingPlugin": "缺少插件",

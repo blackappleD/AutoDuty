@@ -21,7 +21,8 @@
       "ConsumeItems": "Consume",
       "ExecuteCommands": "Commands",
       "Wait": "Wait(?)",
-      "PlaySound": "Sound"
+      "PlaySound": "Sound",
+      "Shop": "Shop"
     },
     "Tooltip": {
       "TurnIn": "Click to Goto GC Turnin and Invoke AutoRetainer's GC Turnin",
@@ -31,7 +32,8 @@
       "ExtractMissing": "Materia Extraction requires having completed quest: Forging the Spirit",
       "Repair": "Click to Repair",
       "Equip": "Click to Equip Gear",
-      "Coffers": "Click to open coffers"
+      "Coffers": "Click to open coffers",
+      "Shop": "Click to buy items from configured shops"
     },
     "Popup": {
       "MissingPlugin": "Missing Plugin",

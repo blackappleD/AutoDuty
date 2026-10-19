@@ -894,6 +894,28 @@ public class CofferOpenLoopActionConfig : ActiveLoopActionConfig<CofferHelper, C
         }
     }
 }
+
+
+public class ShopLoopActionConfig : ActiveLoopActionConfig<ShopHelper, ShopLoopActionConfig>
+{
+    public override string? HelpText    => Loc.Get("LoopActions.Shop.Help");
+    public override string  OverlayName => Loc.Get("Overlay.Button.Shop");
+
+    public override ExternalPlugin RequiredPlugins { get; } = ExternalPlugin.Knightshopper;
+
+    [JsonProperty] public Knightshopper_IPCSubsriber.CurrencyId Currency { get; set; } = Knightshopper_IPCSubsriber.CurrencyId.Tomestone;
+
+    public override void OnGuiSettings()
+    {
+        Knightshopper_IPCSubsriber.CurrencyId currency = this.Currency;
+        if(ImGuiEx.EnumCombo(Loc.Get("LoopActions.Shop.CurrencySelection"), ref currency, Enum.GetValues<Knightshopper_IPCSubsriber.CurrencyId>().ToDictionary(ci => ci, ci => ci.ToCustomString())))
+        {
+            this.Currency = currency;
+            ConfigurationProfileV2.Save();
+        }
+    }
+}
+
 #endregion
 
 #region Custom

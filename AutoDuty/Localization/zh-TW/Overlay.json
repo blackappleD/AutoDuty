@@ -21,7 +21,8 @@
       "ConsumeItems": "使用物品",
       "ExecuteCommands": "執行指令",
       "Wait": "等待(?)",
-      "PlaySound": "提示音"
+      "PlaySound": "提示音",
+      "Shop": "購物"
     },
     "Tooltip": {
       "TurnIn": "點擊前往軍隊總部，並呼叫 AutoRetainer 執行繳交",
@@ -31,7 +32,8 @@
       "ExtractMissing": "魔晶石精煉功能需要先完成任務: 情感培育之力",
       "Repair": "點擊以修理裝備",
       "Equip": "點擊裝備推薦裝備",
-      "Coffers": "點擊開啟裝備箱"
+      "Coffers": "點擊開啟裝備箱",
+      "Shop": "點擊從已設定的商店購買物品"
     },
     "Popup": {
       "MissingPlugin": "缺少插件",

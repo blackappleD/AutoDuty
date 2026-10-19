@@ -153,6 +153,7 @@ namespace AutoDuty.Data
                     ExternalPlugin.Pandora => (@"https://love.puni.sh/ment.json", "PandorasBox"),
                     ExternalPlugin.GlamourLog => (@"https://puni.sh/api/repository/croizat", "GlamourLog"),
                     ExternalPlugin.Questionable => (@"https://love.puni.sh/ment.json", "Questionable"),
+                    ExternalPlugin.Knightshopper => (@"https://puni.sh/api/repository/knightmore", "Knightshopper"),
                     _ => throw new ArgumentOutOfRangeException(nameof(plugin), plugin, null)
                 };
 
@@ -172,6 +173,7 @@ namespace AutoDuty.Data
                     ExternalPlugin.Pandora => "Pandora's Box",
                     ExternalPlugin.GlamourLog => "Glamour Log",
                     ExternalPlugin.Questionable => "Questionable",
+                    ExternalPlugin.Knightshopper => "Knightshopper",
                     _ => throw new ArgumentOutOfRangeException(nameof(plugin), plugin, null)
                 };
         }

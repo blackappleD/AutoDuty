@@ -73,6 +73,11 @@
       "TimeoutHelp": "Questionable is stopped and the quest skipped if it takes longer than this. 0 disables the timeout.",
       "ClearSkipped": "Retry skipped quests ({0})"
     },
+    "Shop": {
+      "Name": "Shopping",
+      "Help": "Will buy items from various shops as configured in Knightshopper",
+      "CurrencySelection": "Currency"
+    },
     "Desynth": {
       "Name": "Desynthing",
       "OnlySkillUps": "Only Skill Ups",
