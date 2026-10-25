@@ -196,6 +196,9 @@
       "NoInfo": "{0}: 無資訊",
       "ResynchronizeStep": "重新同步步驟"
     },
+    "PluginConfig": {
+      "Header": "插件設定檔"
+    },
     "Enums": {
       "Positional": {
         "Any": "任意",

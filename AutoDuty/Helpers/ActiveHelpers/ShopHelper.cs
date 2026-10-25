@@ -14,9 +14,10 @@ public class ShopHelper : ActiveHelperBase<ShopHelper, ShopLoopActionConfig>
 
     internal override void Start()
     {
-        if (!Knightshopper_IPCSubsriber.IsEnabled)
+        if (!Knightshopper_IPCSubscriber.IsEnabled)
             return;
 
+        Knightshopper_IPCSubscriber.ResetPurchaseStatus();
         base.Start();
     }
 
@@ -25,18 +26,18 @@ public class ShopHelper : ActiveHelperBase<ShopHelper, ShopLoopActionConfig>
         if (!base.UpdateBase())
             return;
 
-        switch (Knightshopper_IPCSubsriber.GetStatus())
+        switch (Knightshopper_IPCSubscriber.GetStatus())
         {
-            case Knightshopper_IPCSubsriber.PurchaseState.Unknown:
-                if (!Knightshopper_IPCSubsriber.StartShopping(this.ActionConfig.Currency))
+            case Knightshopper_IPCSubscriber.PurchaseState.Unknown:
+                if (!Knightshopper_IPCSubscriber.StartShopping(this.ActionConfig.Currency))
                     this.Stop();
                 return;
-            case Knightshopper_IPCSubsriber.PurchaseState.Running:
+            case Knightshopper_IPCSubscriber.PurchaseState.Running:
                 break;
-            case Knightshopper_IPCSubsriber.PurchaseState.Failed:
-            case Knightshopper_IPCSubsriber.PurchaseState.Cancelled:
-            case Knightshopper_IPCSubsriber.PurchaseState.CancellationRequested:
-            case Knightshopper_IPCSubsriber.PurchaseState.Succeeded:
+            case Knightshopper_IPCSubscriber.PurchaseState.Failed:
+            case Knightshopper_IPCSubscriber.PurchaseState.Cancelled:
+            case Knightshopper_IPCSubscriber.PurchaseState.CancellationRequested:
+            case Knightshopper_IPCSubscriber.PurchaseState.Succeeded:
                 this.Stop();
                 return;
             default:

@@ -13,6 +13,7 @@
       "Armoire": "Armoire",
       "Glamour": "Glamour",
       "JobQuest": "Job Quests",
+      "Shop": "Shop",
       "AutoRetainer": "Retainers",
       "AutoRetainerMulti": "AR Multi",
       "Discard": "Discard",
@@ -21,8 +22,7 @@
       "ConsumeItems": "Consume",
       "ExecuteCommands": "Commands",
       "Wait": "Wait(?)",
-      "PlaySound": "Sound",
-      "Shop": "Shop"
+      "PlaySound": "Sound"
     },
     "Tooltip": {
       "TurnIn": "Click to Goto GC Turnin and Invoke AutoRetainer's GC Turnin",

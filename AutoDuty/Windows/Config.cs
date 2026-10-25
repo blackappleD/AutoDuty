@@ -47,6 +47,7 @@ public static class ConfigTab
 
     private static bool overlayHeaderSelected      = false;
     private static bool multiboxHeaderSelected     = false;
+    private static bool pluginConfigHeaderSelected = false;
     private static bool devHeaderSelected          = false;
     private static bool dutyConfigHeaderSelected   = false;
     private static bool bmaiSettingHeaderSelected  = false;
@@ -96,7 +97,7 @@ public static class ConfigTab
         ImGui.AlignTextToFramePadding();
         ImGui.Text(Loc.Get("ConfigTab.Profile.CurrentlySelected"));
         ImGui.SameLine();
-        if (ConfigurationMain.Instance.ActiveProfileName == ConfigurationMain.CONFIGNAME_BARE)
+        if (ConfigurationMain.Instance.ActiveProfileGuid == ConfigurationMain.CONFIGGUID_BARE)
             ImGuiHelper.DrawIcon(FontAwesomeIcon.Lock);
         if (ConfigurationMain.Instance.ActiveProfileName == ConfigurationMain.Instance.DefaultConfigName)
             ImGuiHelper.DrawIcon(FontAwesomeIcon.CheckCircle);
@@ -166,7 +167,7 @@ public static class ConfigTab
 
 
 
-        bool bareProfile = ConfigurationMain.Instance.ActiveProfileName == ConfigurationMain.CONFIGNAME_BARE;
+        bool bareProfile = ConfigurationMain.Instance.ActiveProfileGuid == ConfigurationMain.CONFIGGUID_BARE;
 
         if (ImGuiComponents.IconButton(FontAwesomeIcon.Plus))
             ConfigurationMain.Instance.CreateNewProfile();
@@ -1512,7 +1513,76 @@ public static class ConfigTab
             }
         }
 
-        return;
+        if (ConfigurationMain.Instance.profileByPluginName.Count == 0)
+            return;
+
+        ImGui.Separator();
+        ImGui.Spacing();
+        ImGui.PushStyleVar(ImGuiStyleVar.SelectableTextAlign, new Vector2(0.5f, 0.5f));
+
+        ImGui.SetItemAllowOverlap();
+        if (ImGui.Selectable(Loc.Get("ConfigTab.PluginConfig.Header"), pluginConfigHeaderSelected, ImGuiSelectableFlags.DontClosePopups))
+            pluginConfigHeaderSelected = !pluginConfigHeaderSelected;
+
+        ImGui.PopStyleVar();
+        if (ImGui.IsItemHovered())
+            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+
+        if (pluginConfigHeaderSelected)
+        {
+            if (!ImGui.BeginChild("##PluginConfig", new Vector2(0, 100), flags: ImGuiWindowFlags.NoBackground))
+                return;
+
+            ImGui.Columns(3, "PluginConfig_Columns");
+            string? pluginToRemove = null;
+
+            foreach ((string plugin, Guid profileGuid) in ConfigurationMain.Instance.profileByPluginName)
+            {
+                ImGui.Text(plugin);
+                ImGui.NextColumn();
+
+                using (ImRaii.ComboDisposable configCombo = ImRaii.Combo($"##Config{plugin}Combo", ConfigurationMain.Instance.GetProfileByGuid(profileGuid)?.Name ?? "Invalid profile"))
+                {
+                    if (configCombo)
+                        foreach (Guid key in ConfigurationMain.Instance.ConfigGuids)
+                        {
+                            ConfigurationMain.ProfileData? profile = ConfigurationMain.Instance.GetProfileByGuid(key);
+
+                            if (profile == null)
+                                continue;
+
+                            ImGui.SetItemAllowOverlap();
+                            if (ImGui.Selectable($"###{key}ConfigSelectable", key == ConfigurationMain.Instance.ActiveProfileGuid))
+                            {
+                                ConfigurationMain.Instance.profileByPluginName[plugin] = key;
+                                break;
+                            }
+
+                            ImGui.SameLine(0);
+                            ImGui.Text(profile.Name);
+                        }
+                }
+
+                ImGui.NextColumn();
+                using (ImRaii.Disabled(!ImGui.GetIO().KeyCtrl))
+                using (ImRaii.PushColor(ImGuiCol.Button, ImGuiHelper.AccentRed with { W = 0.15f.Scale() }))
+                using (ImRaii.PushColor(ImGuiCol.Text, ImGuiHelper.AccentRed))
+                using (ImRaii.PushFont(UiBuilder.IconFont))
+                {
+                    if (ImGui.Button($"{FontAwesomeIcon.TrashAlt.ToIconString()}###deleteprofileplugin{plugin}", new Vector2(28f.Scale(), 0)))
+                        pluginToRemove = plugin;
+                }
+
+                ImGui.NextColumn();
+
+            }
+
+            if(pluginToRemove != null)
+                ConfigurationMain.Instance.profileByPluginName.Remove(pluginToRemove);
+
+            ImGui.Columns(1);
+            ImGui.EndChild();
+        }
     }
 
     public static bool MakeSliderOrInput(ref int configValue, string valString, int sliderMin, int sliderMax, int inputStep = 1, int inputStepFast = 2) =>

@@ -195,6 +195,9 @@
       "NoInfo": "{0}: No Info",
       "ResynchronizeStep": "Resynchronize Step"
     },
+    "PluginConfig": {
+      "Header": "Plugin Configurations"
+    },
     "Enums": {
       "Positional": {
         "Any": "Any",

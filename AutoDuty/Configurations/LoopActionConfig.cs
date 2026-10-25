@@ -903,12 +903,12 @@ public class ShopLoopActionConfig : ActiveLoopActionConfig<ShopHelper, ShopLoopA
 
     public override ExternalPlugin RequiredPlugins { get; } = ExternalPlugin.Knightshopper;
 
-    [JsonProperty] public Knightshopper_IPCSubsriber.CurrencyId Currency { get; set; } = Knightshopper_IPCSubsriber.CurrencyId.Tomestone;
+    [JsonProperty] public Knightshopper_IPCSubscriber.CurrencyId Currency { get; set; } = Knightshopper_IPCSubscriber.CurrencyId.Tomestone;
 
     public override void OnGuiSettings()
     {
-        Knightshopper_IPCSubsriber.CurrencyId currency = this.Currency;
-        if(ImGuiEx.EnumCombo(Loc.Get("LoopActions.Shop.CurrencySelection"), ref currency, Enum.GetValues<Knightshopper_IPCSubsriber.CurrencyId>().ToDictionary(ci => ci, ci => ci.ToCustomString())))
+        Knightshopper_IPCSubscriber.CurrencyId currency = this.Currency;
+        if(ImGuiEx.EnumCombo(Loc.Get("LoopActions.Shop.CurrencySelection"), ref currency, Enum.GetValues<Knightshopper_IPCSubscriber.CurrencyId>().ToDictionary(ci => ci, ci => ci.ToCustomString())))
         {
             this.Currency = currency;
             ConfigurationProfileV2.Save();
