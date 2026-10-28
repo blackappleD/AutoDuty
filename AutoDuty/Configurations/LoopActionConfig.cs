@@ -979,7 +979,7 @@ public class RetireLoopActionConfig : LoopActionConfig<RetireLoopActionConfig>
 
                 ImGuiHelper.EndUnconditionally? x = retireLocation is RetireLocation.FC_Estate or RetireLocation.Personal_Home or RetireLocation.Lifestream_Auto ? ImGuiHelper.RequiresPlugin(ExternalPlugin.Lifestream, "LoopActionRetireEnum", inline: true) : null;
 
-                if (ImGui.Selectable(retireLocation.ToLocalizedString() + (disabled ? Loc.Get("LoopActions.Retire.LifestreamNotRegistered") : string.Empty), this.RetireLocationEnum == retireLocation))
+                if (ImGui.Selectable(retireLocation.ToLocalizedString() + (disabled ? " | " + Loc.Get("LoopActions.Retire.LifestreamNotRegistered") : string.Empty), this.RetireLocationEnum == retireLocation))
                 {
                     this.RetireLocationEnum = retireLocation;
                     ConfigurationProfileV2.Save();

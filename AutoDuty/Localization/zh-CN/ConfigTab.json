@@ -210,7 +210,8 @@
         "Apartment": "个人公寓",
         "Personal_Home": "个人房屋",
         "FC_Estate": "部队房屋",
-        "GC_Barracks": "冒险者分队兵营"
+        "GC_Barracks": "冒险者分队兵营",
+        "Lifestream_Auto": "Lifestream 自动"
       },
       "SummoningBellLocations": {
         "Inn": "旅馆",

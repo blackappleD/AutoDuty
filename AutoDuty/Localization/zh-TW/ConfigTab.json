@@ -211,7 +211,8 @@
         "Apartment": "公寓",
         "Personal_Home": "個人房屋",
         "FC_Estate": "部隊房屋",
-        "GC_Barracks": "軍營 (冒險者分隊)"
+        "GC_Barracks": "軍營 (冒險者分隊)",
+        "Lifestream_Auto": "Lifestream 自動"
       },
       "SummoningBellLocations": {
         "Inn": "旅館",

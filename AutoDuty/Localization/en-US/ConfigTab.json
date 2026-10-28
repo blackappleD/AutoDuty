@@ -210,7 +210,8 @@
         "Apartment": "Apartment",
         "Personal_Home": "Personal Home",
         "FC_Estate": "FC Estate",
-        "GC_Barracks": "GC Barracks"
+        "GC_Barracks": "GC Barracks",
+        "Lifestream_Auto": "Lifestream Auto"
       },
       "SummoningBellLocations": {
         "Inn": "Inn",

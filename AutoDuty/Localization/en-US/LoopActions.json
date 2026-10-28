@@ -103,7 +103,7 @@
     },
     "Retire": {
       "Name": "Retire",
-      "LifestreamNotRegistered": "Lifestream not installed",
+      "LifestreamNotRegistered": "not registered in Lifestream",
       "AdjustForDutyModes": "Adjust for active Duty Mode",
       "AdjustForDutyModesHelp": "Squadron will retire to barracks.\nCrucible will do absolutely nothing"
     },
