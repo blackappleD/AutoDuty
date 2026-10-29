@@ -26,7 +26,6 @@ using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Serilog.Events;
 using System.Diagnostics;
 using System.Numerics;
@@ -44,7 +43,6 @@ using ECommons.EzIpcManager;
 using ECommons.IPC.Subscribers;
 using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
-using Lumina.Excel.Sheets;
 using Multibox;
 using Pictomancy;
 using System;
@@ -53,6 +51,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static Data.Classes;
+using ClassJob = Lumina.Excel.Sheets.ClassJob;
 using TaskManager = ECommons.Automation.NeoTaskManager.TaskManager;
 
 // TODO:
@@ -132,6 +131,7 @@ public sealed class AutoDuty : IDalamudPlugin
     internal readonly WindowSystem           windowSystem = new("AutoDuty");
 
     internal DateTime runStartTime = DateTime.UnixEpoch;
+    public   string?  currentlyActivePluginConfig;
 
     public   int   Version { get; set; }
     internal Stage previousStage = Stage.Stopped;
@@ -2030,8 +2030,10 @@ public sealed class AutoDuty : IDalamudPlugin
         if (this.currentTerritoryType == 0 && Svc.ClientState.TerritoryType != 0 && InDungeon) this.ClientState_TerritoryChanged(Svc.ClientState.TerritoryType);
 
         if (this.States.HasFlag(PluginState.Navigating) && Configuration.DutyConfig.LootTreasure && (!Configuration.DutyConfig.LootBossTreasureOnly || (this.pathAction?.Name == "Boss" && this.Stage == Stage.Action)) &&
-            (this.treasureCofferGameObject = ObjectHelper.GetObjectsByObjectKind(ObjectKind.Treasure)
-                                                        ?.FirstOrDefault(x => ObjectHelper.GetDistanceToPlayer(x) < 2)) != null)
+            (this.treasureCofferGameObject = ObjectHelper.GetObjectsByObjectKind(ObjectKind.Treasure)?.FirstOrDefault(x =>
+                                                                                                                      {
+                                                                                                                          unsafe { return !((Treasure*)x.Struct())->Flags.HasFlag(Treasure.TreasureFlags.Opened) && ObjectHelper.GetDistanceToPlayer(x) < 2; }
+                                                                                                                      })) != null)
         {
             BossMod_IPCSubscriber.SetRange(30f);
             ObjectHelper.InteractWithObject(this.treasureCofferGameObject, false);
@@ -2107,6 +2109,12 @@ public sealed class AutoDuty : IDalamudPlugin
     private void StopAndResetAll()
     {
         ConfigOverrideHelper.Pop();
+
+        if (this.currentlyActivePluginConfig != null)
+        {
+            ConfigurationMain.Instance.ActivatePluginProfile(this.currentlyActivePluginConfig, false);
+            this.currentlyActivePluginConfig = null;
+        }
 
         if (this.bareModeSettingsActive != SettingsActive.None)
         {

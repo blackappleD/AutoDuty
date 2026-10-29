@@ -196,7 +196,7 @@
       "ResynchronizeStep": "Resynchronize Step"
     },
     "PluginConfig": {
-      "Header": "Plugin Configurations"
+      "Header": "Other Plugins using AD"
     },
     "Enums": {
       "Positional": {

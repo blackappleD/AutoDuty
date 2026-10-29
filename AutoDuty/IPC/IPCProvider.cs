@@ -75,6 +75,13 @@ namespace AutoDuty.IPC
         [EzIPC] public bool ContentHasPath(uint territoryType) => ContentPathsManager.DictionaryPaths.ContainsKey(territoryType);
         [EzIPC] public void SetLevelingMode(int mode) => Plugin.LevelingModeEnum = (LevelingMode)mode;
         [EzIPC] public void PluginConfig(string name, bool enable) => ConfigurationMain.Instance.ActivatePluginProfile(name, enable);
+        [EzIPC] public void RunForPlugin(string pluginName, uint territoryType, int loops = 0, bool bareMode = false)
+        {
+            Configuration.Meta.AutoDutyModeEnum = AutoDutyMode.Looping;
+            Plugin.currentlyActivePluginConfig  = pluginName;
+            this.PluginConfig(pluginName, true);
+            Plugin.Run(territoryType, loops, startFromZero: true, bareMode: bareMode);
+        }
 
         //Callback for Wrath Combo Lease Cancel
         [EzIPC] public void WrathComboCallback(int reason, string s) => Wrath_IPCSubscriber.CancelActions(reason, s);

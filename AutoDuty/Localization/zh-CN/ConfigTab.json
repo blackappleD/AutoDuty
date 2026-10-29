@@ -196,7 +196,7 @@
       "ResynchronizeStep": "重新同步步骤"
     },
     "PluginConfig": {
-      "Header": "插件配置方案"
+      "Header": "使用 AD 的其他插件"
     },
     "Enums": {
       "Positional": {
