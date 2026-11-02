@@ -26,6 +26,8 @@
     "Note": "备注:",
     "Tag": "标签:",
     "Conditions": "条件:",
+    "ConditionsWhile": "条件满足期间持续执行:",
+    "ConditionsUntil": "执行直到条件满足:",
     "Condition": "条件: ",
     "AddNewCondition": "添加新条件",
     "Add": "添加",

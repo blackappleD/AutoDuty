@@ -26,6 +26,8 @@
     "Note": "備註:",
     "Tag": "標籤:",
     "Conditions": "條件:",
+    "ConditionsWhile": "條件滿足期間持續執行:",
+    "ConditionsUntil": "執行直到條件滿足:",
     "Condition": "條件: ",
     "AddNewCondition": "新增條件",
     "Add": "新增",
