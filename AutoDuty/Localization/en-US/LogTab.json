@@ -7,6 +7,16 @@
     "CreateIssueTooltip": "Click to open the Create Issue popup (after authenticating with github) to fill in the form and submit and issue to the Repo",
     "FilterLogLevel": "Filter log event level",
     "DebugLevelWarning": "AutoDuty can't change the log level dalamud uses. To see debug related things, you have to go in the dalamud log \"/xllog\" and set the appropriate level in the top left.",
+    "Table": {
+      "Time": "Time",
+      "Count": "Count",
+      "Level": "Level",
+      "Category": "Category",
+      "Message": "Message",
+      "ClearFiltersTooltip": "Right-click to clear filters.",
+      "EnableAll": "Enable All"
+    },
+
 
     "Auth": {
       "PollingGithub": "Polling Github for User Authorization: {0}",

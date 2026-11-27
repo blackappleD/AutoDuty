@@ -50,7 +50,7 @@ internal static class LogTableInfo
     {
         public TimeColumn()
         {
-            this.Label = "Time";
+            this.Label = Loc.Get("LogTab.Table.Time");
             this.Width = ImGui.CalcTextSize("00:00:00 - 00:00:00").X;
             this.Flags = ImGuiTableColumnFlags.WidthFixed;
         }
@@ -83,7 +83,7 @@ internal static class LogTableInfo
     {
         public CountColumn()
         {
-            this.LabelKey = "Count";
+            this.Label = Loc.Get("LogTab.Table.Count");
             this.SetFixedWidth(ImGui.CalcTextSize("x000").X);
             this.Flags = ImGuiTableColumnFlags.WidthFixed;
         }
@@ -105,7 +105,7 @@ internal static class LogTableInfo
 
         public LevelColumn()
         {
-            this.Label = "Level";
+            this.Label = Loc.Get("LogTab.Table.Level");
             this.SetFixedWidth(ImGui.CalcTextSize("Warning").X);
             this.allFlags    = Enum.GetValues<LogLevel>().Aggregate((a, b) => a | b);
             this.filterValue = this.allFlags;
@@ -145,7 +145,7 @@ internal static class LogTableInfo
     {
         public CategoryColumn()
         {
-            this.Label = "Category";
+            this.Label = Loc.Get("LogTab.Table.Category");
             this.Flags = ImGuiTableColumnFlags.WidthFixed;
         }
 
@@ -161,7 +161,7 @@ internal static class LogTableInfo
     {
         public MessageColumn()
         {
-            this.Label = "Message";
+            this.Label = Loc.Get("LogTab.Table.Message");
             this.Flags = ImGuiTableColumnFlags.WidthStretch;
         }
 
@@ -211,7 +211,7 @@ public class ColumnFlags<T, TItem> : Column<TItem> where T : struct, Enum
         }
 
         if (!all && ImGui.IsItemHovered())
-            ImGui.SetTooltip("Right-click to clear filters.");
+            ImGui.SetTooltip(Loc.Get("LogTab.Table.ClearFiltersTooltip"));
 
         if (!combo)
             return false;
@@ -219,7 +219,7 @@ public class ColumnFlags<T, TItem> : Column<TItem> where T : struct, Enum
         color.Pop();
 
         bool ret = false;
-        if (ImGui.Checkbox("Enable All", ref all))
+        if (ImGui.Checkbox(Loc.Get("LogTab.Table.EnableAll"), ref all))
         {
             this.SetValue(this.allFlags, all);
             ret = true;

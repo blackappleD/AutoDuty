@@ -7,6 +7,16 @@
     "CreateIssueTooltip": "點擊以開啟「建立 Issue」視窗 (需先完成 GitHub 驗證)，填寫表單並將問題提交至倉庫",
     "FilterLogLevel": "過濾日誌事件等級",
     "DebugLevelWarning": "AutoDuty 無法更改 Dalamud 的日誌等級。若要查看除錯相關內容，您必須進入 Dalamud 日誌 (輸入 \"/xllog\") 並在左上角設定適當的等級。",
+    "Table": {
+      "Time": "時間",
+      "Count": "次數",
+      "Level": "級別",
+      "Category": "類別",
+      "Message": "訊息",
+      "ClearFiltersTooltip": "右鍵點擊清除篩選。",
+      "EnableAll": "全部啟用"
+    },
+
     "Auth": {
       "PollingGithub": "正在輪詢 GitHub 使用者授權: {0}",
       "WaitingResponse": "正在等待 GitHub 回應",

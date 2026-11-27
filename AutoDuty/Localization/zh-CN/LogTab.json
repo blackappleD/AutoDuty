@@ -7,6 +7,16 @@
     "CreateIssueTooltip": "点击打开创建 Issue 弹窗（需先通过 GitHub 认证），填写表单并提交到仓库",
     "FilterLogLevel": "筛选日志级别",
     "DebugLevelWarning": "AutoDuty 无法更改 Dalamud 的日志级别。若要查看调试相关信息，请输入 \"/xllog\" 打开 Dalamud 日志窗口，并在左上角设置相应的级别。",
+    "Table": {
+      "Time": "时间",
+      "Count": "次数",
+      "Level": "级别",
+      "Category": "类别",
+      "Message": "消息",
+      "ClearFiltersTooltip": "右键单击清除筛选。",
+      "EnableAll": "全部启用"
+    },
+
 
     "Auth": {
       "PollingGithub": "正在轮询 GitHub 用户授权：{0}",
